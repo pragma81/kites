@@ -16,6 +16,7 @@ export class DashboardPage {
     modal.onDismiss(file => {
      console.log(file.name);
      console.log(file.path);
+     console.log(window['ipc']);
     const fs = window['fs'];
    
      let result = fs.readFileSync(file.path,'utf8');
