@@ -52,7 +52,7 @@
   "scripts": {
     "electron": "electron .",
     "electron dist": "electron .",
-    "electron-mac": "cp package.json www && cp electron.js www && electron-packager  www --platform=darwin --arch=x64 --overwrite"
+    "electron-mac": "cp package.json www && cp electron.js www && cp preload.js www && electron-packager  www --platform=darwin --arch=x64 --overwrite"
   },
   "main": "electron.js"
 }

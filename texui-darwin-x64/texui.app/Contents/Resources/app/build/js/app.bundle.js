@@ -78,6 +78,8 @@ var DashboardPage = (function () {
             console.log(file.name);
             console.log(file.path);
             console.log(fs);
+            console.log(window['ipc']);
+            console.log(window['fs']);
             var result = fs.readFileSync(file.path, 'utf8');
             /*
             fs.readFile(file.path, 'utf-8', function (err, data) {

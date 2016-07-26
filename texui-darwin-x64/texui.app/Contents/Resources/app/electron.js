@@ -10,8 +10,14 @@ let win;
  
 function createWindow() {
     // Create the browser window.
-    win = new BrowserWindow({width: 800, height: 600});
+    win = new BrowserWindow({width: 800, height: 600, webPreferences: {
+      nodeIntegration: false,
+      webSecurity: false,
+      preload: __dirname + "/preload.js"
+    }
+  });
  
+  
     var url = 'http://localhost:8100';
     var Args = process.argv.slice(2);
     Args.forEach(function (val) {
@@ -22,7 +28,7 @@ function createWindow() {
        
     });
      
-   //  url = 'file://' + __dirname + '/index.html'
+    url = 'file://' + __dirname + '/index.html'
     // and load the index.html of the app.
     win.loadURL(url);
  

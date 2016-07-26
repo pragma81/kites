@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {Modal, NavController} from 'ionic-angular'
+import {Modal, NavController, } from 'ionic-angular'
 import {FeatureSearchModal} from './FeatureSearchModal'
 import * as fs from 'fs'
 
@@ -16,10 +16,10 @@ export class DashboardPage {
     modal.onDismiss(file => {
      console.log(file.name);
      console.log(file.path);
-     console.log(fs);
+    const fs = window['fs'];
    
      let result = fs.readFileSync(file.path,'utf8');
-     /*
+     
      fs.readFile(file.path, 'utf-8', function (err, data) {
                     if(err){
                         alert("An error ocurred reading the file :" + err.message);
@@ -28,7 +28,7 @@ export class DashboardPage {
                     
                     console.log(data);
      }); 
-   */});
+   });
     this.nav.present(modal);
   }
 }
