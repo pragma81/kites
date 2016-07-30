@@ -38,7 +38,7 @@ var isRelease = argv.indexOf('--release') > -1;
 
 gulp.task('watch', ['clean'], function(done){
   runSequence(
-    ['sass', 'html', 'fonts', 'scripts'],
+    ['sass', 'html', 'fonts', 'scripts','3rdparty-scripts'],
     function(){
       gulpWatch('app/**/*.scss', function(){ gulp.start('sass'); });
       gulpWatch('app/**/*.html', function(){ gulp.start('html'); });
@@ -49,7 +49,7 @@ gulp.task('watch', ['clean'], function(done){
 
 gulp.task('build', ['clean'], function(done){
   runSequence(
-    ['sass', 'html', 'fonts', 'scripts'],
+    ['sass', 'html', 'fonts', 'scripts','3rdparty-scripts'],
     function(){
       buildBrowserify({
         minify: isRelease,
@@ -63,6 +63,16 @@ gulp.task('build', ['clean'], function(done){
     }
   );
 });
+
+
+
+gulp.task('3rdparty-scripts',function () {
+  var lib = [
+  'node_modules/gherkin/dist/gherkin.js'
+];
+return gulp.src(lib)
+    .pipe(gulp.dest('www/build/js'))
+})
 
 gulp.task('sass', buildSass);
 gulp.task('html', copyHTML);
