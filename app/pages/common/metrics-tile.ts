@@ -3,6 +3,7 @@ import {Component, Input, Output, EventEmitter} from '@angular/core';
 @Component({
   selector: 'da-metrics-tile',
   template: `
+  
     <a class="tile-metric" (click)="onLegendClick($event)">
                 <div class="tile-metric-inner">
                     <div class="tile-metric-image">
@@ -17,8 +18,8 @@ import {Component, Input, Output, EventEmitter} from '@angular/core';
                     </div>
                 </div>
             </a>
-  `,
-  styleUrls: ['app/common/metrics-tile.css']
+            
+  `
 })
 export class MetricsTile {
 @Input() value = 0;
