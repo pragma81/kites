@@ -1,14 +1,13 @@
 import {Component, ViewChild, ElementRef} from '@angular/core';
 import {Modal, NavController, } from 'ionic-angular'
 import {FeatureSearchModal} from './FeatureSearchModal'
-import {MetricsTile} from '../common/metrics-tile'
 import * as fs from 'fs'
 import * as hljs from 'highlight.js'
 
 declare var Gherkin : any ;
 
 @Component({
-  templateUrl: 'build/pages/dashboard/DashboardPage.html'
+  templateUrl: 'build/components/dashboard/DashboardPage.html'
 })
 export class DashboardPage {
   
