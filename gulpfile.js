@@ -54,7 +54,9 @@ gulp.task('build', ['clean'], function(done){
       buildBrowserify({
         minify: isRelease,
         browserifyOptions: {
-          debug: !isRelease
+          debug: !isRelease,
+          insertGlobals: false,
+           detectGlobals: false
         },
         uglifyOptions: {
           mangle: false

@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar primary>
+  <ion-navbar primary>
     <ion-buttons start>
       <button royal>
       <ion-icon name="search"></ion-icon>
@@ -11,7 +11,7 @@
       <ion-icon name="md-settings"></ion-icon>
     </button>
     </ion-buttons>
-  </ion-toolbar>
+  </ion-navbar>
 
 
 </ion-header>
@@ -22,97 +22,10 @@
   <ion-grid>
     <ion-row>
 
-      <ion-col width-25>
-        <div class="side-menu-background">
-          <ion-searchbar clear (ionInput)="filter($event)" showCancelButton=true></ion-searchbar>
-
-      
-           <button outline round (click)="showSearchModal()">Add Test Suite</button>
-
-          <ion-card>
-            <ion-card-header>
-              <ion-row>
-                <ion-col>
-                  Test Suite Acceptance
-                </ion-col>
-                <ion-col >
-                  <ion-icon name="cloud-done"></ion-icon>
-                </ion-col>
-              </ion-row>
-            </ion-card-header>
-            <ion-card-content>
-              <ion-row>
-                <ion-col>
-                  <div class="tiles-metric">
-
-                    <!--da-metrics-tile value="13" legend="Features" >
-              </da-metrics-tile>
-              <da-metrics-tile value="5" legend="UI" >
-              </da-metrics-tile>
-              <da-metrics-tile value="6" legend="API" >
-              </da-metrics-tile-->
-
-                    <a class="tile-metric" (click)="onLegendClick($event)">
-                      <div class="tile-metric-inner">
-                        <div class="tile-metric-image">
-                        </div>
-                        <div class="tile-metric-content">
-                          <span class="tile-metric-data">
-              5
-            </span>
-                          <div class="tile-metric-data-legend">
-                            Features
-                          </div>
-                        </div>
-                      </div>
-                    </a>
-                    <a class="tile-metric" (click)="onLegendClick($event)">
-                      <div class="tile-metric-inner">
-                        <div class="tile-metric-image">
-                        </div>
-                        <div class="tile-metric-content">
-                          <span class="tile-metric-data">
-              3
-            </span>
-                          <div class="tile-metric-data-legend">
-                            UI
-                          </div>
-                        </div>
-                      </div>
-                    </a>
-                    <a class="tile-metric" (click)="onLegendClick($event)">
-                      <div class="tile-metric-inner">
-                        <div class="tile-metric-image">
-                        </div>
-                        <div class="tile-metric-content">
-                          <span class="tile-metric-data">
-              7
-            </span>
-                          <div class="tile-metric-data-legend">
-                            API
-                          </div>
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                </ion-col>
-                <ion-col offset-10>
-
-                  <button small outline round>
-                  <ion-icon  name="refresh"></ion-icon>
-                  </button>
-
-
-                  <button small outline round>
-                  <ion-icon  name="cloud-upload"></ion-icon>
-                  </button>
-                </ion-col>
-              </ion-row>
-            </ion-card-content>
-          </ion-card>
-        </div>
+      <ion-col width-33>
+        <tex-testsuite-explorer> </tex-testsuite-explorer>
       </ion-col>
-      <ion-col width-75>
+      <ion-col width-67>
         <ion-card>
           <ion-card-header>
             <h1> Welcome to TexUI dashboard !!</h1>

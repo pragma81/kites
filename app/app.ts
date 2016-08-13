@@ -1,12 +1,21 @@
 import {Component, ViewChild} from '@angular/core';
 import {ionicBootstrap, Platform, MenuController, Nav} from 'ionic-angular';
 import {StatusBar} from 'ionic-native';
-import {DashboardPage} from './pages/dashboard/DashboardPage';
+import {DashboardPage} from './components/dashboard/DashboardPage';
+import {FileSystem} from './services/storage/FileSystem'
+import {GherkinService} from './services/gherkin/GherkinService'
+import {SettingsServiceImpl} from './services/settings/SettingsServiceImpl'
+import {FeatureServiceImpl} from './services/feature/FeatureServiceImpl'
+import {TestSuiteRepository} from './repository/TestSuiteRepository'
+import {FeatureRepository} from './repository/FeatureRepository'
+
 
 
 
 @Component({
-  templateUrl: 'build/app.html'
+  templateUrl: 'build/app.html',
+  providers : [FileSystem,GherkinService,FeatureServiceImpl,
+                TestSuiteRepository,FeatureRepository,SettingsServiceImpl]
 })
 class MyApp {
 
