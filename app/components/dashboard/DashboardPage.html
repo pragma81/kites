@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-navbar primary>
+    <ion-buttons start>
+      <button royal>
+      <ion-icon name="search"></ion-icon>
+    </button>
+    </ion-buttons>
+    <ion-title>TexUI</ion-title>
+    <ion-buttons end>
+      <button royal>
+      <ion-icon name="md-settings"></ion-icon>
+    </button>
+    </ion-buttons>
+  </ion-navbar>
+
+
+</ion-header>
+
+
+<ion-content>
+
+  <ion-grid>
+    <ion-row>
+
+      <ion-col width-33>
+        <tex-testsuite-explorer> </tex-testsuite-explorer>
+      </ion-col>
+      <ion-col width-67>
+        <ion-card>
+          <ion-card-header>
+            <h1> Welcome to TexUI dashboard !!</h1>
+
+          </ion-card-header>
+          <ion-card-content>
+
+            <button primary outline round (click)="showSearchModal()">
+           <ion-icon name="search"></ion-icon>
+           Let's start to import you first feature file
+           </button>
+            <pre><code class="gherkin" [innerHTML]="gherkinhljs"></code></pre>
+
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+
+
+</ion-content>

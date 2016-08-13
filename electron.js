@@ -28,7 +28,7 @@ function createWindow() {
        
     });
      
-    //url = 'file://' + __dirname + '/index.html'
+    //url = 'file://' + __dirname + '/www/index.html'
     // and load the index.html of the app.
     win.loadURL(url);
  

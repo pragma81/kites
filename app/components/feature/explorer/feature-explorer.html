@@ -1,0 +1,41 @@
+
+
+<div class="side-menu-background">
+
+  <ion-searchbar clear (ionInput)="filter($event)" showCancelButton=true></ion-searchbar>
+
+
+  <button outline round (click)="goToTestSuiteImporter()">Add Test Suite</button>
+
+  <ion-card *ngFor=" let testSuiteInfo of testsSuiteInfo" >
+    <ion-card-header>
+      <ion-row>
+        <ion-col>
+         {{ testSuiteInfo.testSuite.name}}
+        </ion-col>
+        <ion-col>
+          <ion-icon name="cloud-done"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-row>
+        <ion-col>
+          <da-tiles [tiles]='testSuiteInfo.tiles'></da-tiles>
+
+        </ion-col>
+        <ion-col offset-10>
+
+          <button small outline round>
+                  <ion-icon  name="refresh"></ion-icon>
+                  </button>
+
+
+          <button small outline round>
+                  <ion-icon  name="cloud-upload"></ion-icon>
+                  </button>
+        </ion-col>
+      </ion-row>
+    </ion-card-content>
+  </ion-card>
+</div>
