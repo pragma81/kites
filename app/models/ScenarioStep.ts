@@ -21,6 +21,23 @@ export class ScenarioStep {
         return this.text;
     }
 
+
+	public getKeyword(): string {
+		return this.keyword;
+	}
+
+	public setKeyword(value: string) {
+		this.keyword = value;
+	}
+
+	public getDataTable(): StepDataTable {
+		return this.dataTable;
+	}
+
+	public setDataTable(value: StepDataTable) {
+		this.dataTable = value;
+	}
+    
     public hasDataTable(): boolean {
         //TODO this raise a strange typescript error about using '<' on number O_O
         //return (this.dataTable != undefined && (this.dataTable.length > 0);

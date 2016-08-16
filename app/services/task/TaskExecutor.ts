@@ -7,7 +7,7 @@ export class TaskExecutor {
     private title: string;
     private executionCounter: number;
     private tasks: Array<TaskInfo> = [];
-	private taskExecutor: TaskHandler;
+	private taskHandler: TaskHandler;
 	private result: ExecutionResult;
 	//if true only task check is performed
 	private dryrun: boolean = false;
@@ -17,7 +17,7 @@ export class TaskExecutor {
 
 	constructor(title: string, taskHandler: TaskHandler) {
 		this.title = title;
-		this.taskExecutor = taskHandler;
+		this.taskHandler = taskHandler;
 		this.status = ExecutionStatus.compiling;
 	}
 
@@ -82,6 +82,32 @@ export class TaskExecutor {
 
 	}
 
+
+	public getResult(): ExecutionResult {
+		return this.result;
+	}
+	
+	public getExecutionStatus(): ExecutionStatus{
+		return this.status
+	}
+
+	public isCompleted(){
+		return this.status === ExecutionStatus.processed
+	}
+
+	public isValidated(){
+		return this.status === ExecutionStatus.validated
+	}
+
+	public isSuccess(){
+		return this.result === ExecutionResult.success
+	}
+
+	public isError(){
+		return this.result === ExecutionResult.error
+	}
+
+
 	private validate(): ExecutionResult {
 
 		/* Success by default. If one of the task is in error the overall 
@@ -106,7 +132,7 @@ export class TaskExecutor {
 				})
 			}
 			//task info is updated with output and check status
-			taskInfo = this.taskExecutor.check(taskInfo);
+			taskInfo = this.taskHandler.check(taskInfo);
 			if (taskInfo.getExecutionResult() === ExecutionResult.error) {
 				result = ExecutionResult.error
 			}
@@ -153,7 +179,7 @@ export class TaskExecutor {
 				})
 			}
 			//task info is updated with output and check status
-			taskInfo = this.taskExecutor.process(taskInfo);
+			taskInfo = this.taskHandler.process(taskInfo);
 
 			if (taskInfo.getExecutionResult() === ExecutionResult.error) {
 				result = ExecutionResult.error

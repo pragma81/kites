@@ -1,6 +1,5 @@
-import * as path from 'path';
-import {Component} from '@angular/core';
-import {NavController, Modal} from 'ionic-angular';
+import {Component,Output,EventEmitter} from '@angular/core';
+import {NavController, Modal, AlertController} from 'ionic-angular';
 import {TestSuiteService} from '../../../services/testsuite/TestSuiteService';
 import {TestSuiteServiceImpl} from '../../../services/testsuite/TestSuiteServiceImpl';
 import {Tiles, Tile} from '../../tiles/tiles';
@@ -15,9 +14,10 @@ import {TestSuite} from '../../../models/TestSuite';
   providers: [TestSuiteServiceImpl]
 })
 export class TestSuiteExplorer {
+  @Output() testSuiteClick = new EventEmitter();
   private testSuiteService: TestSuiteService;
   private testsSuiteInfo: Array<TestSuiteInfo> = [];
-  constructor(private nav: NavController, testSuiteService: TestSuiteServiceImpl) {
+  constructor(private nav: NavController,private alertController: AlertController, testSuiteService: TestSuiteServiceImpl) {
     console.log('explorer initialized')
     this.testSuiteService = testSuiteService;
   }
@@ -27,6 +27,16 @@ export class TestSuiteExplorer {
   goToTestSuiteImporter() {
 
     this.nav.push(TestSuiteImporter)
+  }
+
+  filter(testsuitename:string){
+     console.log('filtering');
+  }
+
+  onTestSuiteClick(testSuiteInfo: TestSuiteInfo){
+   console.log("Test suite ["+testSuiteInfo.testSuite.getName()+"] clicked")
+   this.testSuiteClick.emit(testSuiteInfo.testSuite);
+
   }
 
   load() {
@@ -49,6 +59,33 @@ export class TestSuiteExplorer {
 
   }
 
+  delete(testSuiteInfo : TestSuiteInfo){
+ let alert = this.alertController.create({
+            title: "Confirmation Requested",
+            
+            message: "Are you sure to delete test suite "+testSuiteInfo.testSuite.getName(),
+            buttons: [
+        {
+          text: 'No',
+          handler: () => {
+            console.log('Disagree clicked');
+          }
+        },
+        {
+          text: 'Yes',
+          handler: () => {
+            console.log('Agree clicked');
+            this.testSuiteService.delete(testSuiteInfo.testSuite,(testsuite:TestSuite)=>{
+              let index = this.testsSuiteInfo.indexOf(testSuiteInfo);
+                this.testsSuiteInfo.splice(index, 1);
+
+            })
+          }
+        }
+      ]
+        });
+        alert.present();
+  }
 
 }
 

@@ -1,14 +1,37 @@
-import {Injectable} from '@angular/core'
-import {Scenario} from './Scenario'
+import {Injectable} from '@angular/core';
+import {Scenario} from './Scenario';
 import {TCMSettings} from './TCMSettings'
-import {FeatureCreationError} from '../error/FeatureCreationError'
-import {ErrorDetail, Severity} from '../error/ErrorDetail'
+import {FeatureCreationError} from '../error/FeatureCreationError';
+import {ErrorDetail, Severity} from '../error/ErrorDetail';
+import {Tag} from './Tag';
 
 export enum FeatureType {
     API,
     UI
 }
 
+export class FileInfo {
+    
+    constructor(private filename : string, 
+                private fileAbsolutePath :string, 
+                private creationTime:Date,
+                private updateTime:Date ){}
+
+     public getFilename():string {
+         return this.filename
+     }   
+
+     public getFileAbsolutePath():string {
+         return this.fileAbsolutePath
+     }
+
+     public getCreationTime():Date{
+         return this.creationTime;
+     }
+     public getUpdateTime(){
+         return this.updateTime;
+     }
+}
 @Injectable()
 export class Feature {
     private _id: string;
@@ -18,29 +41,28 @@ export class Feature {
     private processId: string;
     private tcmId: string;
     private type: FeatureType;
-    private fileName: string;
-    private fileAbsolutePath: string;
+    private fileInfo : FileInfo;
     private rawData: Object;
     private wellFormed: boolean;
-    private featureType: FeatureType;
     private scenarios: Array<Scenario> = [];
     private background: Scenario;
     private hasScenarioOutline: boolean = false;
+    private tags : Array<string> = [];
+
+    
 
     //Used internally for updating object using puchdb
     private _rev: string;
 
     //Internal AST
     private ast: string;
-    constructor(featureAst: Object, testSuiteName: string, fileName: string, fileAbsolutePath: string) {
+    constructor(featureAst: Object,  fileInfo : FileInfo) {
         this.rawData = featureAst;
-        this.testSuiteName = testSuiteName;
-        this.fileName = fileName;
-        this.fileAbsolutePath = fileAbsolutePath;
-
+        this.fileInfo = fileInfo;
         let featureAstAny: any = featureAst;
         this.name = featureAstAny.feature.name;
         this.description = featureAstAny.feature.description;
+        this.buildTags(featureAstAny.feature.tags);
         this.buildTCMId(featureAstAny.feature.tags);
         this.buildProcessId(featureAstAny.feature.tags);
         this.buildFeatureId(featureAstAny.feature.tags);
@@ -73,6 +95,9 @@ export class Feature {
         });
     }
 
+    public hasBackground():boolean{
+        return this.background != null
+    }
     public getId(): string {
         return this._id;
     }
@@ -94,16 +119,15 @@ export class Feature {
     }
 
     public getType(): FeatureType {
-        return this.featureType;
+        return this.type;
     }
 
-    public getFileName(): string {
-        return this.fileName
-    }
 
-    public getFileAsolutePath() {
-        return this.fileAbsolutePath;
-    }
+	public getFileInfo(): FileInfo {
+		return this.fileInfo;
+	}
+    
+
 
     public getScenarios(): Array<Scenario> {
         return this.scenarios;
@@ -141,8 +165,13 @@ export class Feature {
         return this.background;
     }
 
+
+	public getTags(): Array<string>  {
+		return this.tags;
+	}
+
     public getScenariosTotal(): number {
-        if (this.hasScenarioOutline) {
+        if (this.hasBackground) {
             return this.scenarios.length - 1
         } else {
             return this.scenarios.length
@@ -152,11 +181,31 @@ export class Feature {
     }
     public getAutoScenariosTotal(): number {
         let autoScenarios: Array<Scenario> = this.scenarios.filter((value, index, array): boolean => {
-            return value.isAuto();
+            return !value.isScenarioOutline() && value.isAuto();
         })
         return autoScenarios.length;
     }
 
+    public getSmokeScenarios() : Array<Scenario> {
+         let smokeScenarios: Array<Scenario> = this.scenarios.filter((value, index, array): boolean => {
+            return value.isSmoke();
+        })
+        return smokeScenarios;
+    }
+
+     public getBasicScenarios() : Array<Scenario> {
+         let basicScenarios: Array<Scenario> = this.scenarios.filter((value, index, array): boolean => {
+            return value.isBasic();
+        })
+        return basicScenarios;
+    }
+
+     public getAcceptanceScenarios() : Array<Scenario> {
+         let acceptanceScenarios: Array<Scenario> = this.scenarios.filter((value, index, array): boolean => {
+            return value.isAcceptance();
+        })
+        return acceptanceScenarios;
+    }
 
     public getJson() {
         return JSON.stringify(this.rawData);
@@ -174,6 +223,15 @@ export class Feature {
             return valueAny.name === '@api'
         })
 
+    }
+
+    private buildTags(featuresTags: Object[]):void{
+       if (featuresTags === undefined)
+            return ;
+        featuresTags.forEach((value,index ,array)=>{
+             let valueAny: any = value;
+            this.tags.push(<string>valueAny.name)
+        })
     }
 
     private buildTCMId(featuresTags: Object[]) {

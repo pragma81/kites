@@ -32,12 +32,24 @@ $colors: (
   light:       #f4f4f4,
   dark:        #222,
   favorite:    #69BB7B,
-  metricbadge: #607D8B,
+  metricbadge: grey,
   success:     #32db64,
-  error:       #f53d3d
+  error:       #f53d3d,
+  uibadge:     green,
+  apibadge:    #f4f4f4,
+  jirabadge:   blue
 );
 
 $searchbar-md-input-height : 1.8em ;
 $searchbar-md-input-search-icon-size : 1.1em ;
 
 $searchbar-md-input-border-radius:       10px !default;
+
+
+$modal-inset-min-width:                      768px ;
+$modal-inset-min-height-small:               300px ;
+$modal-inset-min-height-large:               400px ;
+$modal-inset-width:                          768px ;
+$modal-inset-height-small:                   300px ;
+$modal-inset-height-large:                   500px ;
+

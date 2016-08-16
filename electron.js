@@ -10,7 +10,7 @@ let win;
  
 function createWindow() {
     // Create the browser window.
-    win = new BrowserWindow({width: 800, height: 600, webPreferences: {
+    win = new BrowserWindow({width: 1024, height: 768, webPreferences: {
       nodeIntegration: false,
       webSecurity: false,
       preload: __dirname + "/preload.js"

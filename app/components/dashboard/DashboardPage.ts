@@ -1,40 +1,44 @@
-import {Component, ViewChild, ElementRef} from '@angular/core';
-import {Modal, NavController} from 'ionic-angular'
-import {TestSuiteExplorer} from '../test-suite/explorer/test-suite-explorer'
-import {Tiles,Tile} from '../tiles/tiles'
-import * as fs from 'fs'
-import * as hljs from 'highlight.js'
+import {TestSuite} from '../../models/TestSuite';
+import {Component, ViewChild} from '@angular/core';
+import {NavController} from 'ionic-angular';
+import {TestSuiteExplorer} from '../test-suite/explorer/test-suite-explorer';
+import {Tiles} from '../tiles/tiles';
+import {FeatureExplorer} from '../feature/explorer/feature-explorer';
+import {Feature} from '../../models/Feature'
 
-declare var Gherkin : any ;
+declare var Gherkin: any;
 
 @Component({
   templateUrl: 'build/components/dashboard/DashboardPage.html',
-  directives : [Tiles,TestSuiteExplorer],
-  providers : [Tile]
+  directives: [Tiles, TestSuiteExplorer, FeatureExplorer]
 
 })
 export class DashboardPage {
-   @ViewChild(TestSuiteExplorer)
-  private testSuiteExplorer : TestSuiteExplorer;
-  private testSuiteTiles : Array<Tile> =[];
+  @ViewChild(TestSuiteExplorer)
+  private testSuiteExplorer: TestSuiteExplorer;
+  @ViewChild(FeatureExplorer)
+  private featureExplorer: FeatureExplorer;
+
+  private currentTestSuite : TestSuite
 
   public fileText: string = "";
-  //public gherkinhljs: string;
-  //@ViewChild('hljsarea') textRef: ElementRef;
+  
   constructor(private nav: NavController) {
-    let featureTile = new Tile(13,'Features');
-    let apiTile = new Tile(6,'UI');
-    let uiTile = new Tile(3,'API');
-    this.testSuiteTiles.push(featureTile);
-    this.testSuiteTiles.push(apiTile);
-     this.testSuiteTiles.push(uiTile);
-    
-    let options: hljs.IOptions = { languages: ['gherkin'] };
-    hljs.configure(options);
   }
 
-ionViewDidEnter(){
-  console.log ('entered in dashboard')
-  this.testSuiteExplorer.load();
+  ionViewDidEnter() {
+    console.log('entered in dashboard')
+    this.testSuiteExplorer.load();
+  }
+
+onTestSuiteClick(testSuite:TestSuite){
+  console.log("test suite clicked in explorer.")
+   this.currentTestSuite = testSuite
+  this.featureExplorer.load(testSuite);
 }
+   
+onFeatureUpdate(feature:Feature){
+console.log("feature changed reload feature explorer")
+  this.featureExplorer.load(this.currentTestSuite);
+}   
 }

@@ -26,6 +26,14 @@ export class TestSuiteRepository {
         return testSuite;
     }
 
+    delete(testsuite: TestSuite,callback:(testsuite:TestSuite)=> void): void {
+        this._db.remove(testsuite.getId(), testsuite.getRevision()).then(result => {
+            callback(testsuite);
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
     public getAll(callback:(testsuite:Array<TestSuite>)=> void): void{
         let testsSuite: Array<TestSuite> = []
         this._db.allDocs({
@@ -42,6 +50,7 @@ export class TestSuiteRepository {
                 row.doc.imported,
                 row.doc.projectFilePath,
                 row.doc.executionRuntimeType);
+                testSuite.setRevision(row.doc._rev);
                 testSuite.setFeatures(row.doc.features);
                 testSuite.setApiTests(row.doc.apiTests);
                 testSuite.setUiTests(row.doc.uiTests);

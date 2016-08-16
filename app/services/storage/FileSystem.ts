@@ -13,12 +13,15 @@ export class FileSystem {
     this.path = window['path'];
   }
 
-  public isDir(path: string) {
+  public isDir(path: string) : boolean{
     let stats: fs.Stats;
     stats = this.fs.statSync(path);
-    return stats.isDirectory;
+    return stats.isDirectory();
   }
 
+  public stat(path : string) : fs.Stats{
+    return this.fs.statSync(path)
+  }
   public readFile(filePath, encoding) {
     let fileData;
     try {

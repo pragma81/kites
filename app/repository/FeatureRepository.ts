@@ -1,9 +1,11 @@
 import {Injectable} from '@angular/core'
 import * as PouchDB from 'pouchdb';
-import {Feature} from '../models/Feature'
+import * as PouchDBFind from 'pouchdb';
+import {Feature,FileInfo} from '../models/Feature'
 
 //let PouchDB = require('pouchdb');
 
+declare var emit: any;
 @Injectable()
 export class FeatureRepository {
 
@@ -27,4 +29,66 @@ export class FeatureRepository {
         return feature;
 
     }
+
+    delete(feature: Feature,callback:(feature:Feature)=> void): void {
+        this._db.remove(feature.getId(), feature.getRevision()).then(result => {
+            callback(feature);
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
+    private featureMapFunction(doc) {
+
+       // emit(doc.name, doc.testSuiteName, doc.description, doc.type)
+        emit(doc.testSuiteName)
+    }
+
+    public query(filters: Object, callback: (testsuite: Array<Feature>) => void): void {
+
+        let pouchDbQueryOptions = {include_docs: true}
+        Object.assign(pouchDbQueryOptions,filters)
+
+        let features: Array<Feature> = []
+        this._db.query(this.featureMapFunction, pouchDbQueryOptions).then(result => {
+            if (result.rows === undefined) {
+                return
+            }
+            result.rows.forEach(row => {
+                let fileInfo = new FileInfo(row.doc.fileInfo.filename,row.doc.fileInfo.fileAbsolutePath,row.doc.fileInfo.creationTime,row.doc.fileInfo.updateTime)
+                let feature = new Feature(row.doc.rawData,fileInfo)
+                feature.setRevision(row.doc._rev)
+                feature.setTestSuiteName(row.doc.testSuiteName)
+                features.push(feature)
+            })
+            callback(features)
+        }).catch(err => {
+            console.log(err);
+        });
+
+    }
+
+public queryByTestSuiteName(testSuiteName:string, callback: (testsuite: Array<Feature>) => void){
+
+    let testSuiteMapFunction = function(doc){ emit(doc.testSuiteName)}
+    let pouchDbQueryOptions = {key:testSuiteName,include_docs: true}
+    
+    let features: Array<Feature> = []
+        this._db.query(testSuiteMapFunction, pouchDbQueryOptions).then(result => {
+            if (result.rows === undefined) {
+                return
+            }
+           result.rows.forEach(row => {
+                let fileInfo = new FileInfo(row.doc.fileInfo.filename,row.doc.fileInfo.fileAbsolutePath,row.doc.fileInfo.creationTime,row.doc.fileInfo.updateTime)
+                let feature = new Feature(row.doc.rawData,fileInfo)
+                feature.setRevision(row.doc._rev)
+                feature.setTestSuiteName(row.doc.testSuiteName)
+                features.push(feature)
+            })
+            callback(features)
+        }).catch(err => {
+            console.log(err);
+        });
+}
+
 }

@@ -1,68 +1,97 @@
-import * as path from 'path';
-import {Component} from '@angular/core';
-import {NavController, Modal} from 'ionic-angular';
-import {TestSuiteService} from '../../../services/testsuite/TestSuiteService';
-import {TestSuiteServiceImpl} from '../../../services/testsuite/TestSuiteServiceImpl';
+import {Component, Output, EventEmitter} from '@angular/core';
+import {ModalController, ToastController} from 'ionic-angular';
+import {FeatureService} from '../../../services/feature/FeatureService';
+import {FeatureServiceImpl} from '../../../services/feature/FeatureServiceImpl';
 import {Tiles, Tile} from '../../tiles/tiles';
 import {TestSuite} from '../../../models/TestSuite';
+import {Feature, FeatureType} from '../../../models/Feature';
+import {TestSuiteImporter} from '../../test-suite/import/test-suite-importer';
+import {TestSuiteInfo} from '../../test-suite/explorer/test-suite-explorer';
+import {FeatureSourceView} from '../source/feature-source-view';
+import {FeatureImporter} from '../import/feature-importer';
 
 
 @Component({
-  selector: 'tex-testsuite-explorer',
-  templateUrl: 'build/components/test-suite/explorer/test-suite-explorer.html',
+  selector: 'tex-feature-explorer',
+  templateUrl: 'build/components/feature/explorer/feature-explorer.html',
   directives: [Tiles],
-  providers: [TestSuiteServiceImpl]
+  providers: [FeatureServiceImpl]
 })
-export class TestSuiteExplorer {
-  private testSuiteService: TestSuiteService;
-  private testsSuiteInfo: Array<TestSuiteInfo> = [];
-  constructor(private nav: NavController, testSuiteService: TestSuiteServiceImpl) {
-    console.log('explorer initialized')
-    this.testSuiteService = testSuiteService;
+export class FeatureExplorer {
+  private selectedType: string = 'ui'
+  private featureService: FeatureService;
+  private featuresInfo: Array<FeatureInfo> = [];
+
+
+  @Output() featureUpdate = new EventEmitter();
+  constructor(private modalController: ModalController, featureService: FeatureServiceImpl, private toastController: ToastController) {
+    this.featureService = featureService;
   }
 
-/*
-  showTestSuiteModal() {
-    let modal = Modal.create(TestSuiteImportModal);
-    modal.onDismiss(path => {
-      console.log('modal closed');
-      this.testSuiteService.importFromLocalDir(path, false);
 
-    });
+  load(testSuite: TestSuite): void {
+    //Reset features
+    this.featuresInfo = []
+    console.log("load features for test suite:" + testSuite.getName());
 
-    this.nav.present(modal);
-  }
+    this.featureService.getByTestSuite(testSuite.getName(),
+      (features: Array<Feature>) => {
+        features.forEach(feature => {
+          console.log("Feature [" + feature.getId() + "] found")
+          let featureInfo = new FeatureInfo()
+          featureInfo.feature = feature
+          let scenarios = new Tile(feature.getScenariosTotal(), 'Scenarios')
+          let auto = new Tile(feature.getAutoScenariosTotal(), 'Auto')
+          let smoke = new Tile(feature.getSmokeScenarios().length, 'Smoke')
+          let basic = new Tile(feature.getBasicScenarios().length, 'Basic')
+          let acceptance = new Tile(feature.getAcceptanceScenarios().length, 'Acceptance')
+          featureInfo.tiles.push(scenarios)
+          featureInfo.tiles.push(auto)
+          featureInfo.tiles.push(smoke)
+          featureInfo.tiles.push(basic)
+          featureInfo.tiles.push(acceptance)
+          this.featuresInfo.push(featureInfo)
 
-  goToTestSuiteImporter() {
-
-    this.nav.push(TestSuiteImporter)
-  }*/
-
-  load() {
-    this.testsSuiteInfo = []
-    this.testSuiteService.getAll(
-      (testsSuite: Array<TestSuite>) => {
-        testsSuite.forEach(testSuite => {
-
-          let testSuiteInfo = new TestSuiteInfo();
-          testSuiteInfo.testSuite = testSuite;
-          let featuresTile = new Tile(testSuite.getFeatures(), 'Features');
-          let apiTile = new Tile(testSuite.getAPITests(), 'Api');
-          let uiTile = new Tile(testSuite.getUiTests(), 'Ui');
-          testSuiteInfo.tiles.push(featuresTile);
-          testSuiteInfo.tiles.push(apiTile);
-          testSuiteInfo.tiles.push(uiTile);
-          this.testsSuiteInfo.push(testSuiteInfo);
         })
       })
+  }
+  filter(testsuitename: string, testType: FeatureType, summaryexpr: string) {
+    console.log('filtering');
+  }
+
+  showSource(featureInfo: FeatureInfo) {
+    console.log('show source for ' + featureInfo.feature.getName())
+
+    const modal = this.modalController.create(FeatureSourceView, { "feature": featureInfo.feature });
+    modal.present()
 
   }
 
+  upload(featureInfo: FeatureInfo) {
 
+    if (this.featureService.isOld(featureInfo.feature)) {
+      const modal = this.modalController.create(FeatureImporter, { "feature": featureInfo.feature, callback: () => { } });
+      modal.onDidDismiss(isSuccess => {
+        //TO-DO If upload failed I shoould not raise feature update
+        if (isSuccess)
+          this.featureUpdate.emit(featureInfo.feature);
+      });
+      modal.present()
+
+    } else {
+      let alert = this.toastController.create({
+        message: 'Feature file already updated to [' + featureInfo.feature.getFileInfo().getUpdateTime().toLocaleString() + ']',
+        duration: 3000,
+        position: 'top',
+      });
+      alert.present();
+    }
+
+  }
 }
 
-export class TestSuiteInfo {
-  testSuite: TestSuite;
+export class FeatureInfo {
+  feature: Feature;
   tiles: Array<Tile> = [];
   constructor() { }
 }

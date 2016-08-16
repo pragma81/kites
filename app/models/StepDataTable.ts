@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core'
 
 @Injectable()
 export class StepDataTable {
-    private header: Array<string>;
+    private header: Array<string>=[];
     private values: Array<Array<string>> =[];
 
     constructor(stepDataTablAst: Object) {
@@ -11,10 +11,21 @@ export class StepDataTable {
         if (stepDataTablAstAny === undefined)
             return;
 
-        this.header = stepDataTablAstAny.rows[0].cells;
+        let headerRow : Array<Object> = stepDataTablAstAny.rows[0].cells;
+        headerRow.forEach((cell,index,array)=>{
+            let cellAny : any = cell
+            this.header.push(cellAny.value)
+        })
+
 
         for (let i = 1; i < stepDataTablAstAny.rows.length; i++) {
-            this.values.push(stepDataTablAstAny.rows[i].cell);
+             let valueRows : Array<Object> = stepDataTablAstAny.rows[i].cells;
+             let row : Array<string> = []
+             valueRows.forEach((cell,index,array)=>{
+            let cellAny : any = cell
+            row.push(cellAny.value)
+        })
+        this.values.push(row)
         }
 
     }

@@ -1,0 +1,70 @@
+
+.feature-source{
+    line-height: 16px;
+    font-family: 'Georgia', serif;
+    font-size: 11pt;
+    margin: 5px;
+}
+p { margin:0 }
+
+.keyword {
+    color: rgb(119, 0, 136);
+} 
+
+.tag {
+    color: green;
+    margin-top: 10px;
+}
+
+.background{
+    margin-left: 10px;
+    margin-top: 15px
+    }
+
+    .description {
+        margin-top: 10px
+    }
+    .datatable-header {
+        margin-left:50px;
+    }
+    .datatable-header-text {
+         color: blue;
+        font-weight: bold;
+        
+    }
+    .datatable-row {
+        margin-left:50px;
+    }
+     .value {
+         color: orangered;
+    }
+    .scenario {
+    margin-left: 10px;
+    }
+     .scenario-tag {
+         margin-left: 10px;
+         margin-top: 15px
+    }
+    
+    .Given {
+        margin-left: 25px;
+    }
+    .When {
+        margin-left: 35px;
+    }
+    
+    .Then {
+        margin-left: 35px;
+    }
+    .And {
+        margin-left: 50px;
+    }
+    
+    .parameter {
+         color: orangered;
+    }
+    .examples {
+         margin-left: 25px;
+         margin-top: 15px;
+         color: rgb(119, 0, 136);
+    }

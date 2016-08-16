@@ -1,9 +1,14 @@
 import {Component, Input, Output, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
-import {NavController, Alert} from 'ionic-angular';
-import {TaskExecutor, TaskHandler, ExecutionListener, TaskExecutionListener} from './TaskExecutor';
-import {TaskInfo, ExecutionResult} from './TaskInfo';
+import {NavController, Alert, AlertController} from 'ionic-angular';
+import {TaskExecutor, TaskHandler, ExecutionListener, TaskExecutionListener} from '../../services/task/TaskExecutor';
+import {TaskInfo, ExecutionResult,ExecutionStatus} from '../../services/task/TaskInfo';
 import {Metric} from '../../models/Metric';
 import {ErrorDetail} from '../../error/ErrorDetail';
+
+export interface ReportCallback {
+    message? : string
+    (taskExecutor:TaskExecutor, tasksreport : Array<TaskReport>) : void
+}
 
 
 @Component({
@@ -18,9 +23,20 @@ export class TaskReporter implements TaskExecutionListener {
     private executionCounter: number = 3;
     private tasksTotal: number = 0;
     private tasksReport: Array<TaskReport> = [];
+    private successCallback: ReportCallback
+    private errorCallback: ReportCallback
+    private executionStatus : ExecutionStatus
+    private executionResult : ExecutionResult
 
 
-    constructor(private nav: NavController) {
+    constructor(private alertController: AlertController) {
+        let defaultSuccessCallback = <ReportCallback> function(taskExecutor:TaskExecutor, tasksreport : Array<TaskReport>){console.log("success empty callback ")} 
+        defaultSuccessCallback.message = "Operation Completed Successfully"
+        this.successCallback = defaultSuccessCallback
+
+        let defaultErrorCallback = <ReportCallback> function(taskExecutor:TaskExecutor, tasksreport : Array<TaskReport>){console.log("error empty callback ")} 
+        defaultErrorCallback.message = "Operation Completed With Errors"
+        this.errorCallback = defaultErrorCallback
     }
 
     build(taskExecutor: TaskExecutor) {
@@ -32,6 +48,18 @@ export class TaskReporter implements TaskExecutionListener {
 
     }
 
+    public setSuccessCallback(callback :ReportCallback){
+        if(callback.message === undefined)
+            callback.message = "Operation Completed Successfully"
+        this.successCallback = callback
+        
+    }
+
+    public setErrorCallback(callback :ReportCallback){
+         if(callback.message === undefined)
+            callback.message = "Operation Completed With Errors"
+        this.errorCallback = callback
+    }
 
     public isHidden(): boolean {
         return this.hidden;
@@ -73,13 +101,13 @@ export class TaskReporter implements TaskExecutionListener {
 
     public showDetails(taskreport: TaskReport) {
         console.log("Task report selected: " + taskreport);
-        let alert = Alert.create({
+        let alert = this.alertController.create({
             title: taskreport.getErrorDetail().getSummary(),
             subTitle: taskreport.getErrorDetail().getDescription(),
             message: taskreport.getErrorDetail().getResolutionHint(),
             buttons: ['Dismiss']
         });
-        this.nav.present(alert);
+        alert.present();
 
     }
 

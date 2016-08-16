@@ -1,21 +1,21 @@
-
 import {Injectable, Component, ViewChild} from '@angular/core';
 import {NavController} from 'ionic-angular';
-import {TaskReporter} from '../../task/task-reporter';
+import {TaskReporter, ReportCallback, TaskReport} from '../../task/task-reporter';
 import {TestSuiteServiceImpl} from '../../../services/testsuite/TestSuiteServiceImpl';
 import {TestSuiteService} from '../../../services/testsuite/TestSuiteService';
 import {FileSystem} from '../../../services/storage/FileSystem';
 import {Feature} from '../../../models/Feature';
-import {TaskHandler, ExecutionListener, TaskExecutor} from '../../task/TaskExecutor';
-import {TaskInfo, ExecutionResult} from '../../task/TaskInfo';
-import {GherkinService} from '../../../services/gherkin/GherkinService';
+import {TaskHandler, ExecutionListener, TaskExecutor} from '../../../services/task/TaskExecutor';
+import {TaskInfo, ExecutionResult} from '../../../services/task/TaskInfo';
 import {Metric} from '../../../models/Metric';
 import {FeatureService} from '../../../services/feature/FeatureService';
 import {TestSuite, ExecutionRuntime} from '../../../models/TestSuite';
 import {FeatureServiceImpl} from '../../../services/feature/FeatureServiceImpl';
-import {Severity, ErrorDetail} from '../../../error/ErrorDetail';
+import {ErrorDetail, Severity} from '../../../error/ErrorDetail';
 import {ErrorWithDetails} from '../../../error/ErrorWithDetails';
 import {FeatureRepository} from '../../../repository/FeatureRepository';
+import {DashboardPage} from '../../dashboard/DashboardPage';
+
 
 
 
@@ -23,7 +23,7 @@ import {FeatureRepository} from '../../../repository/FeatureRepository';
 @Component({
   templateUrl: 'build/components/test-suite/import/test-suite-importer.html',
   directives: [TaskReporter],
-  providers : [TestSuiteServiceImpl,GherkinService,FeatureServiceImpl,FileSystem,TaskReporter,FeatureRepository]
+  providers : [TestSuiteServiceImpl,FeatureServiceImpl,FileSystem,TaskReporter,FeatureRepository]
 
 })
 export class TestSuiteImporter implements TaskHandler, ExecutionListener {
@@ -31,7 +31,6 @@ export class TestSuiteImporter implements TaskHandler, ExecutionListener {
   private testSuiteName: string;
   private projectFileName : string;
   private fileSystem: FileSystem;
-  private gherkinService: GherkinService;
   private featureService: FeatureService;
   private importIntoAppFolder: boolean = false;
   @ViewChild(TaskReporter)
@@ -39,12 +38,11 @@ export class TestSuiteImporter implements TaskHandler, ExecutionListener {
 
   private testSuiteService: TestSuiteService;
   constructor(private nav: NavController, testSuiteService: TestSuiteServiceImpl,
-    fileSystem: FileSystem, gherkinService: GherkinService,
+    fileSystem: FileSystem,
     featureService: FeatureServiceImpl) {
     console.log('explorer initialized')
     this.testSuiteService = testSuiteService;
     this.fileSystem = fileSystem;
-    this.gherkinService = gherkinService;
     this.featureService = featureService;
   }
 
@@ -69,6 +67,13 @@ export class TestSuiteImporter implements TaskHandler, ExecutionListener {
 
     });
     this.taskReporter.build(taskExecutor);
+    let successCallback = <ReportCallback> (taskExecutor:TaskExecutor, tasksreport : Array<TaskReport>)=>{this.nav.push(DashboardPage)} 
+    this.taskReporter.setSuccessCallback(successCallback)
+    let errorCallback = <ReportCallback> (taskExecutor:TaskExecutor, tasksreport : Array<TaskReport>)=>{this.nav.push(DashboardPage)} 
+    this.taskReporter.setErrorCallback(errorCallback)
+
+
+  
     this.taskReporter.start();
     console.log("task report completed");
   }
@@ -77,8 +82,8 @@ export class TestSuiteImporter implements TaskHandler, ExecutionListener {
     try {
       let featureFilePath = taskInfo.getInputHolder().filepath;
       let testsuitename = taskInfo.getInputHolder().testSuiteName
-      let featureAST = this.gherkinService.parse(featureFilePath);
-      let feature = new Feature(featureAST, testsuitename, taskInfo.getSubject(), featureFilePath);
+      let feature = this.featureService.parseGherkinFile(featureFilePath);
+      feature.setTestSuiteName(testsuitename)
 
       let metrics: Array<Metric> = [];
       metrics.push(new Metric(feature.getId(),"Id"));

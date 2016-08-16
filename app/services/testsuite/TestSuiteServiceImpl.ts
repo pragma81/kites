@@ -53,6 +53,16 @@ export class TestSuiteServiceImpl implements TestSuiteService {
     this.testSuiteRepository.save(testSuite);
     return testSuite;
   }
+
+  delete(testsuite: TestSuite, callback:(testsuite:TestSuite)=> void): void {
+    this.featureService.getByTestSuite(testsuite.getId(),(features)=>{
+      features.forEach((feature,index,array)=>{
+        this.featureService.delete(feature,function(){})
+      })
+       this.testSuiteRepository.delete(testsuite,callback)
+    })
+  }
+
   public listFeatureFiles(projectFilePath: string): Array<string> {
     let testSuiteName = this.getTestSuiteName(projectFilePath);
 
@@ -80,7 +90,7 @@ export class TestSuiteServiceImpl implements TestSuiteService {
 
       let featureAst = this.gherkinService.parse(file);
       //Build feature ,scenario,steps model
-      let feature: Feature = new Feature(featureAst, testSuite.getId(), file, file);
+      let feature: Feature = this.featureService.parseGherkinFile(projectFilePath)
       //Save to storage
       this.featureService.save(feature);
       testSuite.incrementFeaturesCounter();

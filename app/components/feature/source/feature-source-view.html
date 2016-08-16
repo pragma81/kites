@@ -1,0 +1,125 @@
+<ion-content>
+
+    <ion-scroll scroll-y="true" style="width: 768px; height: 8000px">
+        <!--div style="height: 2500px; width: 200px; background: url('https://c3.staticflickr.com/8/7573/27373225010_6dfcddc93f_b.jpg') repeat"></div-->
+        <div class="feature-source">
+            <p><span class="tag"> <template ngFor let-featureTag [ngForOf]="feature.getTags()" [ngForTrackBy]="featureGetTags">{{ featureTag}} </template></span></p>
+            <p><span class="keyword">Feature: </span> {{feature.getName()}}</p>
+
+            <p class="description">{{feature.getDescription()}}</p>
+
+            <p *ngIf="feature.hasBackground()" class="background"><span class="keyword">Background: </span> {{feature.getBackground().getSummary()}} </p>
+            <template ngFor let-backgroundStep [ngForOf]="feature.getBackground().getSteps()" [ngForTrackBy]="backgroundSteps">
+                <p [ngClass]="backgroundStep.getKeyword()"><span class="keyword">{{backgroundStep.getKeyword()}} </span> {{backgroundStep.getText() }} </p>
+                <template [ngIf]="backgroundStep.hasDataTable()">
+                    <p class="datatable-header">
+                        <template ngFor let-backgroundTableHeader [ngForOf]="backgroundStep.getDataTable().getHeader()" [ngForTrackBy]="backgroundStepTableHeader">
+                            |<span class="datatable-header-text">{{backgroundTableHeader}}</span>
+                        </template>
+                        |</p>
+                    <template ngFor let-backgroundTableValues [ngForOf]="backgroundStep.getDataTable().getValues()" [ngForTrackBy]="backgroundStepTableValues">
+                        <p class="datatable-row">
+                            <template ngFor let-backgroundTableValue [ngForOf]="backgroundTableValues" [ngForTrackBy]="backgroundStepTableValue">
+                                |<span class="value">{{backgroundTableValue}}</span>
+                            </template>
+                            |</p>
+                    </template>
+                </template>
+            </template>
+
+
+
+
+            <template ngFor let-scenario [ngForOf]="feature.getScenarios()" [ngForTrackBy]="Scenarios">
+                <p class="scenario-tag"><span class="tag"> <template ngFor let-scenarioTag [ngForOf]="scenario.getTags()" [ngForTrackBy]="scenarioTags">{{ scenarioTag}} </template></span></p>
+                <p class="scenario"> <span class="keyword">{{scenario.getKeyword()}}: </span> {{scenario.getSummary()}} </p>
+                <template ngFor let-scenarioStep [ngForOf]="scenario.getSteps()" [ngForTrackBy]="scenarioSteps">
+                    <p [ngClass]="scenarioStep.getKeyword()"><span class="keyword">{{scenarioStep.getKeyword()}}</span> {{scenarioStep.getText() }} </p>
+                    <template [ngIf]="scenarioStep.hasDataTable()">
+                        <p class="datatable-header">
+                            <template ngFor let-scenarioTableHeaderCol [ngForOf]="scenarioStep.getDataTable().getHeader()" [ngForTrackBy]="scenarioStepTableHeader">
+                                |<span class="datatable-header-text">{{scenarioTableHeaderCol}}</span>
+                            </template>
+                            |</p>
+                        <template ngFor let-scenarioTableValues [ngForOf]="scenarioStep.getDataTable().getValues()" [ngForTrackBy]="scenarioStepTableValues">
+                            <p class="datatable-row">
+                                <template ngFor let-scenarioTableValue [ngForOf]="scenarioTableValues" [ngForTrackBy]="scenarioStepTableValue">
+                                    |<span class="value">{{scenarioTableValue}}</span>
+                                </template>
+                                |</p>
+                        </template>
+                    </template>
+                </template>
+                <template [ngIf]="scenario.hasExamples()">
+                    <p class="examples"><span class="keyword">Examples:</span> </p>
+                    <template ngFor let-example [ngForOf]="scenario.getExamples()" [ngForTrackBy]="examples">
+                        <p class="datatable-header">
+                            <template ngFor let-exampleHeader [ngForOf]="example.getHeader()" [ngForTrackBy]="exampleHeader">
+                                |<span class="datatable-header-text">{{exampleHeader}}</span>
+                            </template>
+                            |</p>
+                        <template ngFor let-exampleValues [ngForOf]="example.getValues()" [ngForTrackBy]="exampleValues">
+                            <p class="datatable-row">
+                                <template ngFor let-exampleValue [ngForOf]="exampleValues" [ngForTrackBy]="exampleValue">
+                                    |<span class="value">{{exampleValue}}</span>
+                                </template>
+                                |</p>
+                        </template>
+                    </template>
+                </template>
+            </template>
+
+            <p class="scenario-tag"><span class="tag">@jiraid: @smoke @auto</span></p>
+            <p class="scenario"><span class="keyword">Scenario:</span> Navigation to Add Patient Demographic page </p>
+            <p class="when"><span class="keyword">When</span> The pharmacy team member is in the home page (dashboard)</p>
+            <p class="and"><span class="keyword">And</span> The pharmacy team member navigates to search patient page</p>
+            <p class="and"><span class="keyword">And</span> The pharmacy team member performs a global patient search with </p>
+
+            <p class="datatable-header">| <span class="datatable-header-text">name</span> | <span class="datatable-header-text">surname </span>|
+                <span class="datatable-header-text">dob </span>| <span class="datatable-header-text">phone</span> | </p>
+            <p class="datatable-row">| <span class="datatable-row-text">Gianluca </span>| <span class="datatable-row-text">Tommaso</span> |
+                <span class="datatable-row-text">05/02/1978 </span>| <span class="datatable-row-text">34567364553</span>                | </p>
+            <p class="and"><span class="keyword">And</span> The pharmacy team member navigates to demopgraphic patient page </p>
+            <p class="then"><span class="keyword">Then</span> the demopgraphic patient page is shown with all required fields </p>
+
+            <p class="scenario-tag"><span class="tag">@jiraid:RXRN-1136 @basic @auto </span></p>
+            <p class="scenario"><span class="keyword">Scenario:</span> Register Patient - Verify that the system allows the pharmacy team member
+                to create a Patient with all mandatory fields</p>
+            <p>Given a not existing Patient with | name | surname | dob | phone | gender | | Gianluca | Tommaso | 05/02/1978
+                | 34567364553 | M | When The pharmacy team member is in the home page (dashboard) And The pharmacy team member
+                navigates to search patient page And The pharmacy team member performs a global patient search with the not
+                existing patient data And The pharmacy team member navigates to demopgraphic patient page And The pharmacy
+                team member fills the Add Patient Demographic page with all mandatory fields of the not existing patient
+                data Then rx-ms system will confirm the operation with a success message And the patient data are stored
+                correctly
+
+                <p class="scenario-tag"><span class="tag">@jiraid:RXRN-1138 @acceptance @auto</span></p>
+                <p class="scenario"><span class="keyword">Scenario Outline:</span> Register Patient - Verify that the system doesn't allows the
+                    pharmacy team member to create a Patient without all mandatory fields filled</p>
+                <p class="given"><span class="keyword">Given</span> a not existing Patient with</p>
+                <p class="datatable-header">|<span class="value"> name</span> |<span class="value"> surname</span> | <span class="value">dob</span> |
+                    <span class="value">phone</span> | </p>
+                <p class="datatable-row">| Gianluca | Tommaso | 05/02/1978 | 34567364553 | </p>
+                <p class="when"><span class="keyword">When</span> The pharmacy team member is in the home page (dashboard)</p>
+                <p class="and"><span class="keyword">And</span> The pharmacy team member navigates to search patient page</p>
+                <p class="and"><span class="keyword">And</span> The pharmacy team member performs a global patient search with the not existing
+                    patient data </p>
+                <p class="and"><span class="keyword">And</span> The pharmacy team member navigates to demopgraphic patient page</p>
+                <p class="and"><span class="keyword">And </span>The pharmacy team member fills the Add Patient Demographic page with FirstName
+                    &quot;&lt;name&gt;&quot; and LastName &quot;&lt;surname&gt;&quot; and date of birth &quot;&lt;dob&gt;&quot;
+                    and gender &quot;&lt;gender&gt;&quot;</p>
+                <p class="then"><span class="keyword">Then</span> rx-ms system will display an error message </p>
+                <p class="and"><span class="keyword">And </span>the patient data are not stored</p>
+                <p class="examples">Examples: </p>
+                <p class="datatable-header">| <span class="datatable-header-text"> name </span> | <span class="datatable-header-text">surname </span>|
+                    <span class="datatable-header-text">dob</span> | <span class="datatable-header-text">gender </span>|
+                </p>
+                <p class="datatable-row">|<span class="value"> Gianluca</span> | | | | </p>
+                <p class="datatable-row">| | <span class="value">Tommaso</span> | | | </p>
+                <p class="datatable-row">| | | <span class="value">05/02/1978 </span>| | </p>
+                <p class="datatable-row">| | | | <span class="value">M </span>|
+                    <p class="datatable-row"> | | | | | </p>
+        </div>
+    </ion-scroll>
+
+</ion-content>

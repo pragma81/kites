@@ -8,6 +8,7 @@ export interface TestSuiteService {
     get(testSuiteName:string): TestSuite;
     create(testSuiteName: string, executionRuntimeType: ExecutionRuntime);
     save(testsuite: TestSuite): TestSuite;
+    delete(testsuite: TestSuite, callback:(testsuite:TestSuite)=> void): void;
     importFromLocalDir(projectFilePath :string, importIntoAppFolder :boolean) : TestSuite;
     imporFromSCMRepo(testSuiteDirePath:string);
     importFeatureFiles(testSuiteName:string,files: Array<string>, importIntoAppFolder :boolean,executionRuntimeType: ExecutionRuntime) : TestSuite

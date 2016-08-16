@@ -3,7 +3,7 @@ Feature: US0150-002 Add Patient Demographic Information
 
 As a pharmacy team member
 I want to capture patient demographic information
-So that I can create a patient
+So that I can create a patient [Modified12]
 
   Background: Logged user 
     Given The user logged into the rx-ms application as pharmacy team member with 

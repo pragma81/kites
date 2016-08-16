@@ -1,41 +1,68 @@
+<ion-card>
+<ion-row>
+  <ion-col>
+    <ion-searchbar clear (ionInput)="filter($event)" >
 
+    </ion-searchbar>
+  </ion-col>
+  <ion-col>
+    <ion-item>
+      <ion-select [(ngModel)]="selectedType">
+        <ion-option value="api">API</ion-option>
+        <ion-option value="ui">UI</ion-option>
+      </ion-select>
+    </ion-item>
+  </ion-col>
+  <ion-col>
+    <button outline round (click)="goToFeatureImporter()"><ion-icon name="add-circle"></ion-icon>Add Feature</button>
+  </ion-col>
+</ion-row>
 
-<div class="side-menu-background">
+</ion-card>
 
-  <ion-searchbar clear (ionInput)="filter($event)" showCancelButton=true></ion-searchbar>
-
-
-  <button outline round (click)="goToTestSuiteImporter()">Add Test Suite</button>
-
-  <ion-card *ngFor=" let testSuiteInfo of testsSuiteInfo" >
-    <ion-card-header>
-      <ion-row>
-        <ion-col>
-         {{ testSuiteInfo.testSuite.name}}
-        </ion-col>
-        <ion-col>
-          <ion-icon name="cloud-done"></ion-icon>
-        </ion-col>
-      </ion-row>
+  <ion-card *ngFor=" let featureInfo of featuresInfo" >
+    <ion-card-header class="feature-header">
+         <h2>{{ featureInfo.feature.name}}</h2>
+         <p style="font-size : 1.1rem;"><strong> Last Modified </strong> {{featureInfo.feature.fileInfo.updateTime}}</p>
+         <!--p> <ion-badge metricbadge>{{featureInfo.feature.processId}}</ion-badge> <ion-badge *ngIf=" featureInfo.feature.isUI()" uibadge>UI</ion-badge> <ion-badge *ngIf=" featureInfo.feature.isAPI()" apibadge>API</ion-badge> <ion-badge *ngIf=" featureInfo.feature.getTCMId() != undefined" jirabadge>JIRA</ion-badge> </p-->
     </ion-card-header>
     <ion-card-content>
-      <ion-row>
-        <ion-col>
-          <da-tiles [tiles]='testSuiteInfo.tiles'></da-tiles>
+      <p class="feature-description">  {{ featureInfo.feature.description}}
+        </p>
+      <ion-row >
+        <ion-col width-80>
+          <da-tiles [tiles]='featureInfo.tiles'></da-tiles>
 
         </ion-col>
-        <ion-col offset-10>
-
-          <button small outline round>
-                  <ion-icon  name="refresh"></ion-icon>
-                  </button>
-
-
-          <button small outline round>
-                  <ion-icon  name="cloud-upload"></ion-icon>
-                  </button>
+        <ion-col width-20 offset-10>
+           <button clear primary>
+          <ion-icon name="ios-arrow-forward" class="arrow-custom" item-right></ion-icon>
+           </button>
         </ion-col>
       </ion-row>
+       <ion-row no-padding class="toolbar-row">
+      
+       <button clear small primary (click)="showSource(featureInfo)">
+          <ion-icon name='md-code'></ion-icon>
+          Source
+        </button>
+
+        <button clear small primary (click)="upload(featureInfo)">
+          <ion-icon name='ios-refresh-circle-outline'></ion-icon>
+          Update
+        </button>
+     
+      
+        <button clear small primary>
+          <ion-icon name='md-link'></ion-icon>
+          Sync
+        </button>
+      
+        <button clear small primary>
+          <ion-icon name='ios-play'></ion-icon>
+          Run
+        </button>
+      
+    </ion-row>
     </ion-card-content>
   </ion-card>
-</div>
