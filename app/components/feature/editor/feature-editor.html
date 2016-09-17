@@ -1,0 +1,56 @@
+<!--
+<ion-card>
+    <ion-card-header class= "editor-buttons-palette">
+       <button  (click)="save($event)"><i class="fa fa-floppy-o editor-icon"></i>  Save</button>
+        <button  (click)="compile($event)"><i class="fa fa-indent editor-icon"></i>  Compile</button>
+        <button  (click)="format($event)"><i class="fa fa-list-alt editor-icon"></i>  Format</button>
+        <button  (click)="format($event)"><i class="fa fa-code editor-icon"></i>  Snippets</button>
+    </ion-card-header>
+</ion-card>
+-->
+<!--
+<ion-card>
+    <ion-card-header class="editor-header"> -->
+<ion-grid>
+    <ion-row class="editor-buttons-palette">
+        <ion-column>
+            <button small (click)="save($event)" [disabled]="!dirty || hasCompileErrors"><i class="fa fa-floppy-o editor-icon"></i>  <span style=" text-decoration:underline" >S</span>ave</button>
+            <button small (click)="format($event)"><i class="fa fa-indent editor-icon"></i>  <span style=" text-decoration:underline" >F</span>ormat</button>
+             <button small (click)="exit($event)" ><ion-icon name="exit"></ion-icon>  <span style=" text-decoration:underline" >E</span>xit</button>
+        </ion-column>
+    </ion-row>
+    <ion-row class="editor-file">
+        <ion-column>
+            <div style="width:100rem ; margin-left : 3px"> {{filepath}}<span style="font-size : 20px"> {{ dirty ? '*': ''}} </span>
+
+            </div>
+        </ion-column>
+    </ion-row>
+</ion-grid>
+    <!--
+    </ion-card-header>
+    <ion-card-content>
+        <!--ion-grid>
+            <ion-row>
+                <ion-column >
+                c:\pippo\pluto\paperino\pippo.feature
+                </ion-column>
+            </ion-row>
+            <ion-row>
+                <ion-column>
+                    <div ace-editor [text]="text" [mode]="'gherkin'" [theme]="'clouds'" [options]="options" [readOnly]="false" (textChanged)="onChange($event)"
+          style="display:block; height: 80vh; width:100%"></div>
+                </ion-column>
+            </ion-row>
+        </ion-grid!-->
+    <!-- <editor #gherkin [text]="text" [mode]="'gherkin'" [theme]="'monokai'" [options]="options" [readOnly]="false" (textChanged)="onChange($event)"> </editor>
+        -->
+   
+            <div ace-editor #editorref=gherkineditor [text]="text" [mode]="'gherkin'" [theme]="'monokai'" [options]="options" [readOnly]="false"
+                (textChanged)="onChange($event)" style="display:block; height: 80vh; width:100%"></div>
+        
+
+<!--
+    </ion-card-content>
+</ion-card>
+-->

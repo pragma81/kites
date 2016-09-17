@@ -1,4 +1,4 @@
- @featureid:US0150-003 @process:BPA002_Patient @ui
+ @featureid:US0150-006 @process:BPA002_Patient @ui
 Feature: US0150-003 Add Patient Clinical Information
 
 As a pharmacy team member

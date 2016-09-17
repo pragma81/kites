@@ -7,11 +7,17 @@
 }
 
 .toolbar-row {
-   background-color: #f4f4f4;
+   background-color: #ECEFF1;
 }
 
 .feature-description {
   font-size: 1.3rem;
+  font-weight: lighter;
+  margin: 10px;
+}
+
+.feature-summary {
+  font-weight: bold;
 }
 
 .toast-container {
@@ -19,6 +25,15 @@
 }
 
 .feature-header {
-  background-color: lightcyan;
+  background-color:#f4f4f4;
 }
 
+.feature-popover div.popover-content {
+  width: auto !important;
+  padding: 0px !important;
+}
+
+.toggle-text {
+    font-weight: bold;
+    font-size: 1.7rem;
+}

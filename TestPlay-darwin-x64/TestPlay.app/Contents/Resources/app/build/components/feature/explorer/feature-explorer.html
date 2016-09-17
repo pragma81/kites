@@ -1,0 +1,79 @@
+<template [ngIf]="testSuite != undefined">
+
+
+  <ion-card>
+    <ion-row>
+      <ion-col>
+        <ion-searchbar clear (ionInput)="filter($event)">
+        </ion-searchbar>
+      </ion-col>
+      <ion-col>
+        <ion-item>
+          <ion-select [(ngModel)]="selectedType">
+            <ion-option value="api">API</ion-option>
+            <ion-option value="ui">UI</ion-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+      <ion-col>
+        <button outline round (click)="showAddFeatureMenu($event)"><ion-icon name="add-circle"></ion-icon>Add Feature</button>
+      </ion-col>
+    </ion-row>
+
+  </ion-card>
+  <ion-content style="height: 480px;">
+    <ion-scroll scroll-y="true" style="height: 3000px;">
+      <ion-card *ngFor=" let featureInfo of featuresInfo" style="border-top: 3px solid grey">
+        <ion-card-header class="feature-header">
+          <ion-row>
+            <ion-col width-80>
+              <h2 class="feature-summary">{{ featureInfo.feature.name}}</h2>
+              <p style="font-size : 1.1rem;"><strong> Last Modified </strong> {{featureInfo.feature.fileInfo.updateTime}}</p>
+            </ion-col>
+            <ion-col width-20 offset-10>
+              <button clear  (click)="showFeatureMenu(featureInfo)"> <ion-icon name="more"></ion-icon> </button>
+            </ion-col>
+          </ion-row>
+
+        </ion-card-header>
+        <ion-card-content>
+          <p class="feature-description"> {{ featureInfo.feature.description}}
+          </p>
+          <ion-row>
+            <ion-col width-80>
+              <da-tiles [tiles]='featureInfo.tiles'></da-tiles>
+
+            </ion-col>
+            <ion-col width-20 offset-10>
+              <button clear primary>
+          <ion-icon name="ios-arrow-forward" class="arrow-custom" item-right></ion-icon>
+           </button>
+            </ion-col>
+          </ion-row>
+          <ion-row no-padding class="toolbar-row">
+
+            <button clear small primary (click)="showSource(featureInfo)">
+          <ion-icon name='md-code'></ion-icon>
+          Source
+        
+        </button>
+            <button clear small primary (click)="edit(featureInfo)">
+          <ion-icon name='md-create'></ion-icon>
+          Edit
+        </button>
+
+
+            <button clear small primary (click)="upload(featureInfo)">
+          <ion-icon name='ios-refresh-circle-outline'></ion-icon>
+          Refresh
+        </button>
+
+
+        
+
+          </ion-row>
+        </ion-card-content>
+      </ion-card>
+    </ion-scroll>
+  </ion-content>
+</template>

@@ -6,16 +6,14 @@ import {SettingsService} from './SettingsService'
 
 
 
-
-
 @Injectable()
 export class SettingsServiceImpl implements SettingsService {
 
-constructor(){
+constructor(private appConfig:AppConfig){
 }
     
     public getAppSettings() : AppConfig{
-        return new AppConfig();
+        return this.appConfig
     }
     public getSourceControlManagementSettings() : SCMSettings {
         return new SCMSettings();

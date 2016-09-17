@@ -14,7 +14,7 @@ export class Scenario {
     private description: string;
     private keyword : string;
     private level: TestLevel
-    private trackId: string;
+    private tcmid: string;
     private rawData: Object;
     private auto: boolean;
     private background: boolean;
@@ -35,7 +35,7 @@ export class Scenario {
         }
 
         if (!this.background) {
-            this.buildTrackId(scenarioAstAny.tags);
+            this.buildTCMId(scenarioAstAny.tags);
         }
         
         this.buildTags(scenarioAstAny.tags);
@@ -80,8 +80,8 @@ export class Scenario {
 		return this.tags;
 	}
     
-    public getTrackId(): string {
-        return this.trackId;
+    public getTCMId(): string {
+        return this.tcmid;
     }
     public isBackground(): boolean {
         return this.background;
@@ -169,20 +169,20 @@ export class Scenario {
         })
     }
 
-    private buildTrackId(scenarioTags: Object[]) {
+    private buildTCMId(scenarioTags: Object[]) {
         if (scenarioTags === undefined)
             return null;
 
-        let trackid = scenarioTags.find(function (value, index, array) {
+        let tcmid = scenarioTags.find(function (value, index, array) {
             let valueAny: any = value;
             let tagSplit = valueAny.name.split(':');
             return tagSplit[0] === '@jiraid'
 
         })
-        if (trackid === undefined)
+        if (tcmid === undefined)
             return undefined;
-        let trackidAny: any = trackid;
-        this.trackId = trackidAny.name.split(':')[1];
+        let tcmidAny: any = tcmid;
+        this.tcmid = tcmidAny.name.split(':')[1];
     }
 
     private buildExamples(examplesAst: Object[]) {

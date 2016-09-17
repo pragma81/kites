@@ -1,0 +1,25 @@
+<ion-tabs #tcmTabs class="tabs-basic" tabsHighlight = "true" tabsPlacement="top" preloadTabs>
+  <ion-tab tabTitle="Feature" [root]="featureTab" [rootParams]="feature" (featureLinked)="onFeatureLinked(featureTcm)" ></ion-tab>
+  <ion-tab tabTitle="Scenarios" [root]="scenarioTab" [rootParams]="feature" enabled="false" ></ion-tab>
+</ion-tabs>
+
+<!--div padding>
+  <ion-segment [(ngModel)]="segment">
+    <ion-segment-button value="Feature">
+      Feature
+    </ion-segment-button>
+    <ion-segment-button value="Scenario">
+      Scenario
+    </ion-segment-button>
+  </ion-segment>
+</div>
+
+<div [ngSwitch]="segment">
+  <h2 *ngSwitchCase="'Feature'">
+    this is the feature segment
+  </h2>
+
+  <h2 *ngSwitchCase="'Scenario'">
+    this is the scenario segment
+  </h2>
+</div-->

@@ -1,0 +1,31 @@
+
+.tree-container {
+    background-color: #E3F2FD;
+    height: 27rem;
+    overflow: scroll;
+    width: 70rem;
+    border-radius: 10px;
+}
+
+.tree-header {
+  background-color:gainsboro;
+  padding: 5px;
+  font-size: 1.3rem;
+
+}
+
+.tree-node {
+  font-size: smaller;
+
+}
+
+.tree-node ul {
+  padding: 3px 0 3px 10px !important
+}
+
+.feature-path{
+    white-space: nowrap;
+    width: 40em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

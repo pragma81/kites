@@ -16,17 +16,17 @@ export class FeatureRepository {
     }
 
 
-    public save(feature: Feature): Feature {
+    public save(feature: Feature,callback:(feature:Feature)=> void): void {
         this._db.put(feature).then(function (response) {
             //save revision for the first time
             if (feature.getRevision === undefined) {
                 feature.setRevision(response.rev);
             }
-            console.log('Feature [' + feature.getId() + ',' + feature.getName() + ',' + feature.getRevision + '] saved ');
+            console.log('Feature [' + feature.getId() + ',' + feature.getName() + ',' + feature.getRevision() + '] saved ');
+            callback(feature);
         }).catch(function (err) {
-            throw new Error('Error while saving Feature [' + feature.getId() + ',' + feature.getName() + ',' + feature.getRevision + '] :' + err.message);
+            throw new Error('Error while saving Feature [' + feature.getId() + ',' + feature.getName() + ',' + feature.getRevision() + '] :' + err.message);
         });
-        return feature;
 
     }
 

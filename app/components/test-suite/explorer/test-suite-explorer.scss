@@ -1,5 +1,16 @@
 
   div.side-menu-background {
     background-color: #f4f4f4;
+    padding: 2px;
+    border-radius: 10px;
   }
 
+
+.testsuite-card {
+  text-decoration: none
+}
+
+.testsuite-popover div.popover-content {
+  width: auto !important;
+  padding: 0px !important;
+}

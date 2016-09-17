@@ -71,7 +71,16 @@ export class Feature {
             this.type = FeatureType.UI;
         } else if (this.hasAPITag(featureAstAny.feature.tags)) {
             this.type = FeatureType.UI;
-        } else throw new Error("@ui or @api tags is missing for feature [" + featureAstAny.feature.name + "]")
+        } else  { 
+            let errorDetail = new ErrorDetail("Feature is not well formed",
+                "Feature tags missing",
+                Severity.blocker);
+            errorDetail.setResolutionHint("Add @ui or @api on topo of you feature file")
+            let featureError = new FeatureCreationError("@ui or @api tags is missing for feature [" + featureAstAny.feature.name + "]",new Error(),errorDetail)
+            featureError.Row = 0
+            featureError.Column = 0
+            throw featureError
+        }
 
         if (featureAstAny.feature.children === undefined || featureAstAny.feature.children.length === 0) {
             //throw new Error("Feature [" + this.name + "] has no scenarios")
@@ -79,13 +88,16 @@ export class Feature {
                 "No scenarios found",
                 Severity.blocker);
             errorDetail.setResolutionHint("Add Scenario: ---- Given:--- When--- Then---- in your feature file")
-            throw new FeatureCreationError("Feature [" + this.name + "] has no scenarios", new Error(), errorDetail)
+            let featureError = new FeatureCreationError("Feature [" + this.name + "] has no scenarios", new Error(), errorDetail)
+            featureError.Row = featureAstAny.feature.location.line -1
+            throw featureError
         }
 
         featureAstAny.feature.children.forEach(element => {
             let scenario: Scenario = new Scenario(element);
             if (scenario.isBackground()) {
                 this.background = scenario
+                this.scenarios.push(scenario);
             } else {
                 this.scenarios.push(scenario);
             }
@@ -127,8 +139,6 @@ export class Feature {
 		return this.fileInfo;
 	}
     
-
-
     public getScenarios(): Array<Scenario> {
         return this.scenarios;
     }
@@ -170,8 +180,11 @@ export class Feature {
 		return this.tags;
 	}
 
+    public isTCMSynched(){
+        return this.tcmId != undefined
+    }
     public getScenariosTotal(): number {
-        if (this.hasBackground) {
+        if (this.hasBackground()) {
             return this.scenarios.length - 1
         } else {
             return this.scenarios.length
@@ -181,7 +194,7 @@ export class Feature {
     }
     public getAutoScenariosTotal(): number {
         let autoScenarios: Array<Scenario> = this.scenarios.filter((value, index, array): boolean => {
-            return !value.isScenarioOutline() && value.isAuto();
+            return !value.isBackground() && value.isAuto();
         })
         return autoScenarios.length;
     }
@@ -209,6 +222,14 @@ export class Feature {
 
     public getJson() {
         return JSON.stringify(this.rawData);
+    }
+
+    public searchScenariosBySummary(criteria : string) : Array<Scenario> {
+
+        return this.scenarios.filter((scenario) =>{
+           return scenario.getSummary().toLowerCase().indexOf(criteria.toLowerCase()) > -1
+        })
+
     }
 
     private hasUITag(featuresTags: Object[]): boolean {
@@ -273,8 +294,10 @@ export class Feature {
                 "Feature has no id",
                 Severity.blocker);
             errorDetail.setResolutionHint("Use @featureid:xyz tag on top of your feature file ")
-
-            throw new FeatureCreationError("Feature [" + this.name + "] has no id", new Error(), errorDetail)
+            let featureError = new FeatureCreationError("Feature [" + this.name + "] has no id", new Error(), errorDetail)
+            featureError.Row = 0
+            featureError.Column = 0
+            throw featureError
 
         }
         let featureIdAny: any = featureId;

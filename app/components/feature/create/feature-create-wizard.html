@@ -1,0 +1,74 @@
+<ion-header class="slide-header">
+
+        <h1>Create a feature file</h1>
+        <p><span class="modal-header-description"> {{headerDescription}}</span></p>
+   
+</ion-header>
+<ion-content>
+    <!--
+    <ion-slides #wizard>
+        <ion-slide> -->
+           
+                    <form [formGroup]="featureForm">
+                        <ion-item>
+                            <ion-label floating>Feature Name</ion-label>
+                            <ion-input #name [formControl]="featureForm.controls.name" type="text" required (keyup)="onFeatureFileNameChanged()" (keyup.enter)="goToNext()"></ion-input>
+                        </ion-item>
+                        <!--ion-item *ngIf="!featureForm.controls.name.valid && (featureForm.controls.name.touched || featureForm.controls.name.dirty)"-->
+                            <p *ngIf="!featureForm.controls.name.valid && (featureForm.controls.name.touched || featureForm.controls.name.dirty)" style="color:red">Please enter a valid name value</p>
+                        <!--/ion-item-->
+                    </form>
+               <!--
+            <button *ngIf="canSlideToFolderSelect " ion-button outline (click)="goToNext()"> Select a folder <ion-icon name="arrow-forward" ></ion-icon></button> -->
+            <ion-item>
+            <tsp-testsuite-tree [testsuite]='testsuite' (folderSelected)="onFolderSelected($event)">
+                        </tsp-testsuite-tree>
+            </ion-item>
+       <!--
+        </ion-slide>
+        <ion-slide>
+            
+            <ion-grid>
+                <ion-row wrap>
+                    <ion-column>
+                        <p>Select a folder or create a new one</p>
+                    </ion-column>
+                </ion-row>
+                <ion-row wrap>
+                    <ion-column width-67>
+                        <tsp-testsuite-tree [testsuite]='testsuite' (folderSelected)="onFolderSelected($event)">
+                        </tsp-testsuite-tree>
+                    </ion-column>
+                
+                    <ion-column width-33>
+                        
+                        <template [ngIf]="canStartFeatureEdit">
+                            
+                            <div style ="width:30rem ; margin-left : 3px"> Start editing feature file <span style="font-size:13px; color:blue">{{featureFilepath}}? </span>
+
+                            <button ion-button  primary (click)="editFeature()"> Go!</button>
+                            </div>
+                            
+                        </template>
+                    </ion-column>
+            </ion-row>
+            </ion-grid>
+            <button ion-button outline (click)="goBack()"> <ion-icon name="arrow-back"></ion-icon> Back</button>
+        </ion-slide>
+    </ion-slides> -->
+    <ion-footer class="modal-footer">
+        
+        <ion-buttons end>
+            <div class="feature-path">
+            {{featureFilepath}}
+            </div>
+            <button primary (click)="editFeature()" [disabled]="!canStartFeatureEdit">
+        Edit
+      </button>
+            <button clear (click)="cancel()">
+                Cancel
+            </button>
+        </ion-buttons>
+
+    </ion-footer>
+</ion-content>

@@ -35,6 +35,7 @@ $colors: (
   metricbadge: grey,
   success:     #32db64,
   error:       #f53d3d,
+  warning:     orange,
   uibadge:     green,
   apibadge:    #f4f4f4,
   jirabadge:   blue
@@ -53,3 +54,35 @@ $modal-inset-width:                          768px ;
 $modal-inset-height-small:                   300px ;
 $modal-inset-height-large:                   500px ;
 
+
+.card-success {
+  border-left: solid 3px #ff685f;
+
+}
+
+.card-error {
+  border-left: solid 3px #ff685f;
+
+}
+
+.modal-footer {
+  background-color: ghostwhite;
+  padding: 5px;
+}
+
+.modal-header{
+    line-height: 1px;
+    background-color: ghostwhite;
+}
+
+.modal-header-description {
+  font-size: 1.3rem;
+  font-weight: lighter;
+}
+
+.slide-header{
+    line-height: 1px;
+    background-color: ghostwhite;
+    padding-left: 12px;
+    padding-bottom: 15px;
+}

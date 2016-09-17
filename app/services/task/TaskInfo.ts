@@ -1,9 +1,10 @@
 import {ErrorWithDetails} from '../../error/ErrorWithDetails';
 import {ErrorDetail} from '../../error/ErrorDetail';
 import {Metric} from '../../models/Metric';
+import {TaskResultAction} from './TaskAction';
 
 export class TaskInfo {
-
+    private id: string
     private subject: string;
     private executionResult: ExecutionResult;
     private statusDescription: string;
@@ -14,17 +15,31 @@ export class TaskInfo {
     private inputHolder: any;
     private outputHolder: any;
 
+    private resultActions : Array<TaskResultAction> = []
 
-    constructor($subject: string, inputHolder: any) {
-        this.subject = $subject;
+
+    constructor(id:string,subject: string, inputHolder: any) {
+        this.id = id
+        this.subject = subject;
         this.inputHolder = inputHolder;
     }
 
 
+    get Id ():string {
+        return this.id
+    }
     addErrorDetail(error:ErrorDetail){
         this.errors.push(error)
     }
     
+    addResultAction(resultAction: TaskResultAction){
+        this.resultActions.push(resultAction)
+    }
+
+    get ResultActions(): Array<TaskResultAction> {
+        return this.resultActions
+    }
+
     public getSubject(): string {
         return this.subject;
     }
@@ -92,6 +107,17 @@ export class TaskInfo {
         return this.metrics;
     }
 
+    public clone():TaskInfo {
+        let taskInfo = new TaskInfo(this.id,this.subject,this.inputHolder)
+        taskInfo.setEndTime(this.getEndTime())
+        taskInfo.setStartTime(this.getStartTime())
+        taskInfo.setOutputHolder(this.getOutputHolder())
+        taskInfo.setStatusDescription(this.getStatusDescription())
+        taskInfo.setMetrics(this.metrics)
+        taskInfo.setExecutionResult(this.executionResult)
+
+        return taskInfo
+    }
 
 }
 

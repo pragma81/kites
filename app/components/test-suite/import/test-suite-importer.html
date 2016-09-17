@@ -1,41 +1,40 @@
-<ion-header>
-  <ion-navbar primary>
-    <ion-buttons start>
-      <button royal>
-      <ion-icon name="search"></ion-icon>
-    </button>
-    </ion-buttons>
-    <ion-title>TexUI</ion-title>
-    <ion-buttons end>
-      <button royal>
-      <ion-icon name="md-settings"></ion-icon>
-    </button>
-    </ion-buttons>
-  </ion-navbar>
+<ion-header class="slide-header">
+
+  <h1>Import a Test Suite</h1>
+  <p><span class="modal-header-description"> {{headerDescription}}</span></p>
 
 </ion-header>
-
-
 <ion-content>
+  <ion-slides #wizard>
+    <ion-slide>
 
-  <ion-grid>
-    <ion-row>
-      <ion-col width-100><input type="file" (change)="onFileSelected($event)" />
-      </ion-col>
+      <ion-row>
+        <ion-col offset-25>
+          <input type="file" name="file" id="file" (change)="onFileSelected($event)" />
+        </ion-col>
+      </ion-row>
 
-    </ion-row>
-    <ion-row>
-      <ion-col width-10>
-        <button primary outline (click)="import()"> <ion-icon name="open"></ion-icon>Import
-        </button>
-      </ion-col>
-      <ion-col offset-50 width-33>
-        <button danger (click)="close()"> <ion-icon name="close"></ion-icon>I will import later 
-        </button>
-      </ion-col>
-    </ion-row>
-    <ion-row>
-      <da-task-report></da-task-report>
-    </ion-row>
-</ion-grid>
+
+    </ion-slide>
+    <ion-slide class="slide-overflow">
+      <ion-content class="modal-reporter">
+        <da-task-report></da-task-report>
+      </ion-content>
+    </ion-slide>
+  </ion-slides>
+  <ion-footer class="modal-footer">
+
+    <ion-buttons end>
+      <button *ngIf="!isValidated" primary (click)="checkNextAction()" [disabled]="!fileSelected">
+        Import
+      </button>
+      <button *ngIf="!isProcessed" clear (click)="checkBackAction()">
+                 {{ isImport ? 'Cancel' : 'Back'}}
+      </button>
+      <button *ngIf="isProcessed || isValidated" primary (click)="close()">
+                Close
+            </button>
+    </ion-buttons>
+
+  </ion-footer>
 </ion-content>

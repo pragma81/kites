@@ -1,9 +1,11 @@
 import {Injectable} from '@angular/core'
 import * as PouchDB from 'pouchdb';
-import {TestSuite, ExecutionRuntime} from '../models/TestSuite'
+import {TestSuite} from '../models/TestSuite'
+import {ExecutionRuntime} from '../services/automation/AutomationService';
 
 //let PouchDB = require('pouchdb');
 
+declare var emit: any;
 @Injectable()
 export class TestSuiteRepository {
 
@@ -11,7 +13,11 @@ export class TestSuiteRepository {
 
     constructor() {
         this._db = new PouchDB('texui-testsuite');
+
+        
     }
+
+
 
     public save(testSuite: TestSuite): TestSuite {
         this._db.put(testSuite).then((response) => {
@@ -26,7 +32,7 @@ export class TestSuiteRepository {
         return testSuite;
     }
 
-    delete(testsuite: TestSuite,callback:(testsuite:TestSuite)=> void): void {
+    delete(testsuite: TestSuite, callback: (testsuite: TestSuite) => void): void {
         this._db.remove(testsuite.getId(), testsuite.getRevision()).then(result => {
             callback(testsuite);
         }).catch(err => {
@@ -34,7 +40,7 @@ export class TestSuiteRepository {
         });
     }
 
-    public getAll(callback:(testsuite:Array<TestSuite>)=> void): void{
+    public getAll(callback: (testsuite: Array<TestSuite>) => void): void {
         let testsSuite: Array<TestSuite> = []
         this._db.allDocs({
             include_docs: true
@@ -44,23 +50,44 @@ export class TestSuiteRepository {
             }
             result.rows.forEach(row => {
                 let testSuite = new TestSuite(row.doc.name,
-                row.doc.scmSync,
-                row.doc.tstSuiteRepoName,
-                row.doc.testSuiteFoldername,
-                row.doc.imported,
-                row.doc.projectFilePath,
-                row.doc.executionRuntimeType);
+                    row.doc.scmSync,
+                    row.doc.tstSuiteRepoName,
+                    row.doc.testSuiteFolderPath,
+                    row.doc.imported,
+                    row.doc.projectFilePath,
+                    row.doc.executionRuntimeType);
                 testSuite.setRevision(row.doc._rev);
                 testSuite.setFeatures(row.doc.features);
                 testSuite.setApiTests(row.doc.apiTests);
                 testSuite.setUiTests(row.doc.uiTests);
                 testsSuite.push(testSuite)
             })
-             callback(testsSuite)
+            callback(testsSuite)
         }).catch(err => {
             console.log(err);
         });
-       
+
     }
+
+public getByName(testSuiteName:string, callback: (testsuite: TestSuite) => void){
+
+    let testSuiteMapFunction = function(doc){ emit(doc.name)}
+    let pouchDbQueryOptions = {key:testSuiteName,include_docs: true}
+    
+   
+        this._db.get(testSuiteName).then(doc => {
+           
+            let testSuite : TestSuite = new TestSuite(doc.name,doc.scmSync,doc.testSuiteRepoName,doc.testSuiteFolderPath,doc.imported,doc.projectFilePath,doc.executionRuntimeType)
+           testSuite.setFeatures(doc.features)
+           testSuite.setApiTests(doc.apiTests)
+           testSuite.setUiTests(doc.uiTests)
+           testSuite.setRevision(doc.revision)
+            callback(testSuite)
+        }).catch(err => {
+            console.log(err);
+        });
+}
+
+
 
 }

@@ -7,11 +7,24 @@
 // By default each design mode includes these shared imports.
 // App Shared Sass variables belong in app.variables.scss.
 
+//@import '../../node_modules/bootstrap-sass/assets/stylesheets/_bootstrap';	
+@import 'font-awesome';
+
+//@import 'bootstrap-sprockets';
+
+
+
 @import "../components/Dashboard/DashboardPage";
 
 @import "../components/tiles/tiles";
 
 @import "../components/feature/explorer/feature-explorer";
+@import "../components/test-suite/explorer/test-suite-explorer";
+@import "../components/test-suite/import/test-suite-importer";
+@import "../components/test-suite/create/test-suite-create";
 
-@import "../components/feature/source/feature-source-view"
+@import "../components/feature/source/feature-source-view";
+@import "../components/feature/editor/feature-editor";
+@import "../components/feature/create/testsuite-tree";
+
 

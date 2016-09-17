@@ -1,21 +1,38 @@
 
 import {Injectable} from '@angular/core';
+import {FileSystem} from '../services/storage/FileSystem';
 
+declare var nodeRequire: any
 @Injectable()
 export class AppConfig {
-
-    constuctor() { }
+    private workspaceHomeFolder: string
     
-    public getTestSuiteDefaultFolderName() {
+
+    constructor(private fileSystem:FileSystem) {
+        var config = nodeRequire('electron').remote.getGlobal('sharedObject').config
+        this.workspaceHomeFolder = config.get('app.workspace.home')
+
+        if (this.workspaceHomeFolder === undefined || this.workspaceHomeFolder === null) {
+            let process = nodeRequire('electron').remote.process
+            let userhome = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME']
+            this.workspaceHomeFolder =userhome+ this.fileSystem.fileSeparator()+'testplay'
+        }
+    }
+
+    public get TestSuiteDefaultFolderName() {
         return 'testsuite'
     }
 
-    public getAppFolderName() {
+    public get AppFolderName() {
         return 'home'
     }
 
-    public getTestSuiteProjectFileNameExtension() {
+    public get TestSuiteProjectFileNameExtension() {
         return '.project'
+    }
+
+    public get WorkspaceHome() {
+        return this.workspaceHomeFolder
     }
 
 }

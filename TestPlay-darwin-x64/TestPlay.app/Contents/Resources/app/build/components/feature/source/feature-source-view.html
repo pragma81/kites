@@ -1,0 +1,74 @@
+<ion-content>
+
+    <ion-scroll scroll-y="true" style="width: 768px; height: 8000px">
+        <!--div style="height: 2500px; width: 200px; background: url('https://c3.staticflickr.com/8/7573/27373225010_6dfcddc93f_b.jpg') repeat"></div-->
+        <div class="feature-source">
+            <p><span class="tag"> <template ngFor let-featureTag [ngForOf]="feature.getTags()" [ngForTrackBy]="featureGetTags">{{ featureTag}} </template></span></p>
+            <p><span class="keyword">Feature: </span> {{feature.getName()}}</p>
+
+            <p class="description">{{feature.getDescription()}}</p>
+
+            <p *ngIf="feature.hasBackground()" class="background"><span class="keyword">Background: </span> {{feature.getBackground().getSummary()}} </p>
+            <template ngFor let-backgroundStep [ngForOf]="feature.getBackground().getSteps()" [ngForTrackBy]="backgroundSteps">
+                <p [ngClass]="backgroundStep.getKeyword()"><span class="keyword">{{backgroundStep.getKeyword()}} </span> {{backgroundStep.getText() }} </p>
+                <template [ngIf]="backgroundStep.hasDataTable()">
+                    <p class="datatable-header">
+                        <template ngFor let-backgroundTableHeader [ngForOf]="backgroundStep.getDataTable().getHeader()" [ngForTrackBy]="backgroundStepTableHeader">
+                            |<span class="datatable-header-text">{{backgroundTableHeader}}</span>
+                        </template>
+                        |</p>
+                    <template ngFor let-backgroundTableValues [ngForOf]="backgroundStep.getDataTable().getValues()" [ngForTrackBy]="backgroundStepTableValues">
+                        <p class="datatable-row">
+                            <template ngFor let-backgroundTableValue [ngForOf]="backgroundTableValues" [ngForTrackBy]="backgroundStepTableValue">
+                                |<span class="value">{{backgroundTableValue}}</span>
+                            </template>
+                            |</p>
+                    </template>
+                </template>
+            </template>
+
+
+
+
+            <template ngFor let-scenario [ngForOf]="feature.getScenarios()" [ngForTrackBy]="Scenarios">
+                <p class="scenario-tag"><span class="tag"> <template ngFor let-scenarioTag [ngForOf]="scenario.getTags()" [ngForTrackBy]="scenarioTags">{{ scenarioTag}} </template></span></p>
+                <p class="scenario"> <span class="keyword">{{scenario.getKeyword()}}: </span> {{scenario.getSummary()}} </p>
+                <template ngFor let-scenarioStep [ngForOf]="scenario.getSteps()" [ngForTrackBy]="scenarioSteps">
+                    <p [ngClass]="scenarioStep.getKeyword()"><span class="keyword">{{scenarioStep.getKeyword()}}</span> {{scenarioStep.getText() }} </p>
+                    <template [ngIf]="scenarioStep.hasDataTable()">
+                        <p class="datatable-header">
+                            <template ngFor let-scenarioTableHeaderCol [ngForOf]="scenarioStep.getDataTable().getHeader()" [ngForTrackBy]="scenarioStepTableHeader">
+                                |<span class="datatable-header-text">{{scenarioTableHeaderCol}}</span>
+                            </template>
+                            |</p>
+                        <template ngFor let-scenarioTableValues [ngForOf]="scenarioStep.getDataTable().getValues()" [ngForTrackBy]="scenarioStepTableValues">
+                            <p class="datatable-row">
+                                <template ngFor let-scenarioTableValue [ngForOf]="scenarioTableValues" [ngForTrackBy]="scenarioStepTableValue">
+                                    |<span class="value">{{scenarioTableValue}}</span>
+                                </template>
+                                |</p>
+                        </template>
+                    </template>
+                </template>
+                <template [ngIf]="scenario.hasExamples()">
+                    <p class="examples"><span class="keyword">Examples:</span> </p>
+                    <template ngFor let-example [ngForOf]="scenario.getExamples()" [ngForTrackBy]="examples">
+                        <p class="datatable-header">
+                            <template ngFor let-exampleHeader [ngForOf]="example.getHeader()" [ngForTrackBy]="exampleHeader">
+                                |<span class="datatable-header-text">{{exampleHeader}}</span>
+                            </template>
+                            |</p>
+                        <template ngFor let-exampleValues [ngForOf]="example.getValues()" [ngForTrackBy]="exampleValues">
+                            <p class="datatable-row">
+                                <template ngFor let-exampleValue [ngForOf]="exampleValues" [ngForTrackBy]="exampleValue">
+                                    |<span class="value">{{exampleValue}}</span>
+                                </template>
+                                |</p>
+                        </template>
+                    </template>
+                </template>
+            </template>
+        </div>
+    </ion-scroll>
+
+</ion-content>

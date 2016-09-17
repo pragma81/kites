@@ -1,15 +1,19 @@
-import {Injectable} from '@angular/core'
-import {TestSuiteService} from './TestSuiteService'
-import {FeatureService} from '../feature/FeatureService'
-import {FeatureServiceImpl} from '../feature/FeatureServiceImpl'
-import {TestSuite, ExecutionRuntime} from '../../models/TestSuite'
-import {TestSuiteRepository} from '../../repository/TestSuiteRepository'
-import {Feature} from '../../models/Feature'
+import {Injectable, Injector} from '@angular/core';
+import {Events} from 'ionic-angular';
+import {TestSuiteService} from './TestSuiteService';
+import {FeatureService} from '../feature/FeatureService';
+import {FeatureServiceImpl} from '../feature/FeatureServiceImpl';
+import {TestSuite} from '../../models/TestSuite';
+import {TestSuiteRepository} from '../../repository/TestSuiteRepository';
+import {Feature} from '../../models/Feature';
 import * as fs from 'fs'
-import {FileSystem} from '../storage/FileSystem'
-import {GherkinService} from '../gherkin/GherkinService'
-import {SettingsService} from '../settings/SettingsService'
-import {SettingsServiceImpl} from '../settings/SettingsServiceImpl'
+import {FileSystem} from '../storage/FileSystem';
+import {GherkinService} from '../gherkin/GherkinService';
+import {SettingsService} from '../settings/SettingsService';
+import {SettingsServiceImpl} from '../settings/SettingsServiceImpl';
+import {AutomationService, ExecutionRuntime} from '../automation/AutomationService';
+import {JavaAutomationService} from '../automation/JavaAutomationService';
+
 
 
 /* generic declaration for readdir node module */
@@ -21,19 +25,49 @@ export class TestSuiteServiceImpl implements TestSuiteService {
   private featureService: FeatureService
   private testSuiteRepository: TestSuiteRepository
   private settingsService: SettingsService;
+  private automationService: AutomationService
 
   constructor(fileSystem: FileSystem, gherkinService: GherkinService,
     featureService: FeatureServiceImpl,
     testSuiteRepository: TestSuiteRepository,
-    settingsService: SettingsServiceImpl) {
+    settingsService: SettingsServiceImpl, private injector: Injector, private events:Events) {
     this.fileSystem = fileSystem;
     this.gherkinService = gherkinService;
     this.featureService = featureService;
     this.testSuiteRepository = testSuiteRepository;
     this.settingsService = settingsService;
+
+     this.events.subscribe('feature:update', (data) => {
+      let feature  = <Feature> data[0]
+      console.log('[Feature Update] event arrived:', feature);
+      this.updateMetrics(feature.getTestSuiteName(),feature);
+    })
+
   }
 
-  public getAll(callback:(testsuite:Array<TestSuite>)=> void): void {
+  updateMetrics(testsuitename: string, feature:Feature){
+    this.testSuiteRepository.getByName(testsuitename, (testsuite)=>{
+      //verify if feature alread contained in test suite. Use featureService.
+      // If no update feature, api, ui metrics
+      //if yes calculate delta
+
+      //this.featureService.get
+    })
+  }
+
+  folderExists(testsuiteFolderPath: string): boolean {
+
+    return this.fileSystem.exists(testsuiteFolderPath)
+  }
+
+  exists(testSuiteName: string, testSuiteFolderPath: string): boolean {
+    if (this.folderExists(testSuiteFolderPath))
+      return true
+
+
+  }
+
+  public getAll(callback: (testsuite: Array<TestSuite>) => void): void {
     this.testSuiteRepository.getAll(callback);
   }
 
@@ -45,8 +79,27 @@ export class TestSuiteServiceImpl implements TestSuiteService {
     return;
   }
 
-  public create(testSuiteName: string) {
-    return;
+  create(testSuiteName: string, testSuiteFolderPath: string, executionRuntimeType: ExecutionRuntime): TestSuite {
+    this.fileSystem.createFolder(testSuiteFolderPath)
+    let projectFileNamePath = testSuiteFolderPath+this.fileSystem.fileSeparator()+testSuiteName+'.project'
+    this.fileSystem.createFile(projectFileNamePath)
+
+    switch (executionRuntimeType) {
+      case ExecutionRuntime.JAVA:
+        this.automationService = this.injector.get(JavaAutomationService)
+        this.automationService.generateAutomationFolderLayout(testSuiteName, testSuiteFolderPath)
+        break
+      default:
+        this.automationService = this.injector.get(JavaAutomationService)
+        this.automationService.generateAutomationFolderLayout(testSuiteName, testSuiteFolderPath)
+        break
+    }
+
+    let testsuite = new TestSuite(testSuiteName, false,null, testSuiteFolderPath, false, projectFileNamePath, ExecutionRuntime.JAVA)
+
+    return this.testSuiteRepository.save(testsuite)
+
+
   }
 
   public save(testSuite: TestSuite): TestSuite {
@@ -54,12 +107,12 @@ export class TestSuiteServiceImpl implements TestSuiteService {
     return testSuite;
   }
 
-  delete(testsuite: TestSuite, callback:(testsuite:TestSuite)=> void): void {
-    this.featureService.getByTestSuite(testsuite.getId(),(features)=>{
-      features.forEach((feature,index,array)=>{
-        this.featureService.delete(feature,function(){})
+  delete(testsuite: TestSuite, callback: (testsuite: TestSuite) => void): void {
+    this.featureService.getByTestSuite(testsuite.getId(), (features) => {
+      features.forEach((feature, index, array) => {
+        this.featureService.delete(feature, function () { })
       })
-       this.testSuiteRepository.delete(testsuite,callback)
+      this.testSuiteRepository.delete(testsuite, callback)
     })
   }
 
@@ -76,13 +129,13 @@ export class TestSuiteServiceImpl implements TestSuiteService {
     return this.fileSystem.listFiles(featureFilesFolder, '**/*.feature');
 
   }
-  public importFromLocalDir(projectFilePath: string, importIntoAppFolder: boolean): TestSuite {
+  public importFromLocalDir(projectFilePath: string, importIntoAppFolder: boolean): void {
 
     let testSuiteName = this.getTestSuiteName(projectFilePath);
 
     let testSuite: TestSuite = new TestSuite(testSuiteName, false, null,
       null, importIntoAppFolder,
-      projectFilePath, ExecutionRuntime.ONELEO);
+      projectFilePath, ExecutionRuntime.JAVA);
     this.testSuiteRepository.save(testSuite);
     let featurefiles: Array<string> = this.listFeatureFiles(projectFilePath);
     featurefiles.forEach(file => {
@@ -92,18 +145,17 @@ export class TestSuiteServiceImpl implements TestSuiteService {
       //Build feature ,scenario,steps model
       let feature: Feature = this.featureService.parseGherkinFile(projectFilePath)
       //Save to storage
-      this.featureService.save(feature);
-      testSuite.incrementFeaturesCounter();
-      if (feature.isAPI()) {
-        testSuite.incrementApiTestCounter();
-      } else {
-        testSuite.incrementUiTestCounter()
-      }
+      this.featureService.save(feature, (feature) => {
+        testSuite.incrementFeaturesCounter();
+        if (feature.isAPI()) {
+          testSuite.incrementApiTestCounter();
+        } else {
+          testSuite.incrementUiTestCounter()
+        }
+      });
+       this.testSuiteRepository.save(testSuite);
     });
-    //Save Test Suite with updated tests statistics
-    this.testSuiteRepository.save(testSuite);
 
-    return testSuite;
   }
 
   imporFromSCMRepo(testSuiteDirePath: string) {
@@ -123,11 +175,11 @@ export class TestSuiteServiceImpl implements TestSuiteService {
 
     if (!projectFilePath.endsWith(this.settingsService
       .getAppSettings()
-      .getTestSuiteProjectFileNameExtension())) {
+      .TestSuiteProjectFileNameExtension)) {
       throw new Error('Invalid project file name :' + projectFilePath);
     }
     let projectFileName = this.getProjectFileName(projectFilePath)
-    let endIndex = projectFileName.length - this.settingsService.getAppSettings().getTestSuiteProjectFileNameExtension().length
+    let endIndex = projectFileName.length - this.settingsService.getAppSettings().TestSuiteProjectFileNameExtension.length
     return projectFileName.substring(0, endIndex);
 
   }

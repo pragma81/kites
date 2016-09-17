@@ -1,0 +1,52 @@
+
+
+<div class="side-menu-background">
+
+  <ion-searchbar clear (ionInput)="filter($event)" ></ion-searchbar>
+
+
+  <button outline round (click)="showAddTestSuiteMenu($event)"><ion-icon name="add-circle"></ion-icon>Add Test Suite</button>
+
+  <ion-card class ="testsuite-card" style="border-top: solid 3px royalblue;" *ngFor=" let testSuiteInfo of testsSuiteInfo" >
+    <ion-card-header>
+      <ion-row>
+        <ion-col width-80>
+          <a  href="#" (click)="onTestSuiteClick(testSuiteInfo)">{{ testSuiteInfo.testSuite.name}}</a>
+         
+        </ion-col>
+        <ion-col width-20 offset-10>
+          <ion-icon name="cloud-done"></ion-icon>
+        </ion-col>
+      </ion-row>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-row>
+        <ion-col>
+          <da-tiles [tiles]='testSuiteInfo.tiles'></da-tiles>
+
+        </ion-col>
+      </ion-row>
+        <ion-row no-padding class="toolbar-row">
+      
+        <button clear small primary>
+          <ion-icon name='ios-refresh-circle-outline'></ion-icon>
+          Refresh
+        </button>
+      
+      
+        <button clear small primary>
+          <ion-icon name='cloud-upload'></ion-icon>
+          Upload
+        </button>
+     
+      
+        <button clear small primary (click)="delete(testSuiteInfo)">
+          <ion-icon name='md-trash'></ion-icon>
+          Trash
+        </button>
+     
+    </ion-row>
+
+    </ion-card-content>
+  </ion-card>
+</div>

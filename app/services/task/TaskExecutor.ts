@@ -1,6 +1,29 @@
 import {Injectable} from '@angular/core';
-import {TaskInfo, ExecutionStatus, ExecutionResult} from './TaskInfo';
+import {TaskInfo, ExecutionResult, ExecutionStatus} from './TaskInfo';
+import {TaskResultAction} from './TaskAction';
+import { Observable}     from 'rxjs/Observable';
 
+
+export class BulkExecutionResult {
+	status: ExecutionStatus
+	result: ExecutionResult
+
+	public get Status(): ExecutionStatus {
+		return this.status;
+	}
+
+	public set Status(value: ExecutionStatus) {
+		this.status = value;
+	}
+
+	public get Result(): ExecutionResult {
+		return this.result;
+	}
+
+	public set Result(value: ExecutionResult) {
+		this.result = value;
+	}
+}
 
 //@Injectable()
 export class TaskExecutor {
@@ -12,8 +35,19 @@ export class TaskExecutor {
 	//if true only task check is performed
 	private dryrun: boolean = false;
 	private status: ExecutionStatus;
+
+
+	private defaultSuccessDescription: string = 'Operation Completed Successfully'
+
+	private defaultWarningDescription: string = 'Operation Completed with Warnings'
+	//Bulk execution listeners
 	private executionListener: Array<ExecutionListener> = [];
-	private taskExecutionListener: Array<TaskExecutionListener> =[];
+
+	//Single task execution listeners
+	private taskExecutionListener: Array<TaskExecutionListener> = [];
+
+	//Single task result handlers
+	private taskResultActionBuilders: Array<TaskResultActionBuilder> = []
 
 	constructor(title: string, taskHandler: TaskHandler) {
 		this.title = title;
@@ -21,6 +55,9 @@ export class TaskExecutor {
 		this.status = ExecutionStatus.compiling;
 	}
 
+	public getTitle(): string {
+		return this.title;
+	}
 
 	public getDryrun(): boolean {
 		return this.dryrun;
@@ -39,8 +76,8 @@ export class TaskExecutor {
 		this.taskExecutionListener.push(value);
 	}
 
-	public addTaskExecutionRequest(name: string, inputHolder) {
-		let task: TaskInfo = new TaskInfo(name, inputHolder);
+	public addTaskExecutionRequest(id: string, name: string, inputHolder) {
+		let task: TaskInfo = new TaskInfo(id, name, inputHolder);
 		this.tasks.push(task);
 	}
 
@@ -48,7 +85,11 @@ export class TaskExecutor {
 		return this.tasks.length;
 	}
 
-	public start() {
+	public addTaskResultActionBuilder(taskResultActionBuilder: TaskResultActionBuilder) {
+		this.taskResultActionBuilders.push(taskResultActionBuilder)
+	}
+
+	public start(): BulkExecutionResult {
 
 		/*
 		 If validated it means that it is a process request after a validation 
@@ -59,24 +100,29 @@ export class TaskExecutor {
 			this.status = ExecutionStatus.processing;
 			this.result = this.process();
 			this.status = ExecutionStatus.processed;
-			return
-		}
-
-		if (this.status === ExecutionStatus.compiling) {
-			this.status = ExecutionStatus.validating;
-			this.result = this.validate();
-			this.status = ExecutionStatus.validated;
-
-			if (this.dryrun) {
-				return
-			} else {
-				if (this.result === ExecutionResult.success) {
-					this.status = ExecutionStatus.processing;
-					this.result = this.process();
-					this.status = ExecutionStatus.processed;
+		} else {
+			if (this.status === ExecutionStatus.compiling) {
+				this.status = ExecutionStatus.validating;
+				this.result = this.validate();
+				this.status = ExecutionStatus.validated;
+				
+				if (!this.dryrun) {
+					if (this.result === ExecutionResult.success) {
+						this.status = ExecutionStatus.processing;
+						this.result = this.process();
+						this.status = ExecutionStatus.processed;
+					}
 				}
+			} else {
+				throw new Error("Execution state error[" + this.status + "]")
 			}
 		}
+
+		let bulkExecutionResult = new BulkExecutionResult()
+		bulkExecutionResult.Result = this.result
+		bulkExecutionResult.Status = this.status
+
+		return bulkExecutionResult
 
 
 
@@ -86,24 +132,24 @@ export class TaskExecutor {
 	public getResult(): ExecutionResult {
 		return this.result;
 	}
-	
-	public getExecutionStatus(): ExecutionStatus{
+
+	public getExecutionStatus(): ExecutionStatus {
 		return this.status
 	}
 
-	public isCompleted(){
+	public isCompleted() {
 		return this.status === ExecutionStatus.processed
 	}
 
-	public isValidated(){
+	public isValidated() {
 		return this.status === ExecutionStatus.validated
 	}
 
-	public isSuccess(){
+	public isSuccess() {
 		return this.result === ExecutionResult.success
 	}
 
-	public isError(){
+	public isError() {
 		return this.result === ExecutionResult.error
 	}
 
@@ -118,7 +164,7 @@ export class TaskExecutor {
 		//Execute report listener
 		if (this.executionListener != undefined) {
 			this.executionListener.forEach((listener) => {
-				listener.beforeCheck(this.tasks, this.executionCounter, this.title);
+				listener.beforeCheck(this,this.tasks, this.executionCounter, this.title);
 			})
 
 		}
@@ -133,9 +179,24 @@ export class TaskExecutor {
 			}
 			//task info is updated with output and check status
 			taskInfo = this.taskHandler.check(taskInfo);
+
+			//Build result action if available
+			this.buildTaskResultActions(taskInfo)
+
 			if (taskInfo.getExecutionResult() === ExecutionResult.error) {
 				result = ExecutionResult.error
 			}
+
+			if (taskInfo.getExecutionResult() === ExecutionResult.success) {
+				if (!taskInfo.getStatusDescription())
+					taskInfo.setStatusDescription(this.defaultSuccessDescription)
+			}
+
+			if (taskInfo.getExecutionResult() === ExecutionResult.warning) {
+				if (!taskInfo.getStatusDescription())
+					taskInfo.setStatusDescription(this.defaultWarningDescription)
+			}
+
 			this.executionCounter++;
 
 			//Execute task listener
@@ -149,7 +210,7 @@ export class TaskExecutor {
 		//Execute report listener
 		if (this.executionListener != undefined) {
 			this.executionListener.forEach((listener) => {
-				listener.postCheck(this.tasks, this.executionCounter, this.title);
+				listener.postCheck(this,this.tasks, this.executionCounter, this.title);
 			})
 
 		}
@@ -160,12 +221,13 @@ export class TaskExecutor {
 		/* Success by default. If one of the task is in error the overall 
 		task execution is error
 		*/
+
 		let result = ExecutionResult.success;
 
 		//Execute report listener
 		if (this.executionListener != undefined) {
 			this.executionListener.forEach((listener) => {
-				listener.beforeProcess(this.tasks, this.executionCounter, this.title);
+				listener.beforeProcess(this,this.tasks, this.executionCounter, this.title);
 			})
 
 		}
@@ -181,6 +243,9 @@ export class TaskExecutor {
 			//task info is updated with output and check status
 			taskInfo = this.taskHandler.process(taskInfo);
 
+			//Build result action if available
+			this.buildTaskResultActions(taskInfo)
+
 			if (taskInfo.getExecutionResult() === ExecutionResult.error) {
 				result = ExecutionResult.error
 			}
@@ -195,19 +260,49 @@ export class TaskExecutor {
 		//Execute report listener
 		if (this.executionListener != undefined) {
 			this.executionListener.forEach((listener) => {
-				listener.postProcess(this.tasks, this.executionCounter, this.title);
+				listener.postProcess(this,this.tasks, this.executionCounter, this.title);
 			})
 
 		}
 		return result
 	}
 
-	public getTitle(): string {
-		return this.title;
+
+	private buildTaskResultActions(taskinfo: TaskInfo) {
+		this.taskResultActionBuilders.forEach(builder => {
+			taskinfo.addResultAction(builder.build(taskinfo))
+		})
+	}
+
+	public executeTaskResultAction(taskId: string, actionName?: string, runDefault?: boolean) {
+		let task = this.tasks.find(task => {
+			return task.Id === taskId
+		})
+		if (!task) {
+			throw new Error(`No task with id [${taskId}] found `)
+		}
+		let action = task.ResultActions.find((value, index, array) => {
+
+			if (runDefault) {
+				return value.isDefault()
+			} else {
+				return value.Name === actionName
+			}
+
+		})
+		if (!action && runDefault)
+			throw new Error(`No Default action found for task [${task.getSubject()}]`)
+
+		if (!action && !runDefault)
+			throw new Error(`No action [${actionName}] found for task [${task.getSubject()}]`)
+
+
+		action.execute(task)
 	}
 
 
 }
+
 
 
 export interface TaskHandler {
@@ -215,11 +310,19 @@ export interface TaskHandler {
     process(taskInfo: TaskInfo): TaskInfo
 }
 
+export interface AsyncTaskHandler {
+    check(taskInfo: TaskInfo): Observable<TaskInfo>
+    process(taskInfo: TaskInfo): Observable<TaskInfo>
+}
+
+export interface TaskResultActionBuilder {
+	build(taskinfo: TaskInfo): TaskResultAction
+}
 export interface ExecutionListener {
-    beforeCheck(tasks: Array<TaskInfo>, executionCounter: number, reportTitle: string): void
-    postCheck(tasks: Array<TaskInfo>, executionCounter: number, reportTitle: string): void
-	beforeProcess(tasks: Array<TaskInfo>, executionCounter: number, reportTitle: string): void
-    postProcess(tasks: Array<TaskInfo>, executionCounter: number, reportTitle: string): void
+    beforeCheck(taskExecutor:TaskExecutor,tasks: Array<TaskInfo>, executionCounter: number, reportTitle: string): void
+    postCheck(taskExecutor:TaskExecutor,tasks: Array<TaskInfo>, executionCounter: number, reportTitle: string): void
+	beforeProcess(taskExecutor:TaskExecutor,tasks: Array<TaskInfo>, executionCounter: number, reportTitle: string): void
+    postProcess(taskExecutor:TaskExecutor,tasks: Array<TaskInfo>, executionCounter: number, reportTitle: string): void
 }
 
 export interface TaskExecutionListener {

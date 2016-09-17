@@ -1,4 +1,7 @@
-import {Injectable} from '@angular/core'
+import {Injectable} from '@angular/core';
+import {ExecutionRuntime} from '../services/automation/AutomationService';
+import {Feature} from './Feature';
+
 
 @Injectable()
 export class TestSuite {
@@ -14,13 +17,14 @@ export class TestSuite {
 
     private testSuiteRepoName: string;
     private executionRuntimeType: ExecutionRuntime;
+    private testSuiteFolderPath: string
 
     //Used internally for updating object using puchdb
     private _rev: string;
 
     constructor(name: string, scmSync: boolean,
         testSuiteRepoName: string,
-        testSuiteFoldername: string,
+        testSuiteFolderPath: string,
         imported: boolean,
         projectFilePath: string,
         executionRuntimeType: ExecutionRuntime) {
@@ -28,11 +32,12 @@ export class TestSuite {
         this._id = name;
         this.name = name;
         //Execution runtime oneleo only supported.
-        this.executionRuntimeType = ExecutionRuntime.ONELEO;
+        this.executionRuntimeType = ExecutionRuntime.JAVA;
         this.scmSync = scmSync;
         this.projectFilePath = projectFilePath;
         this.testSuiteRepoName = testSuiteRepoName;
         this.imported = imported;
+        this.testSuiteFolderPath = testSuiteFolderPath
     }
 
     public getId(): string {
@@ -60,6 +65,19 @@ export class TestSuite {
 
     public getTestSuiteRepoName(): string {
         return this.testSuiteRepoName;
+    }
+
+    public get TestSuiteDir(): string {
+        if (this.testSuiteFolderPath)
+            return this.testSuiteFolderPath
+
+        let endIndex = this.projectFilePath.length - this.ProjectFileName.length;
+        return this.projectFilePath.substring(0, endIndex);
+    }
+
+    public get ProjectFileName(): string {
+        let projectFileName = this.getName() + '.project'
+        return projectFileName
     }
 
     public getRevision(): string {
@@ -102,7 +120,3 @@ export class TestSuite {
     }
 }
 
-
-export enum ExecutionRuntime {
-    ONELEO
-}

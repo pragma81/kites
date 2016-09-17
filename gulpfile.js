@@ -2,7 +2,8 @@ var gulp = require('gulp'),
     gulpWatch = require('gulp-watch'),
     del = require('del'),
     runSequence = require('run-sequence'),
-    argv = process.argv;
+    argv = process.argv,
+    flatten = require('gulp-flatten')
 
 
 /**
@@ -38,7 +39,7 @@ var isRelease = argv.indexOf('--release') > -1;
 
 gulp.task('watch', ['clean'], function(done){
   runSequence(
-    ['sass', 'html', 'fonts', 'scripts','3rdparty-scripts'],
+    ['sass', 'html','3rdparty-html', 'fonts', 'scripts','3rdparty-scripts'],
     function(){
       gulpWatch('app/**/*.scss', function(){ gulp.start('sass'); });
       gulpWatch('app/**/*.html', function(){ gulp.start('html'); });
@@ -49,14 +50,15 @@ gulp.task('watch', ['clean'], function(done){
 
 gulp.task('build', ['clean'], function(done){
   runSequence(
-    ['sass', 'html', 'fonts', 'scripts','3rdparty-scripts'],
+    ['sass', 'html', '3rdparty-html','fonts', 'scripts','3rdparty-scripts'],
     function(){
       buildBrowserify({
         minify: isRelease,
         browserifyOptions: {
           debug: !isRelease,
           insertGlobals: false,
-           detectGlobals: false
+           detectGlobals: false,
+           builtins: false
         },
         uglifyOptions: {
           mangle: false
@@ -76,9 +78,40 @@ return gulp.src(lib)
     .pipe(gulp.dest('www/build/js'))
 })
 
-gulp.task('sass', buildSass);
+//gulp.task('sass', buildSass);
+
+gulp.task('sass', function(){
+  return buildSass({
+    sassOptions: {
+      includePaths: [
+        'node_modules/ionic-angular',
+        'node_modules/ionicons/dist/scss',
+        'node_modules/bootstrap-sass/assets',
+        'node_modules/font-awesome/scss',
+        
+
+      ]
+    }
+  });
+});
+
+//Add support for external html/css components
+
+gulp.task('3rdparty-html',function () {
+  var options = {src : ['node_modules/ng2-tree/src/**/*.+(html|css)'], dest :'www'}
+
+  return gulp.src(options.src) 
+    .pipe(flatten())
+    .pipe(gulp.dest(options.dest))
+})
+
+
 gulp.task('html', copyHTML);
-gulp.task('fonts', copyFonts);
+//gulp.task('fonts', copyFonts);
+gulp.task('fonts', function(){
+  return copyFonts({ src: ['node_modules/ionic-angular/fonts/**/*.+(ttf|woff|woff2)', 
+  'node_modules/font-awesome/fonts/**/*.+(eot|ttf|woff|woff2|svg)','node_modules/bootstrap-sass/assets/fonts/**/*.+(eot|ttf|woff|woff2|svg)'] });
+});
 gulp.task('scripts', copyScripts);
 gulp.task('clean', function(){
   return del('www/build');
