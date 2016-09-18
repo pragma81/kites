@@ -30,9 +30,7 @@ export class TestSuiteExplorer {
     private events:Events) {
     console.log('explorer initialized')
     this.testSuiteService = testSuiteService;
-    this.events.subscribe('testsuite:update',()=>{
-      this.load()
-    })
+   
 
     
   }
@@ -113,7 +111,7 @@ export class TestSuiteExplorer {
               let index = this.testsSuiteInfo.indexOf(testSuiteInfo);
               this.testsSuiteInfo.splice(index, 1);
               this.unfilteredTestsSuiteInfo.splice(index,1)
-              //this.testSuiteDeleted.emit(testsuite)
+              this.testSuiteDeleted.emit(testsuite)
 
             })
           }

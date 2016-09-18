@@ -61,12 +61,12 @@
       "locator": "ios"
     }
   ],
-  "name": "TestPlay",
+  "name": "testplay",
   "description": "TestPlay: Collaborate. Automate. Test.",
   "scripts": {
     "electron": "electron . ",
     "electron dist": "electron --conf=testplay.properties",
-    "electron-mac": "cp package.json www && cp electron.js www && cp preload.js www && electron-packager  www --platform=darwin --arch=x64 --overwrite"
+    "electron-mac": "gulp electron-lib && cp package.json www && cp electron.js www && cp preload.js www && electron-packager  www --platform=darwin --arch=x64 --overwrite"
   },
   "main": "electron.js"
 }

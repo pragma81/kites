@@ -31,6 +31,7 @@ export class TaskReporter implements TaskExecutionListener, AsyncExecutionListen
     private validationErrorCallback: ReportCallback
     private executionStatus: ExecutionStatus
     private executionResult: ExecutionResult
+    @Input() showActions : boolean = true ;
 
 
 
@@ -235,7 +236,9 @@ export class TaskReporter implements TaskExecutionListener, AsyncExecutionListen
         this.executionResult = execution.getResult()
         this.executionStatus = execution.getExecutionStatus()
     }
-    beforeAsyncProcess(execution: AsyncTaskExecutor): void { }
+    beforeAsyncProcess(execution: AsyncTaskExecutor): void { 
+        this.tasksReport = []
+    }
 
 
 

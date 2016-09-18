@@ -1,58 +1,41 @@
 <ion-header class="slide-header">
 
-        <h1>Import a Test Suite</h1>
-        <p><span class="modal-header-description"> {{headerDescription}}</span></p>
-   
+  <h1>Import a Test Suite</h1>
+  <p><span class="modal-header-description"> {{headerDescription}}</span></p>
+
 </ion-header>
 <ion-content>
   <ion-slides #wizard>
-    <ion-slide  >
-      
-  
-  <input type="file" name="file" id="file"  (change)="onFileSelected($event)" />
-  <!--<label for="file">{{projectFileName}}</label>
-      
+    <ion-slide>
 
-   <!--
-      <ion-col width-10>
-        <button primary outline (click)="import()"> <ion-icon name="open"></ion-icon>Import
-        </button>
-      </ion-col>
-      <ion-col offset-50 width-33>
-        <button danger (click)="close()"> <ion-icon name="close"></ion-icon>I will import later 
-        </button>
-      </ion-col>
-      -->
-    
-       </ion-slide>
-        <ion-slide class="slide-overflow">
-      <da-task-report></da-task-report>
-      <!--
-       <ion-footer class="modal-footer">
+      <ion-row>
+        <ion-col offset-25>
+          <input type="file" name="file" id="file" (change)="onFileSelected($event)" />
+        </ion-col>
+      </ion-row>
 
-        <ion-buttons end>
-            <button primary (click)="import()">
-        Complete
-      </button>
-            <button clear (click)="back()">
-                 back
-            </button>
-        </ion-buttons>
 
-    </ion-footer>
-    -->
-        </ion-slide>
+    </ion-slide>
+    <ion-slide class="slide-overflow">
+      <ion-content class="modal-reporter">
+        <da-task-report></da-task-report>
+      </ion-content>
+    </ion-slide>
   </ion-slides>
   <ion-footer class="modal-footer">
 
-        <ion-buttons end>
-            <button primary (click)="checkNextAction()" [disabled]="!fileSelected">
+    <ion-buttons end>
+      <button *ngIf="isImport" primary (click)="import()" [disabled]="!fileSelected">
         Import
       </button>
-            <button clear (click)="checkBackAction()">
+       <button *ngIf="isProcessed || isValidated" primary (click)="close()">
+                Close
+      </button>
+      <button clear (click)="checkBackAction()">
                  {{ isImport ? 'Cancel' : 'Back'}}
-            </button>
-        </ion-buttons>
+      </button>
+     
+    </ion-buttons>
 
-    </ion-footer>
+  </ion-footer>
 </ion-content>

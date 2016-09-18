@@ -70,7 +70,7 @@ export class Feature {
         if (this.hasUITag(featureAstAny.feature.tags)) {
             this.type = FeatureType.UI;
         } else if (this.hasAPITag(featureAstAny.feature.tags)) {
-            this.type = FeatureType.UI;
+            this.type = FeatureType.API;
         } else  { 
             let errorDetail = new ErrorDetail("Feature is not well formed",
                 "Feature tags missing",

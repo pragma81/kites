@@ -7,8 +7,9 @@
             <p><span class="keyword">Feature: </span> {{feature.getName()}}</p>
 
             <p class="description">{{feature.getDescription()}}</p>
-
-            <p *ngIf="feature.hasBackground()" class="background"><span class="keyword">Background: </span> {{feature.getBackground().getSummary()}} </p>
+           
+             <template [ngIf]="feature.hasBackground()">
+            <p class="background"><span class="keyword">Background: </span> {{feature.getBackground().getSummary()}} </p>
             <template ngFor let-backgroundStep [ngForOf]="feature.getBackground().getSteps()" [ngForTrackBy]="backgroundSteps">
                 <p [ngClass]="backgroundStep.getKeyword()"><span class="keyword">{{backgroundStep.getKeyword()}} </span> {{backgroundStep.getText() }} </p>
                 <template [ngIf]="backgroundStep.hasDataTable()">
@@ -26,6 +27,7 @@
                     </template>
                 </template>
             </template>
+             </template>
 
 
 

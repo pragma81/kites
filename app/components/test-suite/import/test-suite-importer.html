@@ -25,15 +25,16 @@
   <ion-footer class="modal-footer">
 
     <ion-buttons end>
-      <button *ngIf="!isValidated" primary (click)="checkNextAction()" [disabled]="!fileSelected">
+      <button *ngIf="isImport" primary (click)="import()" [disabled]="!fileSelected">
         Import
       </button>
-      <button *ngIf="!isProcessed" clear (click)="checkBackAction()">
+       <button *ngIf="isProcessed || isValidated" primary (click)="close()">
+                Close
+      </button>
+      <button clear (click)="checkBackAction()">
                  {{ isImport ? 'Cancel' : 'Back'}}
       </button>
-      <button *ngIf="isProcessed || isValidated" primary (click)="close()">
-                Close
-            </button>
+     
     </ion-buttons>
 
   </ion-footer>

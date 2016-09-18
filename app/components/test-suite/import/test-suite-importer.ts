@@ -73,7 +73,7 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
 
   }
 
-  import() {
+ private importTestSuite() {
 
     this.testSuiteName = this.testSuiteService.getTestSuiteName(this.projectFilePath)
 
@@ -100,7 +100,16 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
 
   back() {
     this.slider.slidePrev()
+    this.isImport = true
   }
+
+  import(){
+     this.slider.slideNext()
+      this.importTestSuite()
+      this.isImport = false
+      this.headerDescription = "Import results are shown below"
+  }
+
   checkNextAction() {
     if (this.isImport) {
       this.slider.slideNext()
@@ -114,7 +123,7 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
 
   close() {
     this.viewCtrl.dismiss().then(() => {
-      this.events.publish('testsuite:update')
+     // this.events.publish('testsuite:update')
     })
   }
 
@@ -200,7 +209,7 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
       null, this.importIntoAppFolder,
       this.projectFilePath, ExecutionRuntime.JAVA);
 
-    execution.getTasksExecution().forEach((task) => {
+    execution.getTasksRequest().forEach((task) => {
       let feature = <Feature>task.getOutputHolder()
       testSuite.incrementFeaturesCounter();
       if (feature.isAPI()) {

@@ -2,9 +2,12 @@ import {TCMFeatureSynchronizer} from '../../tcm/tcm-feature-synchronizer';
 import {Component, Output, EventEmitter} from '@angular/core';
 import {ModalController, ToastController, NavController, PopoverController, ViewController} from 'ionic-angular';
 import {FeatureService} from '../../../services/feature/FeatureService';
+import {SettingsService} from '../../../services/settings/SettingsService';
+import {SettingsServiceImpl} from '../../../services/settings/SettingsServiceImpl';
 import {FeatureServiceImpl} from '../../../services/feature/FeatureServiceImpl';
 import {Tiles, Tile} from '../../tiles/tiles';
 import {TestSuite} from '../../../models/TestSuite';
+import {TCMSettings} from '../../../models/TCMSettings';
 import {Feature, FeatureType} from '../../../models/Feature';
 import {TestSuiteImporter} from '../../test-suite/import/test-suite-importer';
 import {TestSuiteInfo} from '../../test-suite/explorer/test-suite-explorer';
@@ -13,13 +16,14 @@ import {FeatureImporter} from '../import/feature-importer';
 import {FeatureEditor} from '../editor/feature-editor'
 import {FeatureCreate} from '../create/feature-create'
 import {FeatureCreateWizard} from '../create/feature-create-wizard'
+import {TCMView} from '../../tcm/tcm-view';
 
 
 @Component({
   selector: 'tex-feature-explorer',
   templateUrl: 'build/components/feature/explorer/feature-explorer.html',
   directives: [Tiles],
-  providers: [FeatureServiceImpl]
+  providers: [FeatureServiceImpl, SettingsServiceImpl]
 })
 export class FeatureExplorer {
   private selectedType: string = 'ui'
@@ -28,6 +32,9 @@ export class FeatureExplorer {
   private unfilteredFeaturesInfo: Array<FeatureInfo> = [];
   private testSuite: TestSuite;
   private scenarioFullText: boolean
+  private tcmBaseUrl: string
+  private settingsService: SettingsService
+  private tcmSettings: TCMSettings
 
 
   @Output() featureUpdate = new EventEmitter();
@@ -35,13 +42,17 @@ export class FeatureExplorer {
     private modalController: ModalController,
     featureService: FeatureServiceImpl,
     private toastController: ToastController,
-    public popoverCtrl: PopoverController) {
+    public popoverCtrl: PopoverController,
+    settingsService: SettingsServiceImpl) {
     this.featureService = featureService;
+    this.settingsService = settingsService
+    this.tcmSettings = settingsService.getTestCaseManegementSettings()
+    this.tcmBaseUrl = this.tcmSettings.Protocol + '://' + this.tcmSettings.Url + '/browse/'
   }
 
   clear() {
     this.testSuite = undefined
-    this.featuresInfo = []
+    this.featuresInfo.length = 0
   }
 
   loadByTestSuiteName(testSuiteName: string): void {
@@ -78,6 +89,7 @@ export class FeatureExplorer {
     this.loadByTestSuiteName(testSuite.getName())
 
   }
+
   filter(event: any) {
     //reset search
     this.featuresInfo = this.unfilteredFeaturesInfo
@@ -179,7 +191,13 @@ export class FeatureExplorer {
     });
   }
 
+  onTcmClick(feature: Feature): void {
+    let tcmFeatureUrl = this.tcmBaseUrl + feature.getTCMId()
+    this.nav.push(TCMView,{ url: tcmFeatureUrl })
+  }
+
 }
+
 
 
 export class FeatureInfo {
@@ -201,9 +219,9 @@ export class AddFeatureMenu {
     let testSuite = this.viewCtrl.data.testSuite
     //this.nav.push(FeatureCreate, {testSuite : testSuite})
     const modal = this.modalController.create(FeatureCreateWizard, { "testSuite": testSuite });
-    
-    this.viewCtrl.dismiss().then(()=>{
-    modal.present()
+
+    this.viewCtrl.dismiss().then(() => {
+      modal.present()
     })
 
   }
@@ -238,10 +256,10 @@ export class FeatureMenu {
   tcmSync() {
     const modal = this.modalController.create(TCMFeatureSynchronizer, { "feature": this.feature, callback: () => { } });
     modal.onDidDismiss(isSuccess => { });
-     this.viewCtrl.dismiss().then(()=>{
-    modal.present()
+    this.viewCtrl.dismiss().then(() => {
+      modal.present()
     })
-   
+
 
   }
 

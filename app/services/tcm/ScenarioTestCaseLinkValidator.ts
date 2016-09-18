@@ -36,12 +36,12 @@ export class ScenarioTestCaseLinkValidator  {
                 })
                 if (testCase) {
                     //warning feature file scenario not linked but test case already created in tcm 
-                    taskInfo.setStatusDescription(`feature file scenario not linked but test case already created in tcm with id [${testCase.Id}]. Default action will link feature file scenario and update test case description `)
+                    taskInfo.setStatusDescription(`feature file scenario not linked but test case already created in tcm with id [${testCase.Id}]. Automatic sync will link feature file scenario and update test case description `)
                     taskInfo.setExecutionResult(ExecutionResult.warning);
                     taskInfo.setOutputHolder({testcase : testCase, action : "link&update"})
                 } else {
                     //success scenario not linked in feature file and never created in tcm
-                    taskInfo.setStatusDescription("scenario not linked in feature file and never created in tcm. Default action will create a new test case")
+                    taskInfo.setStatusDescription("scenario not linked in feature file and never created in tcm. Automatic sync  will create a new test case")
                     taskInfo.setExecutionResult(ExecutionResult.success);
                     taskInfo.setOutputHolder({testcase : testCase, action : "create"})
                 }
@@ -57,21 +57,22 @@ export class ScenarioTestCaseLinkValidator  {
 
                     if (testCase.Summary === scenario.getSummary()) {
                         //Success Feature file scenario and test case synched correctly
-                        taskInfo.setStatusDescription("Feature file scenario and test case synched correctly. Default action will update test case description")
+                        taskInfo.setStatusDescription("Feature file scenario and test case synched correctly. Automatic sync  will update test case description")
                         taskInfo.setExecutionResult(ExecutionResult.success);
                         taskInfo.setOutputHolder({testcase : testCase, action : "update"})
                     } else {
                         //Warning Feature file scenario is synched with test case but the test case summary differs
-                        taskInfo.setStatusDescription(`Feature file scenario and test case synched correctly on id [${testCase.Id}] but the test case summary differs. Default action will update test case summary and description`)
+                        taskInfo.setStatusDescription(`Feature file scenario and test case synched correctly on id [${testCase.Id}] but the test case summary differs. Automatic sync  will update test case summary and description`)
                         taskInfo.setExecutionResult(ExecutionResult.warning);
                         taskInfo.setOutputHolder({testcase : testCase, action : "update"})
                     }
                 } else {
                     //Error Feature file scenario has test case id but it was not found on tcm
-                        let errorMessage = `Feature file scenario has test case id [${scenario.getTCMId()}]but it was not found on tcm. No automatic default action available.`
+                        let errorMessage = `Feature file scenario has test case id [${scenario.getTCMId()}] but it was not found on tcm. No automatic automatic sync action available.`
                         taskInfo.setStatusDescription(errorMessage)
                         taskInfo.setExecutionResult(ExecutionResult.error);
-                        let error = new ErrorDetail("TCM synch Error", errorMessage, Severity.blocker)
+                        let error = new ErrorDetail("TCM synch error", errorMessage, Severity.blocker)
+                        error.setResolutionHint("Try to link feature file to another test case in the TCM tool. Otherwise delete the tcm id on the scenario, automatic sync will create a new test case on tcm tool.")
                         taskInfo.addErrorDetail(error)
                 }
             }

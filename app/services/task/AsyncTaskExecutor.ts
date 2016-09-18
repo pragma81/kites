@@ -7,7 +7,7 @@ import { Observable}     from 'rxjs/Observable';
 //@Injectable()
 export class AsyncTaskExecutor {
     private title: string;
-    private executionCounter: number;
+    private executionCounter: number = 0
     private tasksRequest: Array<TaskInfo> = [];
 	private tasksExecution: Array<TaskInfo> = [];
 	private asyncTaskHandler: AsyncTaskHandler;
@@ -179,7 +179,7 @@ export class AsyncTaskExecutor {
 			//task info is updated with output and check status
 			this.asyncTaskHandler.check(taskInfo).subscribe(
 				taskinfo => {
-					this.tasksExecution.push(taskInfo)
+					//this.tasksExecution.push(taskInfo)
 
 					if (taskInfo.getExecutionResult() === ExecutionResult.error) {
 						this.result = ExecutionResult.error
@@ -211,8 +211,8 @@ export class AsyncTaskExecutor {
 
 					this.executionCounter++;
 
-					console.log(`requests [${this.tasksRequest.length}] results [${this.tasksExecution.length}]`)
-					if (this.tasksRequest.length === this.tasksExecution.length) {
+					console.log(`requests [${this.tasksRequest.length}] results [${this.executionCounter}]`)
+					if (this.tasksRequest.length === this.executionCounter) {
 						this.status = ExecutionStatus.validated
 						//Execute report listener
 						if (this.executionListener != undefined) {
@@ -222,7 +222,7 @@ export class AsyncTaskExecutor {
 
 						}
 
-						if (!this.dryrun && this.status === ExecutionStatus.validated && this.result != ExecutionResult.success)
+						if (!this.dryrun && this.status === ExecutionStatus.validated && this.result === ExecutionResult.success)
 							this.process();
 
 					}
@@ -251,11 +251,7 @@ export class AsyncTaskExecutor {
 		*/
 		let result = ExecutionResult.success;
 
-		/*
-		* reset task execution
-		*/
-		this.tasksExecution = []
-
+		
 		//Execute report listener
 		if (this.executionListener != undefined) {
 			this.executionListener.forEach((listener) => {
@@ -263,6 +259,13 @@ export class AsyncTaskExecutor {
 			})
 
 		}
+
+		/*
+		* reset task execution
+		*/
+		this.tasksExecution.length = 0
+
+		
 
 		this.tasksRequest.forEach((taskInfo, index, tasks) => {
 

@@ -1,10 +1,9 @@
-import {Component, Injector, ViewChild} from '@angular/core';
-import {NavParams, Events, ToastController} from 'ionic-angular';
+import {Component, ViewChild, Injector} from '@angular/core';
+import {NavParams, Events, ToastController, Tab} from 'ionic-angular';
 import {Feature} from '../../models/Feature';
-import {TaskReporter, TaskReport} from '../task/task-reporter';
+import {TaskReporter, ReportCallback, TaskReport} from '../task/task-reporter';
 import {TaskInfo, ExecutionResult} from '../../services/task/TaskInfo';
-import {AsyncTaskExecutor, AsyncExecutionListener} from '../../services/task/AsyncTaskExecutor';
-import {FeatureServiceImpl} from '../..//services/feature/FeatureServiceImpl';
+import {AsyncExecutionListener, AsyncTaskExecutor} from '../../services/task/AsyncTaskExecutor';
 import {FeatureService} from '../../services/feature/FeatureService';
 import {FeatureImporterTaskHandler} from '../../services/feature/FeatureImporterTaskHandler';
 import {Metric} from '../../models/Metric';
@@ -15,18 +14,21 @@ import {FileSystem} from '../../services/storage/FileSystem';
 import {TCMService} from '../../services/tcm/TCMService';
 import {JiraTCM} from '../../services/tcm/JiraTCM';
 import {ScenarioTestCaseLinkValidator} from '../../services/tcm/ScenarioTestCaseLinkValidator';
-import {ScenarioTestCaseLinkAsyncProcessTaskHandler} from '../../services/tcm/ScenarioTestCaseLinkAsyncProcessTaskHandler'
+import {ScenarioTestCaseLinkAsyncProcessTaskHandler} from '../../services/tcm/ScenarioTestCaseLinkAsyncProcessTaskHandler';
 import {FeatureTCM} from '../../models/tcm/FeatureTCM';
 import {TestCase} from '../../models/tcm/TestCase';
 import {TCMSettings} from '../../models/TCMSettings';
 import {SettingsService} from '../../services/settings/SettingsService';
 import {SettingsServiceImpl} from '../../services/settings/SettingsServiceImpl';
+import {TestSuiteRepository} from '../../repository/TestSuiteRepository';
+import {FeatureServiceImpl} from '../../services/feature/FeatureServiceImpl';
+import {Scenario} from '../../models/Scenario';
 
 
 @Component({
   templateUrl: 'build/components/tcm/tcm-scenario-tab.html',
   directives: [TaskReporter],
-  providers: [FeatureServiceImpl, TaskReporter, FeatureRepository, FileSystem]
+  providers: [FeatureServiceImpl, TaskReporter, FeatureRepository, TestSuiteRepository, FileSystem]
 })
 export class ScenarioTab implements AsyncExecutionListener {
   private tcmService: TCMService

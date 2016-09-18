@@ -117,3 +117,32 @@ gulp.task('clean', function(){
   return del('www/build');
 });
 gulp.task('lint', tslint);
+
+
+/* Copy npm modules to build path for packaged application */
+gulp.task('electron-lib',function(){
+    var lib = [
+  'node_modules/properties-reader/**/*',
+   'node_modules/fs-extra/**/*',
+   'node_modules/graceful-fs/**/*',
+   'node_modules/rimraf/**/*',
+   'node_modules/fs.realpath/**/*',
+   'node_modules/minimatch/**/*',
+   'node_modules/brace-expansion/**/*',
+   'node_modules/concat-map/**/*',
+   'node_modules/balanced-match/**/*',
+   'node_modules/inherits/**/*',
+   'node_modules/path-is-absolute/**/*',
+   'node_modules/inflight/**/*',
+   'node_modules/wrappy/**/*',
+   'node_modules/once/**/*',
+   'node_modules/jsonfile/**/*',
+    'node_modules/klaw/**/*'
+
+
+];
+
+return gulp.src(lib, {base: '.'})
+    .pipe(gulp.dest('www'))
+
+})

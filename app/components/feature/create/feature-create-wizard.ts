@@ -90,7 +90,7 @@ export class FeatureCreateWizard {
     }
 
     public editFeature() {
-        this.fileSystem.createFile(this.featureFilepath)
+        //this.fileSystem.createFile(this.featureFilepath)
         this.viewCtrl.dismiss().then(() => {
             this.nav.push(FeatureCreate, { testsuite: this.testsuite, folderPath: this.folderPath, featureFilename: this.featureFilename, featureFilepath: this.featureFilepath })
         })

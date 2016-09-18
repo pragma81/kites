@@ -1,61 +1,53 @@
 <template [ngIf]="!hidden">
-        <ion-card [ngStyle]="taskReport.style" *ngFor=" let taskReport of tasksReport">
-            <ion-card-header>
+    <ion-card [ngStyle]="taskReport.style" *ngFor=" let taskReport of tasksReport">
+        <ion-card-header>
 
-                <ion-grid>
-                    <ion-row>
-                        <ion-col width-90>
-                            <ion-item text-wrap>
-                                <h2 style="word-wrap: break-word">{{ taskReport.subject}}</h2>
-                            </ion-item>
+            <ion-grid>
+                <ion-row>
+                    <ion-col width-90>
+                        <ion-item text-wrap>
+                            <h2 style="word-wrap: break-word">{{ taskReport.subject}}</h2>
+                        </ion-item>
 
-                            <p>
-                                <ion-badge *ngIf="taskReport.result === 'Success'" success>{{taskReport.result}}</ion-badge>
-                                <ion-badge *ngIf="taskReport.result === 'Error'" error>{{taskReport.result}}</ion-badge>
-                                <ion-badge *ngIf="taskReport.result === 'Warning'" warning>{{taskReport.result}}</ion-badge>
-                            </p>
+                        <p>
+                            <ion-badge *ngIf="taskReport.result === 'Success'" success>{{taskReport.result}}</ion-badge>
+                            <ion-badge *ngIf="taskReport.result === 'Error'" error>{{taskReport.result}}</ion-badge>
+                            <ion-badge *ngIf="taskReport.result === 'Warning'" warning>{{taskReport.result}}</ion-badge>
+                        </p>
 
-                        </ion-col>
-                        <ion-col width-10>
-                            <button clear primary (click)="taskReport.expanded = !taskReport.expanded"> 
+                    </ion-col>
+                    <ion-col width-10>
+                        <button clear primary (click)="taskReport.expanded = !taskReport.expanded"> 
           <ion-icon *ngIf="!taskReport.expanded" name="ios-arrow-down" class="arrow-custom" item-right></ion-icon>
           <ion-icon *ngIf="taskReport.expanded" name="ios-arrow-up" class="arrow-custom" item-right></ion-icon>
            </button>
-                        </ion-col>
-                        <ion-row>
-                        </ion-row>
+                    </ion-col>
+                    <ion-row>
                     </ion-row>
-                </ion-grid>
-            </ion-card-header>
-            <ion-card-content>
-                <ion-item *ngIf='taskReport.expanded'>
-                    <ion-grid>
-                        <ion-row>
-                            <ion-col *ngIf="taskReport.result === 'Error'">
-                                <p style="font-size : 1.5rem;">{{taskReport.getErrorDetail().getSummary() }}</p>
-                                <p style="font-size : 1.5rem;"><strong> Error description: </strong>{{taskReport.getErrorDetail().getDescription() }}</p>
-                                <p style="font-size : 1.5rem;"><strong> Hint: </strong> {{ taskReport.getErrorDetail().getResolutionHint() }}</p>
-                            </ion-col>
+                </ion-row>
+            </ion-grid>
+        </ion-card-header>
+        <ion-card-content>
+            <ion-item *ngIf='taskReport.expanded'>
+                <template [ngIf]="taskReport.result === 'Error'">
+                    <ion-item text-wrap>
+                    <p><span class="task-report-error" >Error summary: </span><span class="task-report-error-detail">{{taskReport.getErrorDetail().getSummary() }}</span></p>
+                     <p><span class="task-report-error" >Error description: </span><span class="task-report-error-detail">{{taskReport.getErrorDetail().getDescription() }}</span></p>
+                      <p><span class="task-report-error" >Hint: </span><span class="task-report-error-detail">{{ taskReport.getErrorDetail().getResolutionHint() }}</span></p>
+                    </ion-item>
+                </template>
 
-                            <ion-col *ngIf=" ( taskReport.result === 'Warning' || taskReport.result === 'Success' ) ">
-                                <ion-item text-wrap>
-                                    <p style="font-size : 1.5rem;">{{taskReport.getStatusDescription() }} </p>
-                                </ion-item>
-                            </ion-col>
-                        </ion-row>
-                        <ion-row *ngIf="taskReport.actions.length > 0">
-                            <ion-col width-20>
-                                <p style="font-size : 1.5rem;">Automatic actions: </p>
-                            </ion-col>
-                            <ion-col width-80>
-                                <button primary *ngFor=" let action of taskReport.actions" (click)="executeTaskAction(taskReport,action)" button>{{action.Name}}</button>
+                <template [ngIf]="( taskReport.result === 'Warning' || taskReport.result === 'Success' )">
+                    <ion-item text-wrap>
+                        <p style="font-size : 1.5rem;">{{taskReport.getStatusDescription() }} </p>
+                    </ion-item>
+                </template>
 
-                            </ion-col>
-                        </ion-row>
-                    </ion-grid>
-                </ion-item>
-            </ion-card-content>
-        </ion-card>
+
+            </ion-item>
+        </ion-card-content>
+    </ion-card>
+    <template [ngIf]="showButtons">
         <ion-grid>
             <ion-row>
                 <ion-col offset-33>
@@ -66,4 +58,5 @@
                 </ion-col>
             </ion-row>
         </ion-grid>
+    </template>
 </template>

@@ -22,7 +22,7 @@ require('brace/ext/spellcheck');
     inputs: ['text', 'mode', 'theme', 'readOnly', 'options'],
     outputs: ['textChanged', 'editorRef']
 })
-export class Editor {
+export class Editor implements AfterContentInit{
     static get parameters() {
     return [[ElementRef]];
   }
@@ -67,29 +67,17 @@ export class Editor {
             this.oldVal = newVal;
         });
 
-         this.editor.focus();
+        this.editor.setShowPrintMargin(false);
 
     }
 
-    /*
+    
     ngAfterContentInit() {
-        this.divRef.nativeElement.classList.add('editor');
-        this.editor = ace.edit(this.divRef.nativeElement)
-        this.editor.setTheme("ace/theme/" + this.theme)
-        this.editor.getSession().setMode("ace/mode/" + this.mode)
-        this.editor.setOptions(this.options || {});
-        this.editor.setReadOnly(this.readOnly || true);
-
-        this.editor.on('change', () => {
-            const newVal = this.editor.getValue();
-            if (newVal === this.oldVal) return;
-            if (typeof this.oldVal !== 'undefined') {
-                this.textChanged.next(newVal);
-            }
-            this.oldVal = newVal;
-        });
+        this.editor.focus();
+        this.editor.gotoLine(1)
     }
-    */
+
+    
     public ChangeOptions(value) {
         this.editor.setOptions(value || {});
     }

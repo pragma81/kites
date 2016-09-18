@@ -1,29 +1,3 @@
-<!--template [ngIf]="!hidden">
-  <ion-card style="width : 100%;">
-    <ion-card-header>
-      <ion-item>
-        <h2>{{ title }} ....</h2>
-        <p>{{ processedItem }}</p>
-        <progress [max]="tasksTotal" [value]="executionCounter"></progress>
-      </ion-item>
-    </ion-card-header>
-
-    <ion-list>
-      <button *ngFor=" let taskReport of tasksReport" (click)="showDetails(taskReport)" ion-item>
-       <ion-icon name="ios-arrow-forward" item-right></ion-icon>
-      <h2>{{ taskReport.subject}} <ion-badge *ngIf="taskReport.result === 'Success'" success>{{taskReport.result}}</ion-badge><ion-badge *ngIf="taskReport.result === 'Error'" error>{{taskReport.result}}</ion-badge> </h2>
-    
-    <p> <ion-badge *ngFor=" let metric of taskReport.metrics" metricbadge> {{metric.legend}}:{{metric.value}} </ion-badge> <p>
-     
-     </button>
-    </ion-list>
-  </ion-card>
- <button *ngIf="(taskExecutor.isCompleted() || taskExecutor.isValidated()) && taskExecutor.isSuccess()" outline success round (click)="successCallback(taskExecutor,tasksReport)"><ion-icon name="checkmark-circle"></ion-icon>{{successCallback.message}}</button>
- <button *ngIf="(taskExecutor.isCompleted() || taskExecutor.isValidated()) && taskExecutor.isError()" outline error round (click)="errorCallback(taskExecutor,tasksReport)"><ion-icon name="alert"></ion-icon>{{errorCallback.message}}</button>
-
-
--->
-
 <template [ngIf]="!hidden">
     <ion-card [ngStyle]="taskReport.style" *ngFor=" let taskReport of tasksReport">
         <ion-card-header>
@@ -34,13 +8,13 @@
                         <ion-item text-wrap>
                             <h2 style="word-wrap: break-word">{{ taskReport.subject}}</h2>
                         </ion-item>
-                        
+
                         <p>
                             <ion-badge *ngIf="taskReport.result === 'Success'" success>{{taskReport.result}}</ion-badge>
                             <ion-badge *ngIf="taskReport.result === 'Error'" error>{{taskReport.result}}</ion-badge>
                             <ion-badge *ngIf="taskReport.result === 'Warning'" warning>{{taskReport.result}}</ion-badge>
                         </p>
-                        
+
                     </ion-col>
                     <ion-col width-10>
                         <button clear primary (click)="taskReport.expanded = !taskReport.expanded"> 
@@ -55,41 +29,34 @@
         </ion-card-header>
         <ion-card-content>
             <ion-item *ngIf='taskReport.expanded'>
-                <ion-grid>
-                    <ion-row>
-                        <ion-col *ngIf="taskReport.result === 'Error'">
-                            <p style="font-size : 1.5rem;">{{taskReport.getErrorDetail().getSummary() }}</p>
-                            <p style="font-size : 1.5rem;"><strong> Error description: </strong>{{taskReport.getErrorDetail().getDescription() }}</p>
-                            <p style="font-size : 1.5rem;"><strong> Hint: </strong> {{ taskReport.getErrorDetail().getResolutionHint() }}</p>
-                        </ion-col>
-                        
-                        <ion-col *ngIf=" ( taskReport.result === 'Warning' || taskReport.result === 'Success' ) ">
-                            <ion-item text-wrap>
-                            <p style="font-size : 1.5rem;">{{taskReport.getStatusDescription() }} </p>
-                            </ion-item>
-                        </ion-col>
-                    </ion-row>
-                    <ion-row *ngIf="taskReport.actions.length > 0">
-                        <ion-col width-20>
-                            <p style="font-size : 1.5rem;">Automatic actions: </p>
-                        </ion-col>
-                        <ion-col width-80>
-                            <button primary *ngFor=" let action of taskReport.actions" (click)="executeTaskAction(taskReport,action)" button>{{action.Name}}</button>
+                <template [ngIf]="taskReport.result === 'Error'">
+                    <ion-item text-wrap>
+                    <p><span class="task-report-error" >Error summary: </span><span class="task-report-error-detail">{{taskReport.getErrorDetail().getSummary() }}</span></p>
+                     <p><span class="task-report-error" >Error description: </span><span class="task-report-error-detail">{{taskReport.getErrorDetail().getDescription() }}</span></p>
+                      <p><span class="task-report-error" >Hint: </span><span class="task-report-error-detail">{{ taskReport.getErrorDetail().getResolutionHint() }}</span></p>
+                    </ion-item>
+                </template>
 
-                        </ion-col>
-                    </ion-row>
-                </ion-grid>
+                <template [ngIf]="( taskReport.result === 'Warning' || taskReport.result === 'Success' )">
+                    <ion-item text-wrap>
+                        <p style="font-size : 1.5rem;">{{taskReport.getStatusDescription() }} </p>
+                    </ion-item>
+                </template>
+
+
             </ion-item>
         </ion-card-content>
     </ion-card>
-    <ion-grid>
-                    <ion-row>
-                        <ion-col offset-33>
-    <button *ngIf="(isValidated() && ( isSuccess() || isWarning() ))" outline round (click)="validationSuccessCallback(tasksReport)">{{validationSuccessCallback.message}}<ion-icon name="arrow-forward"></ion-icon></button>
-    <button *ngIf="(isValidated() && isError())" outline error round (click)="validationErrorCallback(tasksReport)"><ion-icon name="alert"></ion-icon>{{validationErrorCallback.message}}</button>
-    <button *ngIf="(isProcessed()  && ( isSuccess() || isWarning() ))" outline success round (click)="processSuccessCallback(tasksReport)"><ion-icon name="checkmark-circle"></ion-icon>{{processSuccessCallback.message}}</button>
-    <button *ngIf="(isProcessed()  && isError())" outline error round (click)="processErrorCallback(tasksReport)"><ion-icon name="alert"></ion-icon>{{processErrorCallback.message}}</button>
-                        </ion-col>
-                    </ion-row>
-    </ion-grid>
+    <template [ngIf]="showButtons">
+        <ion-grid>
+            <ion-row>
+                <ion-col offset-33>
+                    <button *ngIf="(isValidated() && ( isSuccess() || isWarning() ))" outline round (click)="validationSuccessCallback(tasksReport)">{{validationSuccessCallback.message}}<ion-icon name="arrow-forward"></ion-icon></button>
+                    <button *ngIf="(isValidated() && isError())" outline error round (click)="validationErrorCallback(tasksReport)"><ion-icon name="alert"></ion-icon>{{validationErrorCallback.message}}</button>
+                    <button *ngIf="(isProcessed()  && ( isSuccess() || isWarning() ))" outline success round (click)="processSuccessCallback(tasksReport)"><ion-icon name="checkmark-circle"></ion-icon>{{processSuccessCallback.message}}</button>
+                    <button *ngIf="(isProcessed()  && isError())" outline error round (click)="processErrorCallback(tasksReport)"><ion-icon name="alert"></ion-icon>{{processErrorCallback.message}}</button>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </template>
 </template>

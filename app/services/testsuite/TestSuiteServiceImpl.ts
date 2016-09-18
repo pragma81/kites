@@ -37,9 +37,9 @@ export class TestSuiteServiceImpl implements TestSuiteService {
     this.testSuiteRepository = testSuiteRepository;
     this.settingsService = settingsService;
 
-     this.events.subscribe('feature:update', (data) => {
+     this.events.subscribe('feature:create', (data) => {
       let feature  = <Feature> data[0]
-      console.log('[Feature Update] event arrived:', feature);
+      console.log('[Feature Created] event arrived:', feature);
       this.updateMetrics(feature.getTestSuiteName(),feature);
     })
 
@@ -47,11 +47,14 @@ export class TestSuiteServiceImpl implements TestSuiteService {
 
   updateMetrics(testsuitename: string, feature:Feature){
     this.testSuiteRepository.getByName(testsuitename, (testsuite)=>{
-      //verify if feature alread contained in test suite. Use featureService.
-      // If no update feature, api, ui metrics
-      //if yes calculate delta
-
-      //this.featureService.get
+       testsuite.incrementFeaturesCounter();
+      if (feature.isAPI()) {
+        testsuite.incrementApiTestCounter();
+      } else {
+        testsuite.incrementUiTestCounter()
+      }
+   
+    this.save(testsuite);
     })
   }
 

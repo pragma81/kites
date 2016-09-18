@@ -78,6 +78,11 @@ export class FeatureImporter {
         this.taskReporter.startAsync();
     }
 
+close(){
+     this.viewCtrl.dismiss().then(() => {
+     // this.events.publish('testsuite:update')
+    })
+}
 
 
 

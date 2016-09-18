@@ -25,8 +25,10 @@ TO DO :
   20) directory tree with one root node is null
   21) Delete should also delete directory ?
   22) when empty test suite then I have to block import.
-  23) Update test suite statistics when a new feature is created or modified
-  24) Import test suite duplicate entries
+  23) Update test suite statistics when a new feature is created or modified (done)
+  24) Import test suite duplicate entries (done)
+  25) Error while updating testsuite statics after feature creating
+  26) build client for windows
 
 Hashtags:
 Agile , Agile Test, BDD, Cucumber, DevOps, ATDD

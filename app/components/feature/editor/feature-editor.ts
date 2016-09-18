@@ -42,7 +42,8 @@ export class FeatureEditor implements OnInit, AfterViewInit {
     private navParams: NavParams,
     private events: Events,
     private alertController: AlertController,
-    private gherkinBeautifier: GherkinBeautifier) {
+    private gherkinBeautifier: GherkinBeautifier,
+    private fileSystem: FileSystem) {
     this.featureService = featureService
 
     this.options = {
@@ -142,15 +143,25 @@ export class FeatureEditor implements OnInit, AfterViewInit {
     if (this.hasCompileErrors)
       return
 
-    let detachedFeatured = this.featureService.parseGherkinText(this.text)
-    detachedFeatured.setTestSuiteName(this.testsuitename)
+    let detachedFeature: Feature = this.featureService.parseGherkinText(this.text)
+    detachedFeature.setTestSuiteName(this.testsuitename)
+
+    if (this.createMode) {
+      //Create file for the first time
+      this.fileSystem.createFile(this.filepath)
+      this.createMode = false
+      this.events.publish("feature:create", detachedFeature)
+    }
+
     if (this.storedFeature)
-      detachedFeatured.setRevision(this.storedFeature.getRevision())
-    this.featureService.store(detachedFeatured, this.filepath, this.text, (feature: Feature) => {
+      detachedFeature.setRevision(this.storedFeature.getRevision())
+   
+    this.featureService.store(detachedFeature, this.filepath, this.text, (feature: Feature) => {
       console.log('Feature [' + feature.getId() + ',' + feature.getFileInfo().getFilename() + '] saved ');
       this.storedFeature = feature
+      this.dirty = false
     })
-    this.dirty = false
+   
 
   }
 

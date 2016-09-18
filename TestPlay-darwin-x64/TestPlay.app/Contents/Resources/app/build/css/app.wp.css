@@ -15159,6 +15159,19 @@ body {
 div.side-menu-background {
   background-color: #f4f4f4; }
 
+.intro-img {
+  width: 450px;
+  height: 450px;
+  margin: 20px; }
+
+.intro-buttons {
+  margin-top: 60px; }
+
+.import-link {
+  font-size: 1.5rem;
+  display: block;
+  margin-top: 8px; }
+
 .tiles-metric {
   margin-left: -15px;
   margin-right: -15px;
@@ -15226,7 +15239,7 @@ div.side-menu-background {
   font-size: 2.5em; }
 
 .toolbar-row {
-  background-color: #f4f4f4; }
+  background-color: #ECEFF1; }
 
 .feature-description {
   font-size: 1.3rem;
@@ -15240,14 +15253,22 @@ div.side-menu-background {
   background-color: lightseagreen; }
 
 .feature-header {
-  background-color: #f4f4f4; }
+  background-color: #FAFAFA; }
 
 .feature-popover div.popover-content {
   width: auto !important;
   padding: 0px !important; }
 
+.toggle-text {
+  font-weight: bold;
+  font-size: 1.7rem; }
+
 div.side-menu-background {
-  background-color: #f4f4f4; }
+  background-color: #f4f4f4;
+  padding: 2px;
+  border-radius: 10px;
+  height: 600px;
+  overflow: scroll; }
 
 .testsuite-card {
   text-decoration: none; }
@@ -15258,6 +15279,10 @@ div.side-menu-background {
 
 .slide-overflow {
   overflow-y: scroll; }
+
+.modal-reporter {
+  margin-top: 130px;
+  height: 480px; }
 
 .auto-toggle {
   font-weight: 300;
@@ -15344,11 +15369,11 @@ p {
   border-top: 3px solid; }
 
 .tree-container {
-  background-color: lightblue;
-  height: 40rem;
+  background-color: #E3F2FD;
+  height: 27rem;
   overflow: scroll;
-  width: 45rem;
-  border: 1px solid; }
+  width: 70rem;
+  border-radius: 10px; }
 
 .tree-header {
   background-color: gainsboro;
@@ -15360,3 +15385,17 @@ p {
 
 .tree-node ul {
   padding: 3px 0 3px 10px !important; }
+
+.feature-path {
+  white-space: nowrap;
+  width: 40em;
+  overflow: hidden;
+  text-overflow: ellipsis; }
+
+.task-report-error {
+  font-weight: bold;
+  font-size: medium; }
+
+.task-report-error-detail {
+  font-size: 13px;
+  font-weight: normal; }

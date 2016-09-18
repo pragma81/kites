@@ -116,7 +116,7 @@ export class TestSuiteCreate {
     public create(){
        this.viewCtrl.dismiss().then(()=>{
        let testSuite = this.testSuiteService.create(this.testsuiteName,this.workspacepath,this.executionRuntime)
-           this.events.publish('testsuite:update',testSuite)
+           this.events.publish('testsuite:create',testSuite)
        })
         
     }

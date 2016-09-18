@@ -11,7 +11,7 @@ So that I can create a patient
       | username | password | 
       |          |          | 
   
-  @jiraid: @smoke @auto
+  @jiraid: @smoke @basic
   Scenario: Navigation to Add Patient Demographic page 
   This is the generic scenario about accesibility of patient demographic page 
      When The pharmacy team member is in the home page (dashboard) 
