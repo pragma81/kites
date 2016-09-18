@@ -208,15 +208,15 @@ gulp.task('app-win', ['app-clean'], function (done) {
     out: 'packaging/win/dist',
     overwrite: true,
     name: 'kites',
-    icon: 'resources/kites-icon.ico',
-    asar: true
+    icon: 'resources/kites-icon.ico'
+   // asar: true
   }
   runSequence(
     ['app-clean','app-content','electron-lib','app-copy-files'],
     function () {
       electron(options, function (err, appPaths) {
         var releasefiles = [
-          'packaging/mac/run.sh',
+          'packaging/win/run.bat',
           'packaging/kites.properties',
           'KITES-LICENSE.txt'
         ]
