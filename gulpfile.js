@@ -179,6 +179,7 @@ gulp.task('app-mac', ['app-clean'], function (done) {
     out: 'packaging/mac/dist',
     overwrite: true,
     name: 'kites',
+    icon: 'resources/kites-icon.icns',
     asar: true
   }
   runSequence(
@@ -207,6 +208,7 @@ gulp.task('app-win', ['app-clean'], function (done) {
     out: 'packaging/win/dist',
     overwrite: true,
     name: 'kites',
+    icon: 'resources/kites-icon.ico',
     asar: true
   }
   runSequence(
