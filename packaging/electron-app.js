@@ -33,16 +33,8 @@ function createWindow() {
     });
 
     console.log(JSON.stringify(process.argv))
-    var url = 'http://localhost:8100';
-    var Args = process.argv.slice(2);
-    Args.forEach(function (val) {
-
-        if (val === "dist") {
-            url = 'file://' + __dirname + '/www/index.html'
-        }
-
-    });
-
+    var url = 'file://' + __dirname + '/index.html'
+   
     config()
 
     var properties = getProperties(process.argv)
@@ -53,7 +45,9 @@ function createWindow() {
     win.webContents.send('config', properties)
     console.log('KiTes window opened');
     // Open the DevTools.
-    win.webContents.openDevTools();
+    if(hasParameter('debug',process.argv))
+         win.webContents.openDevTools();
+   
 
     console.log('KiTes window opened');
     // Emitted when the window is closed.
@@ -104,19 +98,19 @@ function config() {
 }
 
 function getProperties(args) {
-    var propertiesFile = findCommand('conf', args)
-    if (propertiesFile === undefined)
+    var filePath = findCommand('conf', args)
+    if (filePath === undefined)
         throw new Error("Properties file not configured. Use --conf=path/to/file.properties to setup KiTes")
-    var relativePath = '.' + path.sep + propertiesFile
+    var relativePath = process.cwd() + path.sep + filePath
     var properties = undefined
     try {
         properties = PropertiesReader(relativePath);
     } catch (err) {
         //try absolute mode
         try {
-            properties = PropertiesReader(propertiesFile);
+            properties = PropertiesReader(filePath);
         } catch (err) {
-            throw new Error(` No file found in [${relativePath} or [${propertiesFile}]`)
+            throw new Error(` No file found in relative path [${filePath}] or absolute path [${relativePath}. `)
         }
     }
     return properties
@@ -136,6 +130,16 @@ function findCommand(parameter, args) {
 
         if ('--' + parameter === commandParameter)
             value = commandValue
+
+    })
+    return value
+}
+
+function hasParameter(name, args) {
+    var value = false
+    args.forEach(function (val) {
+        if ('--' + name === val)
+            value = true
 
     })
     return value

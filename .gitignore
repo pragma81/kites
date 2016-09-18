@@ -8,3 +8,7 @@ plugins/
 *.swp
 .DS_Store
 Thumbs.db
+packaging/app-build
+packaging/mac/dist
+packaging/win/dist
+.vscode

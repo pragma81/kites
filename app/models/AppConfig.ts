@@ -15,7 +15,7 @@ export class AppConfig {
         if (this.workspaceHomeFolder === undefined || this.workspaceHomeFolder === null) {
             let process = nodeRequire('electron').remote.process
             let userhome = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME']
-            this.workspaceHomeFolder =userhome+ this.fileSystem.fileSeparator()+'testplay'
+            this.workspaceHomeFolder =userhome+ this.fileSystem.fileSeparator()+'kites'
         }
     }
 

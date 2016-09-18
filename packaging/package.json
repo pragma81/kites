@@ -1,0 +1,8 @@
+{
+  "name": "kites",
+  "version": "1.0-RC1",
+  "license": "Apache-2.0",
+  "description": "KiTes: Collaborate. Automate. Test.",
+  "main": "electron-app.js"
+  
+}
