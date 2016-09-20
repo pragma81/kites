@@ -25,7 +25,7 @@ function createWindow() {
     });
     // Create the browser window.
     win = new BrowserWindow({
-        width: 1024, height: 768, webPreferences: {
+        width: 1100, height: 768, webPreferences: {
             // nodeIntegration: false,
             webSecurity: false,
             preload: __dirname + "/preload.js"

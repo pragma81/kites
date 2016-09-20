@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core'
-import * as PouchDB from 'pouchdb';
+import * as PouchDB from 'pouchdb-browser';
 import {Feature,FileInfo} from '../models/Feature'
 
 //let PouchDB = require('pouchdb');

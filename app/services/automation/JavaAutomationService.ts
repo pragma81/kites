@@ -15,7 +15,7 @@ generateAutomationFolderLayout(testsuitename:string, absoluteRootFolderPath :str
 let sep = this.fileSystem.fileSeparator()
 let process = nodeRequire('electron').remote.process
 let fse = window.fse
-let srcPath = process.resourcesPath+sep+'conf/java/dts-template'
+let srcPath = process.resourcesPath+sep+'app/conf/java/dts-template'
 fse.copy(srcPath, absoluteRootFolderPath)
 
 }

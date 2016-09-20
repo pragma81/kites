@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core'
-import * as PouchDB from 'pouchdb';
+import * as PouchDB from 'pouchdb-browser';
 import {TestSuite} from '../models/TestSuite'
 import {ExecutionRuntime} from '../services/automation/AutomationService';
 

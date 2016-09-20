@@ -53,10 +53,12 @@ export class FeatureExplorer {
   clear() {
     this.testSuite = undefined
     this.featuresInfo.length = 0
+     this.unfilteredFeaturesInfo.length = 0
   }
 
   loadByTestSuiteName(testSuiteName: string): void {
-    this.featuresInfo = []
+    this.featuresInfo.length = 0
+    this.unfilteredFeaturesInfo.length = 0
     console.log("load features for test suite:" + testSuiteName);
 
     this.featureService.getByTestSuite(testSuiteName,
@@ -92,7 +94,7 @@ export class FeatureExplorer {
 
   filter(event: any) {
     //reset search
-    this.featuresInfo = this.unfilteredFeaturesInfo
+    this.featuresInfo = this.unfilteredFeaturesInfo.slice()
     let val = event.target.value;
 
     if (val === undefined || val.trim() === '') {

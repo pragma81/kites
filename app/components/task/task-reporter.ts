@@ -31,7 +31,7 @@ export class TaskReporter implements TaskExecutionListener, AsyncExecutionListen
     private validationErrorCallback: ReportCallback
     private executionStatus: ExecutionStatus
     private executionResult: ExecutionResult
-    @Input() showActions : boolean = true ;
+    @Input() showButtons : boolean = true ;
 
 
 
