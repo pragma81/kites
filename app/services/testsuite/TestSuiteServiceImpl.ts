@@ -129,7 +129,7 @@ export class TestSuiteServiceImpl implements TestSuiteService {
         + ' is not a directory');
     }
 
-    return this.fileSystem.listFiles(featureFilesFolder, '**/*.feature');
+    return this.fileSystem.listFiles(featureFilesFolder, '**/*.feature', ["target"]);
 
   }
   public importFromLocalDir(projectFilePath: string, importIntoAppFolder: boolean): void {

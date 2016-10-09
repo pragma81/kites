@@ -258,33 +258,33 @@ export class Feature {
     private buildTCMId(featuresTags: Object[]) {
         let tcmid = featuresTags.find(function (value, index, array) {
             let valueAny: any = value;
-            let tagSplit = valueAny.name.split(':');
+            let tagSplit = valueAny.name.split('=');
             return tagSplit[0] === '@jiraid'
 
         })
         if (tcmid === undefined)
             return undefined;
         let tcmidAny: any = tcmid;
-        this.tcmId = tcmidAny.name.split(':')[1];
+        this.tcmId = tcmidAny.name.split('=')[1];
     }
 
     private buildProcessId(featuresTags: Object[]) {
         let process = featuresTags.find(function (value, index, array) {
             let valueAny: any = value;
-            let tagSplit = valueAny.name.split(':');
+            let tagSplit = valueAny.name.split('=');
             return tagSplit[0] === '@process'
 
         })
         if (process === undefined)
             return undefined;
         let processAny: any = process;
-        this.processId = processAny.name.split(':')[1];
+        this.processId = processAny.name.split('=')[1];
     }
 
     private buildFeatureId(featuresTags: Object[]) {
         let featureId = featuresTags.find(function (value, index, array) {
             let valueAny: any = value;
-            let tagSplit = valueAny.name.split(':');
+            let tagSplit = valueAny.name.split('=');
             return tagSplit[0] === '@featureid'
 
         })
@@ -293,7 +293,7 @@ export class Feature {
             let errorDetail = new ErrorDetail("Feature is not well formed",
                 "Feature has no id",
                 Severity.blocker);
-            errorDetail.setResolutionHint("Use @featureid:xyz tag on top of your feature file ")
+            errorDetail.setResolutionHint("Use @featureid=xyz tag on top of your feature file ")
             let featureError = new FeatureCreationError("Feature [" + this.name + "] has no id", new Error(), errorDetail)
             featureError.Row = 0
             featureError.Column = 0
@@ -301,7 +301,7 @@ export class Feature {
 
         }
         let featureIdAny: any = featureId;
-        this._id = featureIdAny.name.split(':')[1];
+        this._id = featureIdAny.name.split('=')[1];
     }
 
 }

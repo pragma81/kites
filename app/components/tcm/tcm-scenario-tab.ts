@@ -92,11 +92,11 @@ export class ScenarioTab implements AsyncExecutionListener {
     asyncTaskExecutor.addExecutionListener(this)
 
     let successCallback = <ReportCallback>(tasksreport : Array<TaskReport>) => { 
-             this.events.publish('feature:update', null);
-             this.events.publish('tcmsync:close',null)
+             this.events.publish('tcmsync:close',this.feature)
              }
         this.taskReporter.setProcessSuccessCallback(successCallback)
-        let errorCallback = <ReportCallback>(tasksreport : Array<TaskReport>) => {  this.events.publish('tcmsync:close',null) }
+        let errorCallback = <ReportCallback>(tasksreport : Array<TaskReport>) => {  
+          this.events.publish('tcmsync:close',this.feature) }
         this.taskReporter.setProcessErrorCallback(errorCallback)
 
     this.feature.getScenarios().forEach((scenario, index, array) => {
@@ -134,6 +134,7 @@ export class ScenarioTab implements AsyncExecutionListener {
     // reload feature file from file system
       let featureWithNewTags = this.featureService.parseGherkinFile(this.feature.getFileInfo().getFileAbsolutePath())
       featureWithNewTags.setRevision(this.feature.getRevision())
+      featureWithNewTags.setTestSuiteName(this.feature.getTestSuiteName())
       this.featureService.save(featureWithNewTags,(feature)=>{
         
       })

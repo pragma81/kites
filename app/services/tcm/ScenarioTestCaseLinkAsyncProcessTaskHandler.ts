@@ -92,7 +92,7 @@ export class ScenarioTestCaseLinkAsyncProcessTaskHandler implements AsyncTaskHan
             this.tcmService.updateTestCase(scenario, testcase, feature).subscribe(testcase => {
                 let processedTaskInfo = taskInfo.clone()
                 processedTaskInfo.setOutputHolder({ testcase: testcase })
-                processedTaskInfo.setStatusDescription(`Test Case [${testcase.Id}] update`)
+                processedTaskInfo.setStatusDescription(`Test Case [${testcase.Id}] updated`)
                 processedTaskInfo.setExecutionResult(ExecutionResult.success)
                 observer.next(processedTaskInfo)
                 observer.complete()

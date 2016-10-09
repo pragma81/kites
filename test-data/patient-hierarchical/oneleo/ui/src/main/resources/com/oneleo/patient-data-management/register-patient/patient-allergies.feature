@@ -1,4 +1,4 @@
-@featureid:uss-009 @ui
+@featureid=uss-009 @ui
 Feature: Patient Allergies
   Scenario: Add allergies to existing patient
     Given: I am logged within the system as doctor
