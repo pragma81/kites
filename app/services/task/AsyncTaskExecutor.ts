@@ -244,7 +244,7 @@ export class AsyncTaskExecutor {
 		/* If check result is error than no process steps are called
 		*/
 
-		if(this.result != ExecutionResult.success)
+		if(this.result == ExecutionResult.error)
 		return
 		/* Success by default. If one of the task is in error the overall 
 		task execution is error

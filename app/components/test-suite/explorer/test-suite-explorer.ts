@@ -42,7 +42,7 @@ export class TestSuiteExplorer {
 
   filter(event:any) {
     console.log('filtering');
-    this.testsSuiteInfo = this.unfilteredTestsSuiteInfo
+    this.testsSuiteInfo = this.unfilteredTestsSuiteInfo.slice()
       // set val to the value of the searchbar
     let val = event.target.value;
 

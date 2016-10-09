@@ -1,4 +1,4 @@
-@featureid:uss-007 @ui
+@featureid=uss-007 @ui
 Feature: Patient Search
   
   Background: User Logged

@@ -1,4 +1,4 @@
-@featureid:US0-005-111 @process:patientdatamanagement @ui
+@featureid=US0-005-111 @process=patientdatamanagement @ui
 Feature: US0-005-111 Add Patient Demographic Information
 
 As a pharmacy team member
@@ -12,7 +12,7 @@ So that I can create a patient [Modified14]
       |          |          |
 
   #comment example
-@jiraid: @smoke
+@jiraid= @smoke
   Scenario: Navigation to Add Patient Demographic page
   This is the generic scenario about accesibility of patient demographic page
      When The pharmacy team member is in the home page (dashboard)
@@ -36,7 +36,7 @@ So that I can create a patient [Modified14]
      Then rx-ms system  will confirm the operation with a success message
       And the patient data are stored correctly
   
-  @jiraid:RXRN-1138 @acceptance @auto
+  @jiraid=RXRN-1138 @acceptance @auto
   Scenario Outline: Register Patient - Verify that the system doesn't allows the pharmacy team member to create a Patient without all mandatory fields filled
     Given a not existing Patient with
       | name     | surname | dob        | phone       |
@@ -58,7 +58,7 @@ So that I can create a patient [Modified14]
       |          |         |            | M      |
       |          |         |            |        |
   
-  @jiraid:RXRN-1139 @acceptance @auto
+  @jiraid=RXRN-1139 @acceptance @auto
   Scenario: Register Patient - Verify that the system allows to change the prepopulated City and State for a Zip Code
     Given a not existing Patient with
       | name     | surname | dob        | phone       |
@@ -75,7 +75,7 @@ So that I can create a patient [Modified14]
   
      Then rx-ms system will allow to change the City and State fields
   
-  @jiraid:RXRN-1088 @acceptance @auto
+  @jiraid=RXRN-1088 @acceptance @auto
   Scenario: Register Patient - Verify that the system allow to enter the Phone Number
     Given a not existing Patient with
       | name     | surname | dob        | phone       |
@@ -87,7 +87,7 @@ So that I can create a patient [Modified14]
       And The pharmacy team member fills the Phone Number field with "1234567890"
      Then rx-ms system will validate and format the inserted Phone Number
   
-  @jiraid:RXRN-1090 @basic @auto
+  @jiraid=RXRN-1090 @basic @auto
   Scenario Outline: Register Patient - Verify that the system allows to insert a date of birth corresponding to a past date or a current date
     Given a not existing Patient with
       | name     | surname | dob        | phone       |
@@ -105,7 +105,7 @@ So that I can create a patient [Modified14]
       | 01/01/1990   |
       | current_date |
   
-  @jiraid:RXRN-1089 @acceptance @auto
+  @jiraid=RXRN-1089 @acceptance @auto
   Scenario Outline: Register Patient - Verify that the system doesn't allow to insert a date of birth corresponding to a future date or an invalid format
     Given a not existing Patient with
       | name     | surname | dob        | phone       |
@@ -123,7 +123,7 @@ So that I can create a patient [Modified14]
       | xx/yy/zzzz | Invalid format         |
       | 01/01/2050 | No future date allowed |
   
-  @jiraid:RXRN-1085 @acceptance @auto
+  @jiraid=RXRN-1085 @acceptance @auto
   Scenario: Register Patient - Verify that the system allows to insert the Pet Species when the Pet Checkbox is ticked
     Given a not existing Patient with
       | name     | surname | dob        | phone       |
@@ -135,7 +135,7 @@ So that I can create a patient [Modified14]
       And The pharmacy team member inserts a patient as Pet with Pet Species 'dog'
      Then rx-ms system will allow to insert the Pet Species
   
-  @jiraid:RXRN-1086 @acceptance @auto
+  @jiraid=RXRN-1086 @acceptance @auto
   Scenario: Register Patient - Verify that the system allows to select one or more features of the patient
     Given a not existing Patient with
       | name     | surname | dob        | phone       |
@@ -147,7 +147,7 @@ So that I can create a patient [Modified14]
       And The pharmacy team member selects one o more features
      Then rx-ms system will also allow to select multiple features
   
-  @jiraid:RXRN-1087 @acceptance @auto
+  @jiraid=RXRN-1087 @acceptance @auto
   Scenario: Register Patient - Verify that the system doesn't allows to remove the phone number without remove all Alternative Phone Number
     Given a not existing Patient with
       | name     | surname | dob        | phone       |
@@ -165,7 +165,7 @@ So that I can create a patient [Modified14]
       And The pharmacy team member removes the Phone Number
      Then rx-ms system will not allow to remove the Phone Number
   
-  @jiraid:RXRN-1131 @acceptance @auto
+  @jiraid=RXRN-1131 @acceptance @auto
   Scenario: Register Patient - Verify that the system prepopulates the City and State associated to the inserted Zip Code
     Given a not existing Patient with
       | name     | surname | dob        | phone       |
@@ -179,7 +179,7 @@ So that I can create a patient [Modified14]
       And The pharmacy team member chooses one City and State related to the specified Zip Code
      Then rx-ms system will populate the City and State fields correctly
   
-  @jiraid:RXRN-1091 @acceptance @auto
+  @jiraid=RXRN-1091 @acceptance @auto
   Scenario: Register Patient - Verify that ,if multiple cities exist for the entered Zip Code,the system provides a list from which the User can choose one City and State
     Given a not existing Patient with
       | name     | surname | dob        | phone       |
@@ -192,7 +192,7 @@ So that I can create a patient [Modified14]
       And The pharmacy team member fill Zip Code field with the existing Zip Code linked to more cities
      Then rx-ms system will display the list of multiple cities for the entered Zip Code
   
-  @jiraid:RXRN-1092 @acceptance @auto
+  @jiraid=RXRN-1092 @acceptance @auto
   Scenario Outline:Register Patient - Verify that the system doesn't allows the User to insert an invalid zip code
     Given a not existing Patient with
       | name     | surname | dob        | phone       |
@@ -211,7 +211,7 @@ So that I can create a patient [Modified14]
       | 1234567 |
       | 12abc   |
   
-  @jiraid:RXRN-1132 @acceptance @auto
+  @jiraid=RXRN-1132 @acceptance @auto
   Scenario: Register Patient - Verify that the system allows the pharmacy team member to close the 'Zip Code Select' pop-up
     Given a not existing Patient with
       | name     | surname | dob        | phone       |
@@ -225,7 +225,7 @@ So that I can create a patient [Modified14]
       And The pharmacy team member don't choose a City and a State related to the specified Zip Code
      Then rx-ms system will not populate the City and State fields
   
-  @jiraid:RXRN-1134 @acceptance @auto
+  @jiraid=RXRN-1134 @acceptance @auto
   Scenario: Register Patient - Verify that the system substitute Alternative Phone Number 1 for Alternative Phone Number 2 when the pharmacy team member deletes the Alternative Phone Number 1
     Given a not existing Patient with
       | name     | surname | dob        | phone       |
@@ -244,7 +244,7 @@ So that I can create a patient [Modified14]
       And The pharmacy team member remove the Alternative Phone Number 1
      Then rx-ms system will substitute Alternative Phone Number 1 for Alternative Phone Number 2
   
-  @jiraid:RXRN-1135 @acceptance @auto
+  @jiraid=RXRN-1135 @acceptance @auto
   Scenario: Register Patient - Verify that the system doesn't allow the User to insert the Alternative Phone Number without inserting the Phone Number
     Given a not existing Patient with
       | name     | surname | dob        | phone       |

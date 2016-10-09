@@ -54,24 +54,29 @@ export class FileSystem {
     return this.path.sep;
   }
 
-  public listFiles(absolutePath: string, matcherPaths: string): Array<string> {
+  public listFiles(absolutePath: string, matcherPaths: string,dirExcludes : Array<string>): Array<string> {
 
     var matchers = this.toPatternMatcher(matcherPaths);
     var list: Array<string> = []
+
+    
     var files = this.fs.readdirSync(absolutePath);
 
     files.forEach((file) => {
+     if(dirExcludes && dirExcludes.indexOf(file) > -1)
+     return
       var filePath = this.path.join(absolutePath, file)
 
       let fileStat: fs.Stats = this.fs.statSync(filePath);
 
       if (fileStat.isDirectory()) {
-        let recursiveList: Array<string> = this.listFiles(filePath, matcherPaths);
+        let recursiveList: Array<string> = this.listFiles(filePath, matcherPaths,dirExcludes);
 
         list = list.concat(recursiveList)
 
       } else {
 
+        
         if (matchers(filePath)) {
           list.push(filePath)
         }
@@ -148,7 +153,6 @@ export class FileSystem {
       return minimatcher.match(path)
     }
   }
-
 
 
 

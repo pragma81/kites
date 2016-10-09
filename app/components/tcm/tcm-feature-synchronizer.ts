@@ -41,7 +41,9 @@ export class TCMFeatureSynchronizer {
     })
 
      this.events.subscribe('tcmsync:close', (data) => {
-     this.viewCtrl.dismiss()
+     let featureUpdated = data[0]
+     this.viewCtrl.dismiss().then(()=>{
+       this.events.publish("feature:update",featureUpdated)})
     })
   }
 
