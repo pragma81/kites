@@ -11,26 +11,26 @@ export enum FeatureType {
 }
 
 export class FileInfo {
-    
-    constructor(private filename : string, 
-                private fileAbsolutePath :string, 
-                private creationTime:Date,
-                private updateTime:Date ){}
 
-     public getFilename():string {
-         return this.filename
-     }   
+    constructor(private filename: string,
+        private fileAbsolutePath: string,
+        private creationTime: Date,
+        private updateTime: Date) { }
 
-     public getFileAbsolutePath():string {
-         return this.fileAbsolutePath
-     }
+    public getFilename(): string {
+        return this.filename
+    }
 
-     public getCreationTime():Date{
-         return this.creationTime;
-     }
-     public getUpdateTime(){
-         return this.updateTime;
-     }
+    public getFileAbsolutePath(): string {
+        return this.fileAbsolutePath
+    }
+
+    public getCreationTime(): Date {
+        return this.creationTime;
+    }
+    public getUpdateTime() {
+        return this.updateTime;
+    }
 }
 @Injectable()
 export class Feature {
@@ -41,22 +41,22 @@ export class Feature {
     private processId: string;
     private tcmId: string;
     private type: FeatureType;
-    private fileInfo : FileInfo;
+    private fileInfo: FileInfo;
     private rawData: Object;
     private wellFormed: boolean;
     private scenarios: Array<Scenario> = [];
     private background: Scenario;
     private hasScenarioOutline: boolean = false;
-    private tags : Array<string> = [];
+    private tags: Array<string> = [];
 
-    
+
 
     //Used internally for updating object using puchdb
     private _rev: string;
 
     //Internal AST
     private ast: string;
-    constructor(featureAst: Object,  fileInfo : FileInfo) {
+    constructor(featureAst: Object, fileInfo: FileInfo) {
         this.rawData = featureAst;
         this.fileInfo = fileInfo;
         let featureAstAny: any = featureAst;
@@ -71,12 +71,12 @@ export class Feature {
             this.type = FeatureType.UI;
         } else if (this.hasAPITag(featureAstAny.feature.tags)) {
             this.type = FeatureType.API;
-        } else  { 
+        } else {
             let errorDetail = new ErrorDetail("Feature is not well formed",
                 "Feature tags missing",
                 Severity.blocker);
             errorDetail.setResolutionHint("Add @ui or @api on topo of you feature file")
-            let featureError = new FeatureCreationError("@ui or @api tags is missing for feature [" + featureAstAny.feature.name + "]",new Error(),errorDetail)
+            let featureError = new FeatureCreationError("@ui or @api tags is missing for feature [" + featureAstAny.feature.name + "]", new Error(), errorDetail)
             featureError.Row = 0
             featureError.Column = 0
             throw featureError
@@ -89,7 +89,7 @@ export class Feature {
                 Severity.blocker);
             errorDetail.setResolutionHint("Add Scenario: ---- Given:--- When--- Then---- in your feature file")
             let featureError = new FeatureCreationError("Feature [" + this.name + "] has no scenarios", new Error(), errorDetail)
-            featureError.Row = featureAstAny.feature.location.line -1
+            featureError.Row = featureAstAny.feature.location.line - 1
             throw featureError
         }
 
@@ -97,7 +97,6 @@ export class Feature {
             let scenario: Scenario = new Scenario(element);
             if (scenario.isBackground()) {
                 this.background = scenario
-                this.scenarios.push(scenario);
             } else {
                 this.scenarios.push(scenario);
             }
@@ -107,7 +106,7 @@ export class Feature {
         });
     }
 
-    public hasBackground():boolean{
+    public hasBackground(): boolean {
         return this.background != null
     }
     public getId(): string {
@@ -135,10 +134,10 @@ export class Feature {
     }
 
 
-	public getFileInfo(): FileInfo {
-		return this.fileInfo;
-	}
-    
+    public getFileInfo(): FileInfo {
+        return this.fileInfo;
+    }
+
     public getScenarios(): Array<Scenario> {
         return this.scenarios;
     }
@@ -176,21 +175,15 @@ export class Feature {
     }
 
 
-	public getTags(): Array<string>  {
-		return this.tags;
-	}
+    public getTags(): Array<string> {
+        return this.tags;
+    }
 
-    public isTCMSynched(){
+    public isTCMSynched() {
         return this.tcmId != undefined
     }
     public getScenariosTotal(): number {
-        if (this.hasBackground()) {
-            return this.scenarios.length - 1
-        } else {
-            return this.scenarios.length
-
-        }
-
+        return this.scenarios.length
     }
     public getAutoScenariosTotal(): number {
         let autoScenarios: Array<Scenario> = this.scenarios.filter((value, index, array): boolean => {
@@ -199,22 +192,22 @@ export class Feature {
         return autoScenarios.length;
     }
 
-    public getSmokeScenarios() : Array<Scenario> {
-         let smokeScenarios: Array<Scenario> = this.scenarios.filter((value, index, array): boolean => {
+    public getSmokeScenarios(): Array<Scenario> {
+        let smokeScenarios: Array<Scenario> = this.scenarios.filter((value, index, array): boolean => {
             return value.isSmoke();
         })
         return smokeScenarios;
     }
 
-     public getBasicScenarios() : Array<Scenario> {
-         let basicScenarios: Array<Scenario> = this.scenarios.filter((value, index, array): boolean => {
+    public getBasicScenarios(): Array<Scenario> {
+        let basicScenarios: Array<Scenario> = this.scenarios.filter((value, index, array): boolean => {
             return value.isBasic();
         })
         return basicScenarios;
     }
 
-     public getAcceptanceScenarios() : Array<Scenario> {
-         let acceptanceScenarios: Array<Scenario> = this.scenarios.filter((value, index, array): boolean => {
+    public getAcceptanceScenarios(): Array<Scenario> {
+        let acceptanceScenarios: Array<Scenario> = this.scenarios.filter((value, index, array): boolean => {
             return value.isAcceptance();
         })
         return acceptanceScenarios;
@@ -224,10 +217,10 @@ export class Feature {
         return JSON.stringify(this.rawData);
     }
 
-    public searchScenariosBySummary(criteria : string) : Array<Scenario> {
+    public searchScenariosBySummary(criteria: string): Array<Scenario> {
 
-        return this.scenarios.filter((scenario) =>{
-           return scenario.getSummary().toLowerCase().indexOf(criteria.toLowerCase()) > -1
+        return this.scenarios.filter((scenario) => {
+            return scenario.getSummary().toLowerCase().indexOf(criteria.toLowerCase()) > -1
         })
 
     }
@@ -246,11 +239,11 @@ export class Feature {
 
     }
 
-    private buildTags(featuresTags: Object[]):void{
-       if (featuresTags === undefined)
-            return ;
-        featuresTags.forEach((value,index ,array)=>{
-             let valueAny: any = value;
+    private buildTags(featuresTags: Object[]): void {
+        if (featuresTags === undefined)
+            return;
+        featuresTags.forEach((value, index, array) => {
+            let valueAny: any = value;
             this.tags.push(<string>valueAny.name)
         })
     }
