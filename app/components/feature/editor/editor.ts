@@ -116,6 +116,18 @@ export class Editor implements AfterContentInit{
     public getCursorPosition(): Object{
         return this.editor.getCursorPosition()
     }
+
+    public zoomIn(): void{
+        let fontSize = this.editor.getFontSize()
+        this.editor.setFontSize(this.editor.getFontSize()+2)
+    }
+
+   public zoomOut(): void{
+        let fontSize = this.editor.getFontSize()
+        this.editor.setFontSize(this.editor.getFontSize()-2)
+    }
+
+
     set options(value) {
         this.editor.setOptions(value || {});
     }

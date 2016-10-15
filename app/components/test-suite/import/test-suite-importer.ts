@@ -218,7 +218,7 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
         testSuite.incrementUiTestCounter()
       }
     })
-    this.testSuiteService.save(testSuite);
+    this.testSuiteService.save(testSuite,()=>{});
 
   }
   postAsyncProcess(execution: AsyncTaskExecutor): void {

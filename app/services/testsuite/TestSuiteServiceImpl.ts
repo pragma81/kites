@@ -54,7 +54,7 @@ export class TestSuiteServiceImpl implements TestSuiteService {
         testsuite.incrementUiTestCounter()
       }
    
-    this.save(testsuite);
+    this.save(testsuite,()=>{});
     })
   }
 
@@ -82,7 +82,7 @@ export class TestSuiteServiceImpl implements TestSuiteService {
     return;
   }
 
-  create(testSuiteName: string, testSuiteFolderPath: string, executionRuntimeType: ExecutionRuntime): TestSuite {
+  create(testSuiteName: string, testSuiteFolderPath: string, executionRuntimeType: ExecutionRuntime): void {
     this.fileSystem.createFolder(testSuiteFolderPath)
     let projectFileNamePath = testSuiteFolderPath+this.fileSystem.fileSeparator()+testSuiteName+'.project'
     this.fileSystem.createFile(projectFileNamePath)
@@ -100,14 +100,13 @@ export class TestSuiteServiceImpl implements TestSuiteService {
 
     let testsuite = new TestSuite(testSuiteName, false,null, testSuiteFolderPath, false, projectFileNamePath, ExecutionRuntime.JAVA)
 
-    return this.testSuiteRepository.save(testsuite)
+    this.testSuiteRepository.save(testsuite,()=>{})
 
 
   }
 
-  public save(testSuite: TestSuite): TestSuite {
-    this.testSuiteRepository.save(testSuite);
-    return testSuite;
+  public save(testSuite: TestSuite, callback:(testsuite:TestSuite)=> void): void {
+    this.testSuiteRepository.save(testSuite,()=>{});
   }
 
   delete(testsuite: TestSuite, callback: (testsuite: TestSuite) => void): void {
@@ -139,7 +138,7 @@ export class TestSuiteServiceImpl implements TestSuiteService {
     let testSuite: TestSuite = new TestSuite(testSuiteName, false, null,
       null, importIntoAppFolder,
       projectFilePath, ExecutionRuntime.JAVA);
-    this.testSuiteRepository.save(testSuite);
+    this.testSuiteRepository.save(testSuite,()=>{});
     let featurefiles: Array<string> = this.listFeatureFiles(projectFilePath);
     featurefiles.forEach(file => {
       //Parse feature file
@@ -156,7 +155,7 @@ export class TestSuiteServiceImpl implements TestSuiteService {
           testSuite.incrementUiTestCounter()
         }
       });
-       this.testSuiteRepository.save(testSuite);
+       this.testSuiteRepository.save(testSuite,()=>{});
     });
 
   }

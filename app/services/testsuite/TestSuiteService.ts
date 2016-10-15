@@ -10,8 +10,8 @@ export interface TestSuiteService {
     folderExists(testsuiteFolderPath:string):boolean
     exists(testSuiteName: string, testSuiteFolderPath:string, callback:()=>void):boolean
     get(testSuiteName:string): TestSuite;
-    create(testSuiteName: string, testSuiteFolderPath:string, executionRuntimeType: ExecutionRuntime):TestSuite;
-    save(testsuite: TestSuite): TestSuite;
+    create(testSuiteName: string, testSuiteFolderPath:string, executionRuntimeType: ExecutionRuntime):void;
+    save(testsuite: TestSuite,callback:(testsuite:TestSuite)=> void): void;
     delete(testsuite: TestSuite, callback:(testsuite:TestSuite)=> void): void;
     importFromLocalDir(projectFilePath :string, importIntoAppFolder :boolean) :void;
     imporFromSCMRepo(testSuiteDirePath:string);

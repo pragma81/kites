@@ -19,17 +19,19 @@ export class TestSuiteRepository {
 
 
 
-    public save(testSuite: TestSuite): TestSuite {
+    public save(testSuite: TestSuite, callback: (testsuite: TestSuite) => void): void {
         this._db.put(testSuite).then((response) => {
             //save revision for the first time
             if (testSuite.getRevision === undefined) {
                 testSuite.setRevision(response.rev);
             }
+            if(callback)
+                callback(testSuite);
             console.log('Test suite [' + testSuite.getId() + ',' + testSuite.getName() + ',' + testSuite.getRevision() + '] saved ');
         }).catch(function (err) {
             throw new Error('Error while saving TestSuite [' + testSuite.getId() + ',' + testSuite.getName() + ',' + testSuite.getRevision() + '] :' + err.message);
         });
-        return testSuite;
+      
     }
 
     delete(testsuite: TestSuite, callback: (testsuite: TestSuite) => void): void {

@@ -66,7 +66,8 @@ export class FeatureEditor implements OnInit, AfterViewInit {
       this.filepath = this.feature.getFileInfo().getFileAbsolutePath()
       this.testsuitename = this.feature.getTestSuiteName()
       this.storedFeature = this.feature
-    } else if ((this.filepath != undefined && this.filepath.length > 0) && (this.testsuitename != undefined || this.testsuitename.length > 0)) {
+    } else if ((this.filepath != undefined && this.filepath.length > 0)
+      && (this.testsuitename != undefined || this.testsuitename.length > 0)) {
       this.createMode = true
     } else {
       throw new Error("new feature filepath is empty or/and testsuite is empty")
@@ -105,6 +106,23 @@ export class FeatureEditor implements OnInit, AfterViewInit {
     }
     this.editor.addkeyBinding(exitKeyBinding)
 
+    let zoominKeyBinding: KeyBinding = {
+      name: 'zoomin',
+      bindKey: { win: 'Ctrl-1', mac: 'Command-1' },
+      exec: (editor) => {
+        editor.setFontSize(editor.getFontSize()+2)
+      }
+    }
+    this.editor.addkeyBinding(zoominKeyBinding)
+
+     let zoomoutKeyBinding: KeyBinding = {
+      name: 'zoomout',
+      bindKey: { win: 'Ctrl-2', mac: 'Command-2' },
+      exec: (editor) => {
+        editor.setFontSize(editor.getFontSize()-2)
+      }
+    }
+    this.editor.addkeyBinding(zoomoutKeyBinding)
   }
 
   onChange(data): void {
@@ -121,20 +139,19 @@ export class FeatureEditor implements OnInit, AfterViewInit {
     } catch (e) {
       this.hasCompileErrors = true
       let annotations: Array<Annotation> = []
-          
+
       if (e.name === 'CompositeParserException') {
         annotations = this.buildAnnotionsFromParserError(e)
       } else if (e.name === 'FeatureCreationError') {
         annotations = this.buildAnnotionFromFeatureCreationError(e)
-      } else 
-      {
+      } else {
         let currentRowPosition = (<any>this.editor.getCursorPosition()).row
-         annotations = this.buildAnnotionsFromGenericError(e,currentRowPosition)
+        annotations = this.buildAnnotionsFromGenericError(e, currentRowPosition)
       }
-      
+
       this.editor.addAnnotations(annotations)
-   
-   }
+
+    }
 
   }
 
@@ -150,21 +167,25 @@ export class FeatureEditor implements OnInit, AfterViewInit {
     detachedFeature.setTestSuiteName(this.testsuitename)
 
     if (this.createMode) {
-      //Create file for the first time
+      //Create file for the first time in synch mode
       this.fileSystem.createFile(this.filepath)
-      this.createMode = false
-      this.events.publish("feature:create", detachedFeature)
+
     }
 
     if (this.storedFeature)
       detachedFeature.setRevision(this.storedFeature.getRevision())
-   
+
     this.featureService.store(detachedFeature, this.filepath, this.text, (feature: Feature) => {
       console.log('Feature [' + feature.getId() + ',' + feature.getFileInfo().getFilename() + '] saved ');
       this.storedFeature = feature
       this.dirty = false
+      if (this.createMode) {
+        this.createMode = false
+        this.events.publish("feature:create",  this.storedFeature)
+      }
+
     })
-   
+
 
   }
 
@@ -202,7 +223,7 @@ export class FeatureEditor implements OnInit, AfterViewInit {
 
   }
 
-private  buildAnnotionsFromParserError(gherkinErrors): Array<Annotation> {
+  private buildAnnotionsFromParserError(gherkinErrors): Array<Annotation> {
     let annotations: Array<Annotation> = []
     gherkinErrors.errors.forEach(error => {
       annotations.push({
@@ -215,7 +236,7 @@ private  buildAnnotionsFromParserError(gherkinErrors): Array<Annotation> {
     return annotations
   }
 
-private buildAnnotionFromFeatureCreationError(featureError: FeatureCreationError): Array<Annotation> {
+  private buildAnnotionFromFeatureCreationError(featureError: FeatureCreationError): Array<Annotation> {
     let annotations: Array<Annotation> = []
 
     annotations.push({
@@ -227,7 +248,7 @@ private buildAnnotionFromFeatureCreationError(featureError: FeatureCreationError
     return annotations
   }
 
-  private  buildAnnotionsFromGenericError(error : Error, row:number ): Array<Annotation> {
+  private buildAnnotionsFromGenericError(error: Error, row: number): Array<Annotation> {
     let annotations: Array<Annotation> = []
 
     annotations.push({
