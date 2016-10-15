@@ -51,7 +51,6 @@ export class ScenarioTab implements AsyncExecutionListener {
     featureService: FeatureServiceImpl, private toastController: ToastController) {
 
     this.feature = <Feature>this.navParams.data
-
     this.featureService = featureService
     this.settingsService = settingsService
     this.tcmService = injector.get(JiraTCM)

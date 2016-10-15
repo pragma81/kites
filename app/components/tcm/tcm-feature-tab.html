@@ -1,9 +1,17 @@
 <ion-content>
     <ion-card>
-        <ion-card-header *ngIf="!feature.isTCMSynched()" style="background-color : #E3F2FD;">
+        <!--ion-card-header *ngIf="!feature.isTCMSynched()" style="background-color : #E3F2FD;">
             <ion-icon name="alert"></ion-icon>
             It seems this is the first time you link this feature to {{tcmSettings.TcmName}}. Please fill below with the feature info
             id
+        </ion-card-header-->
+
+        <ion-card-header *ngIf="testCasesWarning" style="background-color : lightsalmon;">
+            <ion-icon name="alert"></ion-icon>
+            It seems that current feature scenarios number
+            <ion-badge>{{feature.getScenarios().length}}</ion-badge> differ from tcm test cases number
+            <ion-badge>{{featureTCM.TestCases.length}}</ion-badge>
+
         </ion-card-header>
 
         <ion-card-content>
@@ -53,7 +61,8 @@
                         <ion-col width-50>
                             <p style="font-size : 1.3rem;"><strong>Created</strong> {{featureTCM.CreationTime}}</p>
                             <p style="font-size : 1.3rem;"><strong>Updated</strong> {{featureTCM.UpdateTime}}</p>
-                            <p style="font-size : 1.3rem;"><strong>TestCases</strong> <ion-badge>{{featureTCM.TestCases.length}}</ion-badge>
+                            <p style="font-size : 1.3rem;"><strong>TestCases</strong>
+                                <ion-badge>{{featureTCM.TestCases.length}}</ion-badge>
                             </p>
                         </ion-col>
                     </ion-row>
@@ -66,11 +75,11 @@
         </ion-card-content>
     </ion-card>
     <ion-grid>
-                    <ion-row>
-                        <ion-col offset-33>
-    <button ion-button  (click)="linkFeature()" *ngIf="featureTCM && !isSearching" >
+        <ion-row>
+            <ion-col offset-33>
+                <button ion-button (click)="linkFeature()" *ngIf="featureTCM && !isSearching">
     <ion-icon ios="ios-link" md="md-link"></ion-icon><span style="font-size : 1.3rem; "> Link  <span style="font-size : 1.4rem; color:cyan">{{featureTCM.Id}}</span> to feature file</span ></button>
-                        </ion-col>
-                    </ion-row>
+            </ion-col>
+        </ion-row>
     </ion-grid>
 </ion-content>

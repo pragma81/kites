@@ -25,6 +25,7 @@ export class FeatureTab {
   private isSearching: boolean = false
   private errorMessage = 'please enter a valid value'
   private showDetail = false
+  private testCasesWarning = false
 
   private tcmSearchForm: FormGroup;
    @Output() featureLinked = new EventEmitter();
@@ -48,7 +49,11 @@ export class FeatureTab {
     if (this.tcmId)
       this.tcmService.findFeature(this.tcmId)
       .subscribe(
-      featureTCM => { this.featureTCM = featureTCM }, 
+      featureTCM => { 
+        this.featureTCM = featureTCM 
+         if(featureTCM.TestCases.length != this.feature.getScenarios().length)
+          this.testCasesWarning = true
+    }, 
       error => {this.isSearching = false }
       
       )
@@ -64,6 +69,8 @@ export class FeatureTab {
       .subscribe(featureTCM => {
         this.featureTCM = featureTCM
         this.isSearching = false
+        if(featureTCM.TestCases.length != this.feature.getScenarios().length)
+          this.testCasesWarning = true
       },
       error => {
         this.isSearching = false 

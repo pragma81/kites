@@ -87,7 +87,7 @@ export class Feature {
             let errorDetail = new ErrorDetail("Feature is not well formed",
                 "No scenarios found",
                 Severity.blocker);
-            errorDetail.setResolutionHint("Add Scenario: ---- Given:--- When--- Then---- in your feature file")
+            errorDetail.setResolutionHint("Add Scenario: ---- Given:--- When:--- Then:---- in your feature file")
             let featureError = new FeatureCreationError("Feature [" + this.name + "] has no scenarios", new Error(), errorDetail)
             featureError.Row = featureAstAny.feature.location.line - 1
             throw featureError

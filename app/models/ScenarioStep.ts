@@ -1,5 +1,7 @@
-import {Injectable} from '@angular/core'
-import {StepDataTable} from './StepDataTable'
+import {Injectable} from '@angular/core';
+import {StepDataTable} from './StepDataTable';
+import {ErrorDetail, Severity} from '../error/ErrorDetail';
+import {FeatureCreationError} from '../error/FeatureCreationError';
 
 @Injectable()
 export class ScenarioStep {
@@ -9,6 +11,7 @@ export class ScenarioStep {
 
     constructor(scenarioStepAst: Object) {
         let scenarioStepAstAny: any = scenarioStepAst;
+        this.validateStep(scenarioStepAstAny)
         this.text = scenarioStepAstAny.text;
         this.keyword = scenarioStepAstAny.keyword;
         if (scenarioStepAstAny.argument) {
@@ -63,4 +66,20 @@ export class ScenarioStep {
     public isBut(): boolean {
         return this.keyword === 'But';
     }
+
+
+     private validateStep(step: any) {
+        let errorDetail = new ErrorDetail("Step is not well formed",
+            "Step text is empty.",
+            Severity.blocker);
+        let scenarioError = new FeatureCreationError("Step is not well formed", new Error(), errorDetail)
+
+        if (step.text === undefined 
+            || step.text.length === 0) {
+            errorDetail.setResolutionHint("Add some step text")
+            scenarioError.Row = step.location.line - 1
+            throw scenarioError
+        }
+
+        }
 }

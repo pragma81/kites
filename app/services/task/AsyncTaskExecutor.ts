@@ -29,6 +29,8 @@ export class AsyncTaskExecutor {
 	private taskResultActionBuilders: Array<TaskResultActionBuilder> = []
 
 	constructor(title: string, taskHandler: AsyncTaskHandler) {
+		this.tasksRequest.length = 0
+		this.tasksExecution.length = 0
 		this.title = title;
 		this.asyncTaskHandler = taskHandler;
 		this.status = ExecutionStatus.compiling;

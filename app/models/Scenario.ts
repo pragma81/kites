@@ -1,6 +1,8 @@
-import {Injectable} from '@angular/core'
-import {ScenarioExamples} from './ScenarioExamples'
-import {ScenarioStep} from './ScenarioStep'
+import {Injectable} from '@angular/core';
+import {ScenarioExamples} from './ScenarioExamples';
+import {ScenarioStep} from './ScenarioStep';
+import {FeatureCreationError} from '../error/FeatureCreationError';
+import {ErrorDetail, Severity} from '../error/ErrorDetail';
 
 export enum TestLevel {
     Smoke,
@@ -26,6 +28,7 @@ export class Scenario {
     constructor(scenarioAst: Object) {
         this.rawData = scenarioAst;
         let scenarioAstAny: any = scenarioAst;
+        this.validateScenario (scenarioAstAny)
         this.summary = scenarioAstAny.name;
         this.scenarioOutline = scenarioAstAny.type === 'ScenarioOutline';
         this.description = scenarioAstAny.description;
@@ -175,14 +178,14 @@ export class Scenario {
 
         let tcmid = scenarioTags.find(function (value, index, array) {
             let valueAny: any = value;
-            let tagSplit = valueAny.name.split(':');
+            let tagSplit = valueAny.name.split('=');
             return tagSplit[0] === '@jiraid'
 
         })
         if (tcmid === undefined)
             return undefined;
         let tcmidAny: any = tcmid;
-        this.tcmid = tcmidAny.name.split(':')[1];
+        this.tcmid = tcmidAny.name.split('=')[1];
     }
 
     private buildExamples(examplesAst: Object[]) {
@@ -203,6 +206,34 @@ export class Scenario {
        })
        
     }
+
+     private validateScenario(scenario: any) {
+        let errorDetail = new ErrorDetail("Scenario is not well formed",
+            "Scenario is not well formed.",
+            Severity.blocker);
+        let scenarioError = new FeatureCreationError("Scenario is not well formed", new Error(), errorDetail)
+
+        if (scenario.name === undefined 
+            || scenario.name.length === 0) {
+            errorDetail.setDescription("Summary is empty.")
+            errorDetail.setResolutionHint("Add scenario summary.")
+            scenarioError.Row = scenario.location.line - 1
+            throw scenarioError
+        }
+
+        if (scenario.steps === undefined 
+        || scenario.steps.length ===0) {
+            errorDetail.setDescription("Scenario steps are missing.")
+            errorDetail.setResolutionHint(" Add Given, When, Then statements")
+            scenarioError.Row = scenario.location.line - 1
+            throw scenarioError
+        }
+
+        }
+
+       
+
+    
 
 }
 
