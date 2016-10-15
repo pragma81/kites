@@ -113,6 +113,9 @@ export class Editor implements AfterContentInit{
         this.editor.getSession().clearAnnotations()
     }
 
+    public getCursorPosition(): Object{
+        return this.editor.getCursorPosition()
+    }
     set options(value) {
         this.editor.setOptions(value || {});
     }

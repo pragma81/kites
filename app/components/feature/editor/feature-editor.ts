@@ -120,18 +120,21 @@ export class FeatureEditor implements OnInit, AfterViewInit {
       this.hasCompileErrors = false
     } catch (e) {
       this.hasCompileErrors = true
-      if (e.name !== 'CompositeParserException' && e.name !== 'FeatureCreationError') {
-        throw e; // something unexpected happened other than a parse error
-      }
-
       let annotations: Array<Annotation> = []
-      if (e.name === 'CompositeParserException')
+          
+      if (e.name === 'CompositeParserException') {
         annotations = this.buildAnnotionsFromParserError(e)
-      if (e.name === 'FeatureCreationError')
+      } else if (e.name === 'FeatureCreationError') {
         annotations = this.buildAnnotionFromFeatureCreationError(e)
-
+      } else 
+      {
+        let currentRowPosition = (<any>this.editor.getCursorPosition()).row
+         annotations = this.buildAnnotionsFromGenericError(e,currentRowPosition)
+      }
+      
       this.editor.addAnnotations(annotations)
-    }
+   
+   }
 
   }
 
@@ -163,31 +166,6 @@ export class FeatureEditor implements OnInit, AfterViewInit {
     })
    
 
-  }
-
-  buildAnnotionsFromParserError(gherkinErrors): Array<Annotation> {
-    let annotations: Array<Annotation> = []
-    gherkinErrors.errors.forEach(error => {
-      annotations.push({
-        row: error.location.line - 1, // must be 0 based
-        column: error.location.column,  // must be 0 based
-        text: error.message,  // text to show in tooltip
-        type: "error" //"error"|"warning"|"info"
-      })
-    })
-    return annotations
-  }
-
-  buildAnnotionFromFeatureCreationError(featureError: FeatureCreationError): Array<Annotation> {
-    let annotations: Array<Annotation> = []
-
-    annotations.push({
-      row: featureError.Row,
-      column: featureError.Column,
-      text: featureError.getDetail().getDescription() + " " + featureError.getDetail().getResolutionHint(),
-      type: "error"
-    })
-    return annotations
   }
 
   exit($event) {
@@ -224,4 +202,40 @@ export class FeatureEditor implements OnInit, AfterViewInit {
 
   }
 
+private  buildAnnotionsFromParserError(gherkinErrors): Array<Annotation> {
+    let annotations: Array<Annotation> = []
+    gherkinErrors.errors.forEach(error => {
+      annotations.push({
+        row: error.location.line - 1, // must be 0 based
+        column: error.location.column,  // must be 0 based
+        text: error.message,  // text to show in tooltip
+        type: "error" //"error"|"warning"|"info"
+      })
+    })
+    return annotations
+  }
+
+private buildAnnotionFromFeatureCreationError(featureError: FeatureCreationError): Array<Annotation> {
+    let annotations: Array<Annotation> = []
+
+    annotations.push({
+      row: featureError.Row,
+      column: featureError.Column,
+      text: featureError.getDetail().getDescription() + " " + featureError.getDetail().getResolutionHint(),
+      type: "error"
+    })
+    return annotations
+  }
+
+  private  buildAnnotionsFromGenericError(error : Error, row:number ): Array<Annotation> {
+    let annotations: Array<Annotation> = []
+
+    annotations.push({
+      row: row,
+      column: 0,
+      text: error.message,
+      type: "error"
+    })
+    return annotations
+  }
 }
