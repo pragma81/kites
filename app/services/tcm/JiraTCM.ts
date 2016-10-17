@@ -174,7 +174,8 @@ export class JiraTCM implements TCMService {
 {{{description}}}
 {{#steps}}{color:#770088}{{keyword}}{color}{{{text}}}{{#dataTable}}
 {{#header}} | {color:blue}{{{.}}}{color} {{/header}} {{#header.length}}|{{/header.length}}
-{{#values}}{{#.}}| {color:#FF4500}{{{.}}}{color} {{/.}} |{{/values}}{{/dataTable}}
+{{#values}}{{#.}}| {color:#FF4500}{{{.}}}{color} {{/.}} |
+{{/values}}{{/dataTable}}
 {{/steps}}{{/background}}
 
 {{#scenario}}{{#tags}}{color:green}{{{.}}}{color} {{/tags}}
@@ -182,7 +183,8 @@ export class JiraTCM implements TCMService {
 {{{description}}}
 {{#steps}}{color:#770088}{{keyword}}{color}{{{text}}}{{#dataTable}}
 {{#header}} | {color:blue}{{{.}}}{color} {{/header}} {{#header.length}}|{{/header.length}}
-{{#values}}{{#.}}| {color:#FF4500}{{{.}}}{color} {{/.}} |{{/values}}{{/dataTable}}
+{{#values}}{{#.}}| {color:#FF4500}{{{.}}}{color} {{/.}} |
+{{/values}}{{/dataTable}}
 {{/steps}}
 
 {{#examples.length}}
