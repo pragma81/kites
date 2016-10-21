@@ -103,6 +103,18 @@ export class JiraTCM implements TCMService {
         }
         console.log(JSON.stringify(createRequest))
 
+          let linkRequest = {
+                        "type": {
+                            "name": this.tcmSettings.TestCaseTypeName
+                        },
+                        "inwardIssue": {
+                            "key": ""
+                        },
+                        "outwardIssue": {
+                            "key": featureTCMId
+                        }
+                    }
+
         let newTestCaseStream: Observable<TestCase> = Observable.create(observer => {
             this.http.post(issueCreateUrl, createRequest, this.requestOptions).subscribe(
 
@@ -116,20 +128,10 @@ export class JiraTCM implements TCMService {
                     testCase.CreationTime = new Date()
                     testCase.UpdateTime = new Date()
 
-
-                    let linkRequest = {
-                        "type": {
-                            "name": "Tests"
-                        },
-                        "inwardIssue": {
-                            "key": issueJson.key
-                        },
-                        "outwardIssue": {
-                            "key": featureTCMId
-                        }
-                    }
+                    linkRequest.inwardIssue.key = issueJson.key
 
                     console.log(JSON.stringify(linkRequest))
+                    
                     this.http.post(issueLinkUrl, linkRequest, this.requestOptions).subscribe(
                         response => {
 

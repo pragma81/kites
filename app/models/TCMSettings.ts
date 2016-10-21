@@ -37,8 +37,8 @@ export class TCMSettings {
 	 this.featureTestCaseRelationshipType = config.get('tcm.jira.featureTestcaseRelationshipType')
 	 this.testCaseFeatureRelationshipType = config.get('tcm.jira.testcaseFeatureRelationshipType')
 	 this.testCaseTypeId = config.get('tcm.jira.testcaseTypeid')
-	 this.testCaseTypeName = config.get('tcm.jira.testcaseName')
-	 this.featureType = config.get('tcm.featuretype')
+	 this.testCaseTypeName = config.get('tcm.jira.testcaseTypename')
+	 this.featureType = config.get('tcm.featuretype') 
 
 	/* var properties = nodeRequire('electron').ipcRenderer.on('config', config => {
 this.properties = config});*/
