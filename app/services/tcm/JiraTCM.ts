@@ -103,17 +103,17 @@ export class JiraTCM implements TCMService {
         }
         console.log(JSON.stringify(createRequest))
 
-          let linkRequest = {
-                        "type": {
-                            "name": this.tcmSettings.TestCaseTypeName
-                        },
-                        "inwardIssue": {
-                            "key": ""
-                        },
-                        "outwardIssue": {
-                            "key": featureTCMId
-                        }
-                    }
+        let linkRequest = {
+            "type": {
+                "name": this.tcmSettings.TestCaseTypeName
+            },
+            "inwardIssue": {
+                "key": ""
+            },
+            "outwardIssue": {
+                "key": featureTCMId
+            }
+        }
 
         let newTestCaseStream: Observable<TestCase> = Observable.create(observer => {
             this.http.post(issueCreateUrl, createRequest, this.requestOptions).subscribe(
@@ -131,7 +131,7 @@ export class JiraTCM implements TCMService {
                     linkRequest.inwardIssue.key = issueJson.key
 
                     console.log(JSON.stringify(linkRequest))
-                    
+
                     this.http.post(issueLinkUrl, linkRequest, this.requestOptions).subscribe(
                         response => {
 
@@ -173,31 +173,31 @@ export class JiraTCM implements TCMService {
     private formatJiraDescription(scenario: Scenario, feature: Feature): string {
         let template =
             `{{#background}}{color:#770088}Background: {color}: {{{summary}}}
-{{{description}}}
-{{#steps}}{color:#770088}{{keyword}}{color}{{{text}}}{{#dataTable}}
-{{#header}} | {color:blue}{{{.}}}{color} {{/header}} {{#header.length}}|{{/header.length}}
-{{#values}}{{#.}}| {color:#FF4500}{{{.}}}{color} {{/.}} |
-{{/values}}{{/dataTable}}
-{{/steps}}{{/background}}
+            {{{description}}}
+            {{#steps}}{color:#770088}{{keyword}}{color}{{{text}}}{{#dataTable}}
+            {{#header}} | {color:blue}{{{.}}}{color} {{/header}} {{#header.length}}|{{/header.length}}
+            {{#values}}{{#.}}| {color:#FF4500}{{{.}}}{color} {{/.}} |
+            {{/values}}{{/dataTable}}
+            {{/steps}}{{/background}}
 
-{{#scenario}}{{#tags}}{color:green}{{{.}}}{color} {{/tags}}
-{color:#770088}{{keyword}}{color}: {{{summary}}}
-{{{description}}}
-{{#steps}}{color:#770088}{{keyword}}{color}{{{text}}}{{#dataTable}}
-{{#header}} | {color:blue}{{{.}}}{color} {{/header}} {{#header.length}}|{{/header.length}}
-{{#values}}{{#.}}| {color:#FF4500}{{{.}}}{color} {{/.}} |
-{{/values}}{{/dataTable}}
-{{/steps}}
+            {{#scenario}}{{#tags}}{color:green}{{{.}}}{color} {{/tags}}
+            {color:#770088}{{keyword}}{color}: {{{summary}}}
+            {{{description}}}
+            {{#steps}}{color:#770088}{{keyword}}{color}{{{text}}}{{#dataTable}}
+            {{#header}} | {color:blue}{{{.}}}{color} {{/header}} {{#header.length}}|{{/header.length}}
+            {{#values}}{{#.}}| {color:#FF4500}{{{.}}}{color} {{/.}} |
+            {{/values}}{{/dataTable}}
+            {{/steps}}
 
-{{#examples.length}}
-{color:#770088}Examples:{color}
-{{#examples}}
-{{#header}} | {color:blue}{{{.}}}{color}{{/header}} |
-{{#values}}{{#.}}| {color:#FF4500}{{{.}}}{color} {{/.}} |
-{{/values}}
-{{/examples}}
-{{/examples.length}}
-{{/scenario}}`
+            {{#examples.length}}
+            {color:#770088}Examples:{color}
+            {{#examples}}
+            {{#header}} | {color:blue}{{{.}}}{color}{{/header}} |
+            {{#values}}{{#.}}| {color:#FF4500}{{{.}}}{color} {{/.}} |
+            {{/values}}
+            {{/examples}}
+            {{/examples.length}}
+            {{/scenario}}`
         let model = { scenario: scenario, background: feature.getBackground() }
         var rendered = Mustache.render(template, model);
         return rendered
