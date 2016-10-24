@@ -11,4 +11,4 @@ Thumbs.db
 packaging/app-build
 packaging/mac/dist
 packaging/win/dist
-.vscode
+.vscode/
