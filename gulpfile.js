@@ -207,8 +207,8 @@ gulp.task('app-win', ['app-clean'], function (done) {
     arch: 'ia32',
     out: 'packaging/win/dist',
     overwrite: true,
-    name: 'kites'
-    //icon: 'resources/kites-icon.ico'
+    name: 'kites',
+    icon: 'resources/kites-icon.ico'
     //asar: true
   }
   runSequence(

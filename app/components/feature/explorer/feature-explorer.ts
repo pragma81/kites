@@ -57,12 +57,14 @@ export class FeatureExplorer {
   }
 
   loadByTestSuiteName(testSuiteName: string): void {
-    this.featuresInfo.length = 0
-    this.unfilteredFeaturesInfo.length = 0
+   
     console.log("load features for test suite:" + testSuiteName);
 
     this.featureService.getByTestSuite(testSuiteName,
       (features: Array<Feature>) => {
+         this.featuresInfo.length = 0
+        this.unfilteredFeaturesInfo.length = 0
+
         features.forEach(feature => {
           console.log("Feature [" + feature.getId() + "] found")
           let featureInfo = new FeatureInfo()
