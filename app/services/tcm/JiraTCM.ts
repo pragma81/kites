@@ -174,7 +174,8 @@ export class JiraTCM implements TCMService {
         let template =
             `{{#background}}{color:#770088}Background: {color}: {{{summary}}}
             {{{description}}}
-            {{#steps}}{color:#770088}{{keyword}}{color}{{{text}}}{{#dataTable}}
+            {{#steps}}{color:#770088}{{keyword}}{color}{{{text}}}
+            {{#dataTable}}
             {{#header}} | {color:blue}{{{.}}}{color} {{/header}} {{#header.length}}|{{/header.length}}
             {{#values}}{{#.}}| {color:#FF4500}{{{.}}}{color} {{/.}} |
             {{/values}}{{/dataTable}}
@@ -183,7 +184,8 @@ export class JiraTCM implements TCMService {
             {{#scenario}}{{#tags}}{color:green}{{{.}}}{color} {{/tags}}
             {color:#770088}{{keyword}}{color}: {{{summary}}}
             {{{description}}}
-            {{#steps}}{color:#770088}{{keyword}}{color}{{{text}}}{{#dataTable}}
+            {{#steps}}{color:#770088}{{keyword}}{color}{{{text}}}
+            {{#dataTable}}
             {{#header}} | {color:blue}{{{.}}}{color} {{/header}} {{#header.length}}|{{/header.length}}
             {{#values}}{{#.}}| {color:#FF4500}{{{.}}}{color} {{/.}} |
             {{/values}}{{/dataTable}}
