@@ -11,6 +11,7 @@
       <ion-row>
         <ion-col offset-25>
           <input type="file" name="file" id="file" (change)="onFileSelected($event)" />
+          <p *ngIf="!isValidated"><span class="import-error"> {{importErrorMessage}}</span></p>
         </ion-col>
       </ion-row>
 
@@ -25,10 +26,10 @@
   <ion-footer class="modal-footer">
 
     <ion-buttons end>
-      <button *ngIf="isImport" primary (click)="import()" [disabled]="!fileSelected">
+      <button *ngIf="isImport" primary (click)="import()" [disabled]="!fileSelected || !isValidated">
         Import
       </button>
-       <button *ngIf="isProcessed || isValidated" primary (click)="close()">
+       <button *ngIf="isProcessed " primary (click)="close()">
                 Close
       </button>
       <button clear (click)="checkBackAction()">

@@ -48,7 +48,8 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
   private isImport: boolean = true
   private isCheckSuccess: boolean
   private isProcessed: boolean = false
-  private isValidate: boolean = false
+  private isValidated: boolean = false
+  private importErrorMessage : string = ""
   
   @ViewChild('wizard') slider: Slides;
 
@@ -67,10 +68,18 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
   }
 
   onFileSelected(event) {
+    this.isValidated = true
+     this.importErrorMessage = ""
     this.fileSelected = true
     this.projectFilePath = event.srcElement.files[0].path;
     this.projectFileName = event.srcElement.files[0].name;
 
+    this.testSuiteName = this.testSuiteService.getTestSuiteName(this.projectFilePath)
+
+    this.testSuiteService.exists(this.testSuiteName,this.projectFilePath,(testsuite)=>{
+      this.isValidated = false
+      this.importErrorMessage = "test suite ["+this.testSuiteName+"] already exists"
+    },()=>{})
   }
 
  private importTestSuite() {
@@ -195,7 +204,7 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
 
   beforeAsyncCheck(execution: AsyncTaskExecutor): void { }
   postAsyncCheck(execution: AsyncTaskExecutor): void { 
-      this.isValidate = true
+      this.isValidated = true
     if (execution.getResult() === ExecutionResult.success)
       this.isCheckSuccess = true
     else

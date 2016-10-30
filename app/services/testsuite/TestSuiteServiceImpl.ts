@@ -61,12 +61,13 @@ export class TestSuiteServiceImpl implements TestSuiteService {
   folderExists(testsuiteFolderPath: string): boolean {
 
     return this.fileSystem.exists(testsuiteFolderPath)
-  }
+  }s
 
-  exists(testSuiteName: string, testSuiteFolderPath: string): boolean {
-    if (this.folderExists(testSuiteFolderPath))
-      return true
-
+  exists(testSuiteName: string, testSuiteFolderPath: string, existscallback:(testsuite:TestSuite)=>void, notexistscallback:()=>void): void {
+  
+    this.testSuiteRepository.getByName(testSuiteName,testsuite =>{
+      existscallback(testsuite)
+    })
 
   }
 

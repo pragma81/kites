@@ -39,7 +39,7 @@ So that I can create a patient
   #     Then rx-ms system alerts that have no Clinical Information
   
   # scenario da US update patient clinical info
-  #@jiraid:RXRN-1145 @acceptance @auto
+  #@jiraid=RXRN-1145 @acceptance @auto
   #  #RXAPPD-1053 Register Patient - Delete all the Clinical information associated to a patient and confirm
   #  Scenario: Register Patient - Verify that, when the User selects 'Add/Update Allergies & Health Conditions' from the "Patient profile" page 
   #  of an exsisting patient and deletes all the existing Clinical Informations, the System alerts the user they have no Clinical Information 
@@ -53,7 +53,7 @@ So that I can create a patient
   #     Then rx-ms system alerts that have no Clinical Information
   
   # In attesa di info dal team responsabile della feature, incongruenza Then
-  #    @jiraid:RXRN-1146 @acceptance @auto
+  #    @jiraid=RXRN-1146 @acceptance @auto
   #	#RXAPPD-1056 Register Patient - Remove Common Health Conditions from 'Health Conditions' section
   #	Scenario: Register Patient - Verify that, in the 'Allergies & Health Conditions' page, the system allows to remove the Common Health Conditions 
   # from Health Conditions section  
@@ -110,7 +110,7 @@ So that I can create a patient
   
   # In attesa di info dal team responsabile della feature, incongruenza, o si modifica il Given, specificando che esiste già una Health Condition
   # o aggiungere uno step che indichi l'aggiunta di una Health Condition
-  @jiraid:RXRN-1151 @acceptance @auto
+  @jiraid=RXRN-1151 @acceptance @auto
   #RXAPPD-1064 Register Patient - Remove Common Allergy and related reactions from 'Allergies ' section
   Scenario: Register Patient - Verify that, in the 'Allergies & Health Conditions' page, the system allows to remove the Common Allergies and
   related reactions from 'Allergies' section

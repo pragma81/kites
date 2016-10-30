@@ -8,7 +8,7 @@ export interface TestSuiteService {
     getAll(callback:(testsuite:Array<TestSuite>)=> void): void;
     refresh();
     folderExists(testsuiteFolderPath:string):boolean
-    exists(testSuiteName: string, testSuiteFolderPath:string, callback:()=>void):boolean
+    exists(testSuiteName: string, testSuiteFolderPath:string, existscallback:(testsuite:TestSuite)=>void, notexistscallback:()=>void):void
     get(testSuiteName:string): TestSuite;
     create(testSuiteName: string, testSuiteFolderPath:string, executionRuntimeType: ExecutionRuntime):void;
     save(testsuite: TestSuite,callback:(testsuite:TestSuite)=> void): void;

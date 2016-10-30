@@ -1,4 +1,4 @@
-@featureid:US0150-002 @jiraid:RXRN-1098 @process:patientdatamanagement @ui
+@featureid=US0150-002 @jiraid=RXRN-1098 @process:patientdatamanagement @ui
 Feature: US0150-002 Add Patient Demographic Information
 
 As a pharmacy team member
@@ -11,7 +11,7 @@ So that I can create a patient
       | username | password | 
       |          |          | 
   
-  @smoke @auto  @jiraid:RXRN-1211
+  @smoke @auto  @jiraid=RXRN-1211
   Scenario: Navigation to Add Patient Demographic page 
   This is the generic scenario about accesibility of patient demographic page 
      When The pharmacy team member is in the home page (dashboard) 
@@ -22,7 +22,7 @@ So that I can create a patient
       And The pharmacy team member navigates to demopgraphic patient page
      Then the demopgraphic patient page is shown with all required fields
   
-   @basic @auto  @jiraid:RXRN-1136
+   @basic @auto  @jiraid=RXRN-1136
   Scenario: Register Patient - Verify that the system allows the pharmacy team member to create a Patient with all mandatory fields 
     Given a not existing Patient with
       | name     | surname | dob        | phone       | gender | 
@@ -35,7 +35,7 @@ So that I can create a patient
      Then rx-ms system  will confirm the operation with a success message
       And the patient data are stored correctly
   
-  @acceptance @auto @jiraid:RXRN-1138
+  @acceptance @auto @jiraid=RXRN-1138
   Scenario Outline: Register Patient - Verify that the system doesn't allows the pharmacy team member to create a Patient without all mandatory fields filled
     Given a not existing Patient with
       | name     | surname | dob        | phone       | 
