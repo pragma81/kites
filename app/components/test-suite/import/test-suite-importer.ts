@@ -1,26 +1,26 @@
-import {Injectable, Component, ViewChild} from '@angular/core';
-import {Slides, NavController, ViewController, Events} from 'ionic-angular';
-import {TaskReporter, ReportCallback, TaskReport} from '../../task/task-reporter';
-import {TestSuiteServiceImpl} from '../../../services/testsuite/TestSuiteServiceImpl';
-import {TestSuiteService} from '../../../services/testsuite/TestSuiteService';
-import {FileSystem} from '../../../services/storage/FileSystem';
-import {Feature} from '../../../models/Feature';
-import {AsyncTaskHandler, AsyncTaskExecutor, AsyncExecutionListener} from '../../../services/task/AsyncTaskExecutor';
-import {TaskInfo, ExecutionResult} from '../../../services/task/TaskInfo';
-import {Metric} from '../../../models/Metric';
-import {FeatureService} from '../../../services/feature/FeatureService';
-import {TestSuite} from '../../../models/TestSuite';
-import {FeatureServiceImpl} from '../../../services/feature/FeatureServiceImpl';
-import {ErrorDetail, Severity} from '../../../error/ErrorDetail';
-import {ErrorWithDetails} from '../../../error/ErrorWithDetails';
-import {FeatureRepository} from '../../../repository/FeatureRepository';
-import {DashboardPage} from '../../dashboard/DashboardPage';
-import {SettingsServiceImpl} from '../../../services/settings/SettingsServiceImpl';
-import {GherkinService} from '../../../services/gherkin/GherkinService';
-import {TestSuiteRepository} from '../../../repository/TestSuiteRepository';
-import {AppConfig} from '../../../models/AppConfig';
-import {ExecutionRuntime} from '../../../services/automation/AutomationService'
-import { Observable}     from 'rxjs/Observable';
+import { Injectable, Component, ViewChild } from '@angular/core';
+import { Slides, NavController, ViewController, Events } from 'ionic-angular';
+import { TaskReporter, ReportCallback, TaskReport } from '../../task/task-reporter';
+import { TestSuiteServiceImpl } from '../../../services/testsuite/TestSuiteServiceImpl';
+import { TestSuiteService } from '../../../services/testsuite/TestSuiteService';
+import { FileSystem } from '../../../services/storage/FileSystem';
+import { Feature } from '../../../models/Feature';
+import { AsyncTaskHandler, AsyncTaskExecutor, AsyncExecutionListener } from '../../../services/task/AsyncTaskExecutor';
+import { TaskInfo, ExecutionResult } from '../../../services/task/TaskInfo';
+import { Metric } from '../../../models/Metric';
+import { FeatureService } from '../../../services/feature/FeatureService';
+import { TestSuite } from '../../../models/TestSuite';
+import { FeatureServiceImpl } from '../../../services/feature/FeatureServiceImpl';
+import { ErrorDetail, Severity } from '../../../error/ErrorDetail';
+import { ErrorWithDetails } from '../../../error/ErrorWithDetails';
+import { FeatureRepository } from '../../../repository/FeatureRepository';
+import { DashboardPage } from '../../dashboard/DashboardPage';
+import { SettingsServiceImpl } from '../../../services/settings/SettingsServiceImpl';
+import { GherkinService } from '../../../services/gherkin/GherkinService';
+import { TestSuiteRepository } from '../../../repository/TestSuiteRepository';
+import { AppConfig } from '../../../models/AppConfig';
+import { ExecutionRuntime } from '../../../services/automation/AutomationService'
+import { Observable } from 'rxjs/Observable';
 
 
 import 'rxjs/add/observable/from';
@@ -49,8 +49,8 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
   private isCheckSuccess: boolean
   private isProcessed: boolean = false
   private isValidated: boolean = false
-  private importErrorMessage : string = ""
-  
+  private importErrorMessage: string = ""
+
   @ViewChild('wizard') slider: Slides;
 
   @ViewChild(TaskReporter)
@@ -69,20 +69,20 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
 
   onFileSelected(event) {
     this.isValidated = true
-     this.importErrorMessage = ""
+    this.importErrorMessage = ""
     this.fileSelected = true
     this.projectFilePath = event.srcElement.files[0].path;
     this.projectFileName = event.srcElement.files[0].name;
 
     this.testSuiteName = this.testSuiteService.getTestSuiteName(this.projectFilePath)
 
-    this.testSuiteService.exists(this.testSuiteName,this.projectFilePath,(testsuite)=>{
+    this.testSuiteService.exists(this.testSuiteName, (testsuite) => {
       this.isValidated = false
-      this.importErrorMessage = "test suite ["+this.testSuiteName+"] already exists"
-    },()=>{})
+      this.importErrorMessage = "test suite [" + this.testSuiteName + "] already exists"
+    }, () => { })
   }
 
- private importTestSuite() {
+  private importTestSuite() {
 
     this.testSuiteName = this.testSuiteService.getTestSuiteName(this.projectFilePath)
 
@@ -112,11 +112,11 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
     this.isImport = true
   }
 
-  import(){
-     this.slider.slideNext()
-      this.importTestSuite()
-      this.isImport = false
-      this.headerDescription = "Import results are shown below"
+  import() {
+    this.slider.slideNext()
+    this.importTestSuite()
+    this.isImport = false
+    this.headerDescription = "Import results are shown below"
   }
 
   checkNextAction() {
@@ -132,7 +132,7 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
 
   close() {
     this.viewCtrl.dismiss().then(() => {
-     // this.events.publish('testsuite:update')
+      // this.events.publish('testsuite:update')
     })
   }
 
@@ -147,7 +147,7 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
     }
   }
 
-  check(taskInfo: TaskInfo): Observable<TaskInfo> {
+  check(context: any, taskInfo: TaskInfo): Observable<TaskInfo> {
     try {
       let featureFilePath = taskInfo.getInputHolder().filepath;
       let testsuitename = taskInfo.getInputHolder().testSuiteName
@@ -160,8 +160,21 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
       metrics.push(new Metric(feature.getAutoScenariosTotal().toString(), "Auto"));
       taskInfo.setMetrics(metrics);
 
-      taskInfo.setOutputHolder(feature);
-      taskInfo.setExecutionResult(ExecutionResult.success);
+      if (context[feature.getId()] === undefined) {
+       //No feature id duplicated
+        taskInfo.setOutputHolder(feature);
+        taskInfo.setExecutionResult(ExecutionResult.success);
+        context[feature.getId()] = 'placehoder'
+      } else {
+        //Feature id duplicated
+         taskInfo.setExecutionResult(ExecutionResult.error)
+         let name = 'Feature validation error'
+         let message = 'Feature with id ' + feature.getId()+ 'already exists'
+         let error = new ErrorDetail(name, message, Severity.blocker)
+          taskInfo.addErrorDetail(error);
+      }
+
+
     } catch (err) {
       taskInfo.setExecutionResult(ExecutionResult.error)
       if (err instanceof ErrorWithDetails)
@@ -176,7 +189,7 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
     arraySupport.push(taskInfo)
     return Observable.from(arraySupport)
   }
-  process(taskInfo: TaskInfo): Observable<TaskInfo> {
+  process(context: any, taskInfo: TaskInfo): Observable<TaskInfo> {
     let feature: Feature = <Feature>taskInfo.getOutputHolder()
     return Observable.create(observer => {
       this.featureService.save(feature, feature => {
@@ -202,9 +215,10 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
     })
   }
 
-  beforeAsyncCheck(execution: AsyncTaskExecutor): void { }
-  postAsyncCheck(execution: AsyncTaskExecutor): void { 
-      this.isValidated = true
+  beforeAsyncCheck(execution: AsyncTaskExecutor): void {
+  }
+  postAsyncCheck(execution: AsyncTaskExecutor): void {
+    this.isValidated = true
     if (execution.getResult() === ExecutionResult.success)
       this.isCheckSuccess = true
     else
@@ -227,7 +241,7 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
         testSuite.incrementUiTestCounter()
       }
     })
-    this.testSuiteService.save(testSuite,()=>{});
+    this.testSuiteService.save(testSuite, () => { });
 
   }
   postAsyncProcess(execution: AsyncTaskExecutor): void {

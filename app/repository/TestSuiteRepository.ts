@@ -12,7 +12,7 @@ export class TestSuiteRepository {
     private _db: any;
 
     constructor() {
-        this._db = new PouchDB('texui-testsuite');
+        this._db = new PouchDB('kites-testsuite');
 
         
     }
@@ -71,7 +71,7 @@ export class TestSuiteRepository {
 
     }
 
-public getByName(testSuiteName:string, callback: (testsuite: TestSuite) => void){
+public getByName(testSuiteName:string, callback: (testsuite: TestSuite) => void, errorcallback: (error: Error)=>void){
 
     let testSuiteMapFunction = function(doc){ emit(doc.name)}
     let pouchDbQueryOptions = {key:testSuiteName,include_docs: true}
@@ -87,6 +87,7 @@ public getByName(testSuiteName:string, callback: (testsuite: TestSuite) => void)
             callback(testSuite)
         }).catch(err => {
             console.log(err);
+            errorcallback(err)
         });
 }
 

@@ -55,7 +55,7 @@ export class TestSuiteServiceImpl implements TestSuiteService {
       }
    
     this.save(testsuite,()=>{});
-    })
+    }, error =>{})
   }
 
   folderExists(testsuiteFolderPath: string): boolean {
@@ -63,11 +63,12 @@ export class TestSuiteServiceImpl implements TestSuiteService {
     return this.fileSystem.exists(testsuiteFolderPath)
   }s
 
-  exists(testSuiteName: string, testSuiteFolderPath: string, existscallback:(testsuite:TestSuite)=>void, notexistscallback:()=>void): void {
+  exists(testSuiteName: string, existscallback:(testsuite:TestSuite)=>void, notexistscallback:(error :Error)=>void): void {
   
-    this.testSuiteRepository.getByName(testSuiteName,testsuite =>{
-      existscallback(testsuite)
-    })
+    this.testSuiteRepository.getByName(testSuiteName,
+      existscallback,
+      notexistscallback
+    )
 
   }
 

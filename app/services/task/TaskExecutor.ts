@@ -310,11 +310,6 @@ export interface TaskHandler {
     process(taskInfo: TaskInfo): TaskInfo
 }
 
-export interface AsyncTaskHandler {
-    check(taskInfo: TaskInfo): Observable<TaskInfo>
-    process(taskInfo: TaskInfo): Observable<TaskInfo>
-}
-
 export interface TaskResultActionBuilder {
 	build(taskinfo: TaskInfo): TaskResultAction
 }

@@ -12,12 +12,14 @@
                 <ion-input #name [formControl]="testSuiteForm.controls.name" type="text" required (keyup)="onTestSuiteNameChanged()" (keyup.enter)="goToNext()"></ion-input>
                 
             </ion-item>
-                <p *ngIf="!testSuiteForm.controls.name.valid && (testSuiteForm.controls.name.touched || testSuiteForm.controls.name.dirty)" style="color:red">test suite name is too short</p>
+                <p *ngIf="testSuiteForm.controls.name.hasError('required') && (testSuiteForm.controls.name.touched || testSuiteForm.controls.name.dirty)" style="color:red">test suite name is mandatory</p>
+                <p *ngIf="testSuiteForm.controls.name.hasError('minlength') && (testSuiteForm.controls.name.touched || testSuiteForm.controls.name.dirty)" style="color:red">test suite name is too short</p>
+                <p *ngIf="testSuiteForm.controls.name.hasError('validateTestSuiteName') && (testSuiteForm.controls.name.touched || testSuiteForm.controls.name.dirty)" style="color:red">test suite name already exists</p>
             <ion-item>
                 <ion-label floating>Workspace</ion-label>
                 <ion-input #workspace [formControl]="testSuiteForm.controls.workspace" type="text" required readonly></ion-input>
             </ion-item>
-            <p *ngIf="testSuiteForm.controls['name'].errors && testSuiteForm.controls['name'].errors.validateTestSuiteName && (testSuiteForm.controls.name.touched || testSuiteForm.controls.name.dirty)" style="color:red">test suite name already exists</p>
+            <!--p *ngIf="testSuiteForm.controls['name'].errors && testSuiteForm.controls['name'].errors.validateTestSuiteName && (testSuiteForm.controls.name.touched || testSuiteForm.controls.name.dirty)" style="color:red">test suite name already exists</p-->
         </ion-list>
         <ion-grid>
             <ion-row>

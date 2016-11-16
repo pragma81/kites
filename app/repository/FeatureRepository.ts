@@ -11,12 +11,17 @@ export class FeatureRepository {
     private _db: any;
 
     constructor() {
-        this._db = new PouchDB('texui-feature');
+        this._db = new PouchDB('kites-feature');
     }
 
 
     public save(feature: Feature,callback:(feature:Feature)=> void): void {
-        this._db.put(feature).then(function (response) {
+    
+    //create feature id pouchdb id as featureid  + testuitename
+
+    let storedFeature :any = JSON.parse(JSON.stringify(feature))
+    storedFeature['_id'] = storedFeature['_id'] + ":"+storedFeature['testSuiteName']
+        this._db.put(storedFeature).then(function (response) {
             //save revision for the first time
             if (feature.getRevision === undefined) {
                 feature.setRevision(response.rev);
@@ -30,6 +35,8 @@ export class FeatureRepository {
     }
 
     delete(feature: Feature,callback:(feature:Feature)=> void): void {
+       
+       let featureid = feature.getId() + ":" + feature.getTestSuiteName()
         this._db.remove(feature.getId(), feature.getRevision()).then(result => {
             callback(feature);
         }).catch(err => {
@@ -43,29 +50,6 @@ export class FeatureRepository {
         emit(doc.testSuiteName)
     }
 
-    public query(filters: Object, callback: (testsuite: Array<Feature>) => void): void {
-
-        let pouchDbQueryOptions = {include_docs: true}
-        Object.assign(pouchDbQueryOptions,filters)
-
-        let features: Array<Feature> = []
-        this._db.query(this.featureMapFunction, pouchDbQueryOptions).then(result => {
-            if (result.rows === undefined) {
-                return
-            }
-            result.rows.forEach(row => {
-                let fileInfo = new FileInfo(row.doc.fileInfo.filename,row.doc.fileInfo.fileAbsolutePath,row.doc.fileInfo.creationTime,row.doc.fileInfo.updateTime)
-                let feature = new Feature(row.doc.rawData,fileInfo)
-                feature.setRevision(row.doc._rev)
-                feature.setTestSuiteName(row.doc.testSuiteName)
-                features.push(feature)
-            })
-            callback(features)
-        }).catch(err => {
-            console.log(err);
-        });
-
-    }
 
 public queryByTestSuiteName(testSuiteName:string, callback: (testsuite: Array<Feature>) => void){
 

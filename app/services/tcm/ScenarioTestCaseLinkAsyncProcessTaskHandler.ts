@@ -5,7 +5,7 @@ import {Injectable} from '@angular/core';
 import {Feature} from '../../models/Feature';
 
 import {TaskInfo, ExecutionResult} from '../task/TaskInfo';
-import {AsyncTaskHandler, TaskExecutor} from '../task/TaskExecutor';
+import {AsyncTaskHandler,AsyncTaskExecutor} from '../task/AsyncTaskExecutor';
 import {FeatureServiceImpl} from '../../services/feature/FeatureServiceImpl';
 import {FeatureService} from '../../services/feature/FeatureService';
 import {SettingsService} from '../settings/SettingsService'
@@ -31,14 +31,14 @@ export class ScenarioTestCaseLinkAsyncProcessTaskHandler implements AsyncTaskHan
     * in a more performant in the before process synch method
     *
     */
-    check(taskInfo: TaskInfo): Observable<TaskInfo> {
+    check(context:any,taskInfo: TaskInfo): Observable<TaskInfo> {
         let arraySupport: Array<TaskInfo> = []
         arraySupport.push(taskInfo)
         return Observable.from(arraySupport)
     }
 
 
-    process(taskInfo: TaskInfo): Observable<TaskInfo> {
+    process(context:any,taskInfo: TaskInfo): Observable<TaskInfo> {
         let scenario = <Scenario>taskInfo.getInputHolder().scenario;
         let testcase = <TestCase>taskInfo.getOutputHolder().testcase
         let action = <string>taskInfo.getOutputHolder().action

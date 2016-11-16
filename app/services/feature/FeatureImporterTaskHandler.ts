@@ -5,7 +5,7 @@ import {Injectable} from '@angular/core';
 import {Feature} from '../../models/Feature';
 
 import {TaskInfo, ExecutionResult} from '../task/TaskInfo';
-import {TaskHandler,AsyncTaskHandler, TaskExecutor} from '../task/TaskExecutor';
+import {TaskHandler,AsyncTaskHandler, AsyncTaskExecutor} from '../task/AsyncTaskExecutor';
 import {FeatureServiceImpl} from '../../services/feature/FeatureServiceImpl';
 import {FeatureService} from '../../services/feature/FeatureService';
 import { Observable}     from 'rxjs/Observable';
@@ -27,7 +27,7 @@ export class FeatureImporterTaskHandler implements AsyncTaskHandler {
      * @param {Object} { "filepath": <string>, "testSuiteName": <string>, "oldFeature": <Feature> }
      * @return {TaskInfo} taskInfo is updated with validation result and errors if any
      */
-    check(taskInfo: TaskInfo): Observable<TaskInfo> {
+    check(context:any,taskInfo: TaskInfo): Observable<TaskInfo> {
         try {
             let featureFilePath = taskInfo.getInputHolder().filepath;
             let testsuitename = taskInfo.getInputHolder().testSuiteName
@@ -62,7 +62,7 @@ export class FeatureImporterTaskHandler implements AsyncTaskHandler {
     * @param {Feature} feature object is contained in TaskInfo.getOutputHolder()
     * @return {TaskInfo} taskInfo is updated with process result and errors if any
     */
-    process(taskInfo: TaskInfo): Observable<TaskInfo> {
+    process(context:any,taskInfo: TaskInfo): Observable<TaskInfo> {
         let feature = <Feature>taskInfo.getOutputHolder()
         /*
         * If 'taskInfo.getInputHolder().oldFeature is not null, this this an update request. 

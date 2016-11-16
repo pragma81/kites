@@ -28,6 +28,9 @@ export class AsyncTaskExecutor {
 	//Single task result handlers
 	private taskResultActionBuilders: Array<TaskResultActionBuilder> = []
 
+	//execution state context shared across tasks
+	private context : any  = {}
+
 	constructor(title: string, taskHandler: AsyncTaskHandler) {
 		this.tasksRequest.length = 0
 		this.tasksExecution.length = 0
@@ -179,7 +182,7 @@ export class AsyncTaskExecutor {
 				})
 			}
 			//task info is updated with output and check status
-			this.asyncTaskHandler.check(taskInfo).subscribe(
+			this.asyncTaskHandler.check(this.context,taskInfo).subscribe(
 				taskinfo => {
 					//this.tasksExecution.push(taskInfo)
 
@@ -279,7 +282,7 @@ export class AsyncTaskExecutor {
 			}
 
 			//task info is updated with output and check status
-			this.asyncTaskHandler.process(taskInfo).subscribe(
+			this.asyncTaskHandler.process(this.context,taskInfo).subscribe(
 				taskInfo => {
 					this.tasksExecution.push(taskInfo)
 
@@ -381,8 +384,8 @@ export interface TaskHandler {
 }
 
 export interface AsyncTaskHandler {
-    check(taskInfo: TaskInfo): Observable<TaskInfo>
-    process(taskInfo: TaskInfo): Observable<TaskInfo>
+    check(context:any,taskInfo: TaskInfo): Observable<TaskInfo>
+    process(context:any,taskInfo: TaskInfo): Observable<TaskInfo>
 }
 
 export interface TaskResultActionBuilder {
