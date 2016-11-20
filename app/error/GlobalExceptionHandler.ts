@@ -1,6 +1,6 @@
 
 import { ErrorDetail, Severity } from './ErrorDetail';
-import { ExceptionHandler, Injector, Injectable } from 'angular2/core';
+import { ExceptionHandler, Injector, Injectable } from '@angular/core';
 import { ToastController } from 'ionic-angular';
 import { ErrorWithDetails } from './ErrorWithDetails';
 
