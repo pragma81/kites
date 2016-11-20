@@ -22,12 +22,13 @@ export class GherkinBeautifier {
         let indentedText = ""
         let currentIndent = 0
         let scenarioDetected = false
+        let featureDetected = false
 
         textLines.forEach((line,index,array) => {
             let lastline = (index === array.length -1)
             switch (this.checkLine(line)) {
                 case LineType.TAGS:
-                    if (scenarioDetected) {
+                    if (featureDetected) {
                         indentedText = indentedText.concat(this.indentLine(2, line))
                         currentIndent = 2
                     } else {
@@ -39,6 +40,7 @@ export class GherkinBeautifier {
                 case LineType.FEATURE:
                     indentedText = indentedText.concat(this.indentLine(0, line))
                     currentIndent = 0
+                    featureDetected = true
                       if(!lastline) indentedText = indentedText.concat("\n")
                     break;
                 case LineType.BACKGROUND:
@@ -84,7 +86,7 @@ export class GherkinBeautifier {
                      if(!lastline) indentedText = indentedText.concat("\n")
                     break;
                 case LineType.DESCRIPTION:
-                    if (scenarioDetected) {
+                    if (featureDetected) {
                         indentedText = indentedText.concat(this.indentLine(2, line))
                     } else {
                         indentedText = indentedText.concat(this.indentLine(0, line))

@@ -153,7 +153,10 @@ export class FeatureEditor implements OnInit, AfterViewInit {
         annotations = this.buildAnnotionsFromGenericError(e, currentRowPosition)
       }
 
-      this.editor.addAnnotations(annotations)
+      setTimeout(() => {
+         this.editor.addAnnotations(annotations)
+      }, 100);
+     
 
     }
 
@@ -163,7 +166,11 @@ export class FeatureEditor implements OnInit, AfterViewInit {
     let currentRowPosition = (<any>this.editor.getCursorPosition()).row
     let currentColumnPosition = (<any>this.editor.getCursorPosition()).column
     this.text = this.gherkinBeautifier.beautifyText(this.text)
-    //this.editor.moveCursorPosition(currentRowPosition,currentColumnPosition)
+    //
+
+    setTimeout(() => {
+            this.editor.moveCursorPosition(currentRowPosition,currentColumnPosition)
+        },100);
   }
 
   save() {

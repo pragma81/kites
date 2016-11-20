@@ -76,11 +76,7 @@ export class ScenarioTestCaseLinkAsyncProcessTaskHandler implements AsyncTaskHan
 
 
             }, error => {
-                let processedTaskInfo = taskInfo.clone()
-                let errorDetail = new ErrorDetail("Test case creation error", error.message, Severity.blocker)
-                processedTaskInfo.addErrorDetail(errorDetail)
-                processedTaskInfo.setExecutionResult(ExecutionResult.error)
-                observer.next(processedTaskInfo)
+                observer.next(this.buildTaskInfoWithError(taskInfo,error))
                 observer.complete()
             })
         })
@@ -98,11 +94,7 @@ export class ScenarioTestCaseLinkAsyncProcessTaskHandler implements AsyncTaskHan
                 observer.complete()
 
             }, error => {
-                let processedTaskInfo = taskInfo.clone()
-                let errorDetail = new ErrorDetail("Test case update error", error.message, Severity.blocker)
-                processedTaskInfo.addErrorDetail(errorDetail)
-                processedTaskInfo.setExecutionResult(ExecutionResult.error)
-                observer.next(processedTaskInfo)
+                observer.next(this.buildTaskInfoWithError(taskInfo,error))
                 observer.complete()
             })
         })
@@ -125,14 +117,23 @@ export class ScenarioTestCaseLinkAsyncProcessTaskHandler implements AsyncTaskHan
 
 
             }, error => {
-                let processedTaskInfo = taskInfo.clone()
-                let errorDetail = new ErrorDetail("Test case creation error", error.message, Severity.blocker)
-                processedTaskInfo.addErrorDetail(errorDetail)
-                processedTaskInfo.setExecutionResult(ExecutionResult.error)
-                observer.next(processedTaskInfo)
+                observer.next(this.buildTaskInfoWithError(taskInfo,error))
                 observer.complete()
             })
         })
 
+    }
+
+    buildTaskInfoWithError(taskInfo : TaskInfo, error) : TaskInfo {
+        let badRequestData = JSON.parse(error._body)
+                let message = "Errors from server: "+badRequestData.errors.issuetype+"."
+                let hint = "Please verify test case management properties (tcm) in your kites.properties configuration file."
+                let errorDetail = new ErrorDetail("Test Case Creation Error.", message, Severity.blocker)
+                errorDetail.setResolutionHint(hint)
+                
+                let errorTaskInfo = taskInfo.clone()
+                errorTaskInfo.addErrorDetail(errorDetail)
+                errorTaskInfo.setExecutionResult(ExecutionResult.error)
+                return errorTaskInfo
     }
 }

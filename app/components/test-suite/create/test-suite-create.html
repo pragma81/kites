@@ -1,20 +1,23 @@
-<ion-content>
-    <div class="modal-header">
-        <h1>Create a Test Suite</h1>
-        <p><span class="modal-header-description"> Already have a set of feature files ? </span><a href="#" (click)="jumpToImport()"> Import a folder</a></p>
-    </div>
+<ion-header class="slide-header">
 
+    <h1>Create a Test Suite</h1>
+    <p><span class="modal-header-description"> Already have a set of feature files ? </span><a href="#" (click)="jumpToImport()"> Import a folder</a></p>
+</ion-header>
+<ion-content>
 
     <form [formGroup]="testSuiteForm">
         <ion-list inset>
             <ion-item>
                 <ion-label floating>Test Suite Name</ion-label>
                 <ion-input #name [formControl]="testSuiteForm.controls.name" type="text" required (keyup)="onTestSuiteNameChanged()" (keyup.enter)="goToNext()"></ion-input>
-                
+
             </ion-item>
-                <p *ngIf="testSuiteForm.controls.name.hasError('required') && (testSuiteForm.controls.name.touched || testSuiteForm.controls.name.dirty)" style="color:red">test suite name is mandatory</p>
-                <p *ngIf="testSuiteForm.controls.name.hasError('minlength') && (testSuiteForm.controls.name.touched || testSuiteForm.controls.name.dirty)" style="color:red">test suite name is too short</p>
-                <p *ngIf="testSuiteForm.controls.name.hasError('validateTestSuiteName') && (testSuiteForm.controls.name.touched || testSuiteForm.controls.name.dirty)" style="color:red">test suite name already exists</p>
+            <p *ngIf="testSuiteForm.controls.name.hasError('required') && (testSuiteForm.controls.name.touched || testSuiteForm.controls.name.dirty)"
+                style="color:red">test suite name is mandatory</p>
+            <p *ngIf="testSuiteForm.controls.name.hasError('minlength') && (testSuiteForm.controls.name.touched || testSuiteForm.controls.name.dirty)"
+                style="color:red">test suite name is too short</p>
+            <p *ngIf="testSuiteForm.controls.name.hasError('validateTestSuiteName') && (testSuiteForm.controls.name.touched || testSuiteForm.controls.name.dirty)"
+                style="color:red">test suite name already exists</p>
             <ion-item>
                 <ion-label floating>Workspace</ion-label>
                 <ion-input #workspace [formControl]="testSuiteForm.controls.workspace" type="text" required readonly></ion-input>
@@ -24,12 +27,12 @@
         <ion-grid>
             <ion-row>
                 <ion-col width-50>
-                    <ion-item >
+                    <ion-item>
                         <ion-label> <span class="auto-toggle">Enable script automation</span></ion-label>
-                        <ion-toggle [(ngModel)]="auto" formControlName="auto" checked="false" ></ion-toggle>
+                        <ion-toggle [(ngModel)]="auto" formControlName="auto" checked="false"></ion-toggle>
                     </ion-item>
                 </ion-col>
-                <ion-col width-20 *ngIf="auto" >
+                <ion-col width-20 *ngIf="auto">
                     <ion-list radio-group formControlName="langs" (ionChange)="setExecutionRuntime()">
                         <ion-item>
                             <ion-label>Java</ion-label>

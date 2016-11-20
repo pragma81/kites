@@ -1,16 +1,10 @@
 <ion-content>
     <ion-card>
-        <!--ion-card-header *ngIf="!feature.isTCMSynched()" style="background-color : #E3F2FD;">
-            <ion-icon name="alert"></ion-icon>
-            It seems this is the first time you link this feature to {{tcmSettings.TcmName}}. Please fill below with the feature info
-            id
-        </ion-card-header-->
 
-        <ion-card-header *ngIf="testCasesWarning" style="background-color : lightsalmon;">
-            <ion-icon name="alert"></ion-icon>
-            It seems that current feature scenarios number
-            <ion-badge>{{feature.getScenarios().length}}</ion-badge> differ from tcm test cases number
-            <ion-badge>{{featureTCM.TestCases.length}}</ion-badge>
+        <ion-card-header *ngIf="featureTCM && testCasesWarning" style="background-color : lightsalmon;">
+            Warning <ion-icon name="alert"></ion-icon>
+            Your local feature file has <ion-badge>{{feature.getScenarios().length}}</ion-badge> scenarios while feature [{{tcmSearchForm.controls.tcmId.value}}] has 
+            <ion-badge>{{featureTCM.TestCases.length}}</ion-badge> test cases
 
         </ion-card-header>
 
@@ -18,7 +12,7 @@
             <form [formGroup]="tcmSearchForm">
                 <ion-item>
                     <ion-label floating>{{tcmSettings.TcmName | uppercase }} ID</ion-label>
-                    <ion-input #tcmId [formControl]="tcmSearchForm.controls.tcmId" type="text" required></ion-input>
+                    <ion-input #tcmId [formControl]="tcmSearchForm.controls.tcmId" type="text" (keyup)="onFeatureIdChanged()" required></ion-input>
                     <button ion-button clear item-right (click)="search()">
         Search <ion-icon name="settings" ></ion-icon>
       </button>

@@ -76,6 +76,14 @@ export class Editor implements AfterContentInit{
              "  Scenario: <Scenario summary> \n  <Scenario description> \n\    Given <Given step summary> \n\      And <Given And step summary>\n\     When <When step summary> \n\      And <When And step summary> \n\     Then <Then step summary> \n\      And <Then And step summary > \n ", 
              meta: "gherkin" }); 
 
+             completions.push({ caption: "Feature", snippet: 
+             "Feature: <Feature summary> \n  As user\n\  I want\n  So that\n", 
+             meta: "gherkin" }); 
+
+             completions.push({ caption: "Scenario Outline", snippet: 
+             "  Scenario Outline: <Scenario summary> \n  <Scenario description> \n\    Given <Given step summary> \n\      And <Given And step summary>\n\     When <When step summary> \n\      And <When And step summary> \n\     Then <Then step summary> \n\      And <Then And step summary > \n    Examples:\n ", 
+             meta: "gherkin" });
+             
 
              callback(null, completions); } } 
              langTools.setCompleters([completer]); 

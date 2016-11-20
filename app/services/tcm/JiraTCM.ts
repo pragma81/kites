@@ -138,10 +138,17 @@ export class JiraTCM implements TCMService {
                             observer.next(testCase);
                             observer.complete();
 
-                        }, error => { })
+                        }, error => { 
+                           // RxHTTPErrorHandler.handleError(error)
+                          
+                           observer.error(error)
+                        })
 
                 },
-                error => { })
+                error => { 
+                 //   RxHTTPErrorHandler.handleError(error)
+                observer.error(error)
+                })
 
         })
         return newTestCaseStream
@@ -165,7 +172,7 @@ export class JiraTCM implements TCMService {
                     observer.next(testcase);
                     observer.complete();
 
-                }, error => { })
+                }, error => { RxHTTPErrorHandler.handleError(error)})
         })
         return newTestCaseStream
     }
