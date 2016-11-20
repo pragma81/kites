@@ -239,7 +239,7 @@ export class FeatureEditor implements OnInit, AfterViewInit {
 
   private validateFeatureId(parsedFeature : Feature){
     //check featureid is dirty
-    if(parsedFeature.getId() === this.storedFeature.getId())
+    if(this.storedFeature && (parsedFeature.getId() === this.storedFeature.getId()))
     return
     
     let storeFeatureid = parsedFeature.getId() + ":" +this.testsuitename
