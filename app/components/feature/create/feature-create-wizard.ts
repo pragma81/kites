@@ -1,98 +1,120 @@
-import {Feature} from '../../../models/Feature';
-import {Component, ViewChild} from '@angular/core';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
-import {Slides, NavController, NavParams, ViewController} from 'ionic-angular';
-import {FileSystem} from '../../../services/storage/FileSystem';
-import {FeatureCreate} from './feature-create';
-import {TestSuite} from '../../../models/TestSuite';
-import {TestSuiteTree} from './testsuite-tree';
+import { Component } from '@angular/core';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { NavController, NavParams, ViewController } from 'ionic-angular';
+import { FileSystem } from '../../../services/storage/FileSystem';
+import { FeatureService } from '../../../services/feature/FeatureService';
+import { FeatureServiceImpl } from '../../../services/feature/FeatureServiceImpl';
+import { SettingsServiceImpl } from '../../../services/settings/SettingsServiceImpl';
+import { FeatureRepository } from '../../../repository/FeatureRepository';
+import { TestSuiteRepository } from '../../../repository/TestSuiteRepository';
+import { AppConfig } from '../../../models/AppConfig';
+import { JiraTCM } from '../../../services/tcm/JiraTCM';
+import { Feature } from '../../../models/Feature';
+import { FeatureCreate } from './feature-create';
+import { TestSuite } from '../../../models/TestSuite';
+import { TestSuiteTree } from './testsuite-tree';
 
+declare var nodeRequire: any
 
 @Component({
     directives: [TestSuiteTree],
     templateUrl: 'build/components/feature/create/feature-create-wizard.html',
-    providers: [FileSystem]
+    providers: [FileSystem, FeatureServiceImpl, FeatureRepository, SettingsServiceImpl, AppConfig, TestSuiteRepository]
 })
 export class FeatureCreateWizard {
     private testsuite: TestSuite
+    private featureService: FeatureService
     private folderPath: string = ''
     private featureFilename: string
     private featureFilepath: string
+    private featureId: string
     private canSlideToFolderSelect: boolean = false
     private canStartFeatureEdit: boolean = false
     private folderSelected: boolean = false
-
+    private featureIdTouched: boolean = false
 
     private featureForm: FormGroup;
 
-    //@ViewChild('wizard') slider: Slides;
-
     constructor(private nav: NavController, private navParams: NavParams,
         private viewCtrl: ViewController, private formBuilder: FormBuilder,
-        private fileSystem: FileSystem
-    ) {
+        private fileSystem: FileSystem, featureService: FeatureServiceImpl) {
 
         this.testsuite = this.navParams.get("testSuite")
-
-        /*
-        this.settingsService = settingsService
-        this.tcmService = injector.get(JiraTCM)
-        this.tcmSettings = this.settingsService.getTestCaseManegementSettings()
-        this.feature = <Feature>this.navParams.data
-        this.tcmId = this.feature.getTCMId()*/
+        this.featureService = featureService
 
         this.featureForm = formBuilder.group({
-            name: ['', Validators.compose([Validators.minLength(5), Validators.required])]
+            name: ['', Validators.compose([Validators.minLength(5), Validators.required, this.validateFileName.bind(this)])],
+            id: ['', Validators.compose([Validators.minLength(5), Validators.required]), this.validatefeatureId.bind(this)]
         });
 
     }
 
 
     public onFeatureFileNameChanged() {
-        if (!this.featureForm.valid) {
-            this.canStartFeatureEdit = false
-            return
-        }
 
-        if (this.folderSelected)
-            this.canStartFeatureEdit = true
         this.featureFilename = this.featureForm.controls['name'].value + '.feature'
-        // this.canSlideToFolderSelect = true
-        this.featureFilepath = this.folderPath + this.fileSystem.fileSeparator() + this.featureFilename
+        this.featureFilepath = (this.folderPath ? this.folderPath : "") + this.fileSystem.fileSeparator() + this.featureFilename
+
+        if (this.featureForm.valid && this.folderSelected)
+            this.canStartFeatureEdit = true
+            else
+            this.canStartFeatureEdit = false
+    }
+
+    public onFeatureIdChanged() {
+
+        this.featureId = this.featureForm.controls['id'].value
+
+      if (this.featureForm.valid && this.folderSelected)
+            this.canStartFeatureEdit = true
+            else
+            this.canStartFeatureEdit = false
 
     }
 
-    /*
-        private goToNext() {
-            if(this.canSlideToFolderSelect)
-                this.slider.slideNext()
-    
-        }
-        */
 
     private cancel() {
         this.viewCtrl.dismiss()
     }
-    public onFolderCreated(folderPath: string) {
-        /* this.folderPath = folderPath
- 
-         //try to create the folder
-         this.fileSystem.createFolder(folderPath)
-         this.canStartFeatureEdit = true */
-    }
 
-    public onFolderSelected(folderPath: string) {
-        this.folderPath = folderPath
-        this.featureFilepath = this.folderPath + this.fileSystem.fileSeparator() + this.featureFilename
+    private selectDirectory() {
+
+        this.folderPath = nodeRequire('electron').remote.dialog.showOpenDialog({
+            defaultPath: this.testsuite.TestSuiteDir,
+            properties: ['openDirectory', 'createDirectory']
+        })
+
+        this.folderSelected = true
+        this.featureFilepath = this.folderPath + this.fileSystem.fileSeparator() + (this.featureFilename ? this.featureFilename : "")
+
         if (this.featureForm.valid)
             this.canStartFeatureEdit = true
-        this.folderSelected = true
+    }
+
+    private validateFileName(c: FormControl) {
+        if (c.value === "")
+            return null
+
+        this.featureFilepath = this.folderPath + this.fileSystem.fileSeparator() + c.value
+        return this.featureService.fileExists(this.featureFilepath) ? { "validateFileName": true } : null
+    }
+
+    private validatefeatureId(c: FormControl) {
+
+        return new Promise(resolve => {
+            let storedfeatureId = c.value + ":" + this.testsuite.getName()
+            this.featureService.exists(storedfeatureId, (feature) => {
+                resolve({ "validatefeatureId": true })
+            }, () => {
+                resolve(null)
+            })
+        })
+
     }
 
     public editFeature() {
-        //this.fileSystem.createFile(this.featureFilepath)
         this.viewCtrl.dismiss().then(() => {
-            this.nav.push(FeatureCreate, { testsuite: this.testsuite, folderPath: this.folderPath, featureFilename: this.featureFilename, featureFilepath: this.featureFilepath })
+            this.nav.push(FeatureCreate, { testsuite: this.testsuite, folderPath: this.folderPath, featureFilename: this.featureFilename, featureFilepath: this.featureFilepath, featureId: this.featureId })
         })
 
 

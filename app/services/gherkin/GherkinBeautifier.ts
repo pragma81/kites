@@ -23,7 +23,8 @@ export class GherkinBeautifier {
         let currentIndent = 0
         let scenarioDetected = false
 
-        textLines.forEach(line => {
+        textLines.forEach((line,index,array) => {
+            let lastline = (index === array.length -1)
             switch (this.checkLine(line)) {
                 case LineType.TAGS:
                     if (scenarioDetected) {
@@ -33,54 +34,54 @@ export class GherkinBeautifier {
                         currentIndent = 0
                         indentedText = indentedText.concat(this.indentLine(0, line))
                     }
-                     indentedText = indentedText.concat("\n")
+                    if(!lastline) indentedText = indentedText.concat("\n")
                     break;
                 case LineType.FEATURE:
                     indentedText = indentedText.concat(this.indentLine(0, line))
                     currentIndent = 0
-                    indentedText = indentedText.concat("\n")
+                      if(!lastline) indentedText = indentedText.concat("\n")
                     break;
                 case LineType.BACKGROUND:
                     indentedText = indentedText.concat(this.indentLine(2, line))
                     currentIndent = 2
-                    indentedText = indentedText.concat("\n")
+                     if(!lastline) indentedText = indentedText.concat("\n")
                     break;
                 case LineType.SCENARIO:
                     indentedText = indentedText.concat(this.indentLine(2, line))
-                    indentedText = indentedText.concat("\n")
+                     if(!lastline) indentedText = indentedText.concat("\n")
                     scenarioDetected = true
                     break;
                 case LineType.GIVEN:
                     indentedText = indentedText.concat(this.indentLine(4, line))
-                    indentedText = indentedText.concat("\n")
+                      if(!lastline) indentedText = indentedText.concat("\n")
                     break;
                 case LineType.WHEN:
                     indentedText = indentedText.concat(this.indentLine(5, line))
-                    indentedText = indentedText.concat("\n")
+                     if(!lastline) indentedText = indentedText.concat("\n")
                     break;
                 case LineType.THEN:
                     indentedText = indentedText.concat(this.indentLine(5, line))
-                    indentedText = indentedText.concat("\n")
+                     if(!lastline) indentedText = indentedText.concat("\n")
                     break;
                 case LineType.AND:
                     indentedText = indentedText.concat(this.indentLine(6, line))
-                    indentedText = indentedText.concat("\n")
+                     if(!lastline) indentedText = indentedText.concat("\n")
                     break;
                 case LineType.BUT:
                     indentedText = indentedText.concat(this.indentLine(6, line))
-                    indentedText = indentedText.concat("\n")
+                     if(!lastline) indentedText = indentedText.concat("\n")
                     break;
                 case LineType.DATATABLE:
                     indentedText = indentedText.concat(this.indentLine(6, line))
-                    indentedText = indentedText.concat("\n")
+                     if(!lastline) indentedText = indentedText.concat("\n")
                     break;
                 case LineType.EXAMPLES:
                     indentedText = indentedText.concat(this.indentLine(4, line))
-                    indentedText = indentedText.concat("\n")
+                     if(!lastline) indentedText = indentedText.concat("\n")
                     break;
                 case LineType.COMMENT:
                     indentedText = indentedText.concat(line)
-                    indentedText = indentedText.concat("\n")
+                     if(!lastline) indentedText = indentedText.concat("\n")
                     break;
                 case LineType.DESCRIPTION:
                     if (scenarioDetected) {
@@ -88,11 +89,11 @@ export class GherkinBeautifier {
                     } else {
                         indentedText = indentedText.concat(this.indentLine(0, line))
                     }
-                    indentedText = indentedText.concat("\n")
+                     if(!lastline) indentedText = indentedText.concat("\n")
                     break;
                 default:
                     indentedText = indentedText.concat(line)
-                    indentedText = indentedText.concat("\n")
+                     if(!lastline) indentedText = indentedText.concat("\n")
                     break;
             }
         })

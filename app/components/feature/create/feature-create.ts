@@ -39,11 +39,13 @@ export class FeatureCreate {
     this.feature = this.navParams.get("feature")
     this.featureFilepath = this.navParams.get("featureFilepath")
     
+    let featureId = this.navParams.get("featureId")
+    
+    this.text = "@featureid="+featureId
+
     if(this.testsuite)
       this.testSuitename = this.testsuite.getName()
 
-    this.options = { printMargin: false };
-    this.text = "prova"
   }
 
   onChange = (data) => {

@@ -25,6 +25,7 @@ export class FeatureEditor implements OnInit, AfterViewInit {
   @Input() feature: Feature;
   @Input() filepath: string;
   @Input() testsuitename: string;
+  @Input() templateText:string
 
   @ViewChild("editorref") editor: Editor
 
@@ -47,11 +48,11 @@ export class FeatureEditor implements OnInit, AfterViewInit {
     this.featureService = featureService
 
     this.options = {
-      enableBasicAutocompletion: true,
+      //enableBasicAutocompletion: true,
       //enableSnippets: true,
-      enableLiveAutocompletion: false,
+      //enableLiveAutocompletion: false,
       //fontSize : 15,
-      spellcheck: true
+      //spellcheck: true
     }
 
 
@@ -75,6 +76,8 @@ export class FeatureEditor implements OnInit, AfterViewInit {
 
     if (!this.createMode)
       this.text = this.featureService.getTextFromFile(this.filepath)
+      else
+      this.text = this.templateText
   }
 
   ngAfterViewInit() {
@@ -90,7 +93,7 @@ export class FeatureEditor implements OnInit, AfterViewInit {
 
     let formatKeyBinding: KeyBinding = {
       name: 'format',
-      bindKey: { win: 'Ctrl-F', mac: 'Command-F' },
+      bindKey: { win: 'Alt-F', mac: 'Alt-F' },
       exec: (editor) => {
         this.format(null)
       }
@@ -134,7 +137,8 @@ export class FeatureEditor implements OnInit, AfterViewInit {
       return
 
     try {
-      this.featureService.parseGherkinText(this.text)
+      let parsedFeature = this.featureService.parseGherkinText(this.text)
+      this.validateFeatureId(parsedFeature)
       this.hasCompileErrors = false
     } catch (e) {
       this.hasCompileErrors = true
@@ -156,7 +160,10 @@ export class FeatureEditor implements OnInit, AfterViewInit {
   }
 
   format($event) {
+    let currentRowPosition = (<any>this.editor.getCursorPosition()).row
+    let currentColumnPosition = (<any>this.editor.getCursorPosition()).column
     this.text = this.gherkinBeautifier.beautifyText(this.text)
+    //this.editor.moveCursorPosition(currentRowPosition,currentColumnPosition)
   }
 
   save() {
@@ -205,21 +212,44 @@ export class FeatureEditor implements OnInit, AfterViewInit {
           text: 'Yes',
           handler: () => {
             this.nav.pop().then(() => {
-              this.events.publish('feature:update', this.storedFeature);
+             this.events.publish('feature:update', {testsuitename : this.testsuitename, feature :this.storedFeature});
             })
 
           }
         }]
     });
 
-    if (this.dirty) {
+    if (this.storedFeature && this.dirty) {
       alert.present();
     } else {
       this.nav.pop().then(() => {
-        this.events.publish('feature:update', this.storedFeature);
+        this.events.publish('feature:update', {testsuitename : this.testsuitename, feature :this.storedFeature});
       })
       //this.nav.push(DashboardPage, { feature: this.storedFeature })
     }
+
+  }
+
+  private validateFeatureId(parsedFeature : Feature){
+    //check featureid is dirty
+    if(parsedFeature.getId() === this.storedFeature.getId())
+    return
+    
+    let storeFeatureid = parsedFeature.getId() + ":" +this.testsuitename
+    let exists = this.featureService.exists(storeFeatureid,feature =>{
+       let annotations: Array<Annotation> = []
+
+    annotations.push({
+      row: 0,
+      column: 0,
+      text: parsedFeature.getId()+ " already exists",
+      type: "error"
+    })
+
+    this.editor.addAnnotations(annotations)
+    this.hasCompileErrors = true
+    },()=>{})
+
 
   }
 

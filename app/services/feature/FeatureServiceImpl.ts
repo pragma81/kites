@@ -42,6 +42,17 @@ export class FeatureServiceImpl implements FeatureService {
         //this.featureRepository.query(filterOptions,callback);
         this.featureRepository.queryByTestSuiteName(testSuiteId, callback);
     }
+
+    public fileExists(filePath:string):boolean {
+         return this.fileSystem.exists(filePath)
+    }
+
+    public exists(featureId: string, existscallback:(feature:Feature)=>void, notexistscallback:()=>void):void {
+        this.featureRepository.findById(featureId,
+      existscallback,
+      notexistscallback
+    )
+    }
     public findByQuery(queryOptions: Object): Array<Feature> { return }
     public findById(id: String): Feature { return }
     public refresh() { }

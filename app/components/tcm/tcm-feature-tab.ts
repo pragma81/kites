@@ -45,16 +45,18 @@ export class FeatureTab {
     });
 
     (<FormControl>this.tcmSearchForm.controls['tcmId']).updateValue (this.tcmId)
-
+    this.isSearching = true
     if (this.tcmId)
       this.tcmService.findFeature(this.tcmId)
       .subscribe(
       featureTCM => { 
+        this.isSearching = false
         this.featureTCM = featureTCM 
          if(featureTCM.TestCases.length != this.feature.getScenarios().length)
           this.testCasesWarning = true
     }, 
-      error => {this.isSearching = false }
+      error => {
+        this.isSearching = false }
       
       )
   }

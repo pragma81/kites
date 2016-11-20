@@ -87,7 +87,11 @@ $modal-inset-height-large:                   500px ;
     padding-bottom: 15px;
 }
 
-
 .toast-container{
    background-color: navy;
+}
+
+.descriptive-button{
+  text-transform: none !important;
+    font-size: 18px !important;
 }

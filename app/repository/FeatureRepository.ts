@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core'
+import { Injectable } from '@angular/core'
 import * as PouchDB from 'pouchdb-browser';
-import {Feature,FileInfo} from '../models/Feature'
+import { Feature, FileInfo } from '../models/Feature'
 
 //let PouchDB = require('pouchdb');
 
@@ -15,12 +15,12 @@ export class FeatureRepository {
     }
 
 
-    public save(feature: Feature,callback:(feature:Feature)=> void): void {
-    
-    //create feature id pouchdb id as featureid  + testuitename
+    public save(feature: Feature, callback: (feature: Feature) => void): void {
 
-    let storedFeature :any = JSON.parse(JSON.stringify(feature))
-    storedFeature['_id'] = storedFeature['_id'] + ":"+storedFeature['testSuiteName']
+        //create feature id pouchdb id as featureid  + testuitename
+
+        let storedFeature: any = JSON.parse(JSON.stringify(feature))
+        storedFeature['_id'] = storedFeature['_id'] + ":" + storedFeature['testSuiteName']
         this._db.put(storedFeature).then(function (response) {
             //save revision for the first time
             if (feature.getRevision === undefined) {
@@ -34,9 +34,9 @@ export class FeatureRepository {
 
     }
 
-    delete(feature: Feature,callback:(feature:Feature)=> void): void {
-       
-       let featureid = feature.getId() + ":" + feature.getTestSuiteName()
+    delete(feature: Feature, callback: (feature: Feature) => void): void {
+
+        let featureid = feature.getId() + ":" + feature.getTestSuiteName()
         this._db.remove(feature.getId(), feature.getRevision()).then(result => {
             callback(feature);
         }).catch(err => {
@@ -46,24 +46,24 @@ export class FeatureRepository {
 
     private featureMapFunction(doc) {
 
-       // emit(doc.name, doc.testSuiteName, doc.description, doc.type)
+        // emit(doc.name, doc.testSuiteName, doc.description, doc.type)
         emit(doc.testSuiteName)
     }
 
 
-public queryByTestSuiteName(testSuiteName:string, callback: (testsuite: Array<Feature>) => void){
+    public queryByTestSuiteName(testSuiteName: string, callback: (testsuite: Array<Feature>) => void) {
 
-    let testSuiteMapFunction = function(doc){ emit(doc.testSuiteName)}
-    let pouchDbQueryOptions = {key:testSuiteName,include_docs: true}
-    
-    let features: Array<Feature> = []
+        let testSuiteMapFunction = function (doc) { emit(doc.testSuiteName) }
+        let pouchDbQueryOptions = { key: testSuiteName, include_docs: true }
+
+        let features: Array<Feature> = []
         this._db.query(testSuiteMapFunction, pouchDbQueryOptions).then(result => {
             if (result.rows === undefined) {
                 return
             }
-           result.rows.forEach(row => {
-                let fileInfo = new FileInfo(row.doc.fileInfo.filename,row.doc.fileInfo.fileAbsolutePath,row.doc.fileInfo.creationTime,row.doc.fileInfo.updateTime)
-                let feature = new Feature(row.doc.rawData,fileInfo)
+            result.rows.forEach(row => {
+                let fileInfo = new FileInfo(row.doc.fileInfo.filename, row.doc.fileInfo.fileAbsolutePath, row.doc.fileInfo.creationTime, row.doc.fileInfo.updateTime)
+                let feature = new Feature(row.doc.rawData, fileInfo)
                 feature.setRevision(row.doc._rev)
                 feature.setTestSuiteName(row.doc.testSuiteName)
                 features.push(feature)
@@ -72,6 +72,23 @@ public queryByTestSuiteName(testSuiteName:string, callback: (testsuite: Array<Fe
         }).catch(err => {
             console.log(err);
         });
-}
+    }
+
+    public findById(featureid: string, callback: (feature: Feature) => void, errorcallback: (error: Error) => void) {
+
+        this._db.get(featureid).then(doc => {
+
+            let fileInfo = new FileInfo(doc.fileInfo.filename, doc.fileInfo.fileAbsolutePath, doc.fileInfo.creationTime, doc.fileInfo.updateTime)
+        let feature = new Feature(doc.rawData, fileInfo)
+        feature.setRevision(doc._rev)
+        feature.setTestSuiteName(doc.testSuiteName)
+            callback(feature)
+        }).catch(err => {
+            console.log(err);
+            errorcallback(err)
+        });
+
+    }
+
 
 }

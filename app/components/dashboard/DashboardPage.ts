@@ -39,9 +39,14 @@ export class DashboardPage {
     })
 
     this.events.subscribe('feature:update', (data) => {
-      let feature = <Feature>data[0]
-      console.log('[Feature Update] event arrived:', feature);
-      this.featureExplorer.loadByTestSuiteName(feature.getTestSuiteName());
+      let testsuitename = ""
+      let eventPayload = data[0]
+      if( eventPayload instanceof Feature) {
+        testsuitename  = (<Feature>data[0]).getTestSuiteName()
+      } else{
+        testsuitename = data[0].testsuitename
+      }
+      this.featureExplorer.loadByTestSuiteName(testsuitename);
     })
 
      this.events.subscribe('testsuite:create',()=>{

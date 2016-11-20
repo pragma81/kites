@@ -1,30 +1,70 @@
 <ion-header class="slide-header">
 
-        <h1>Create a feature file</h1>
-        <p><span class="modal-header-description"> {{headerDescription}}</span></p>
-   
+    <h1>Create a feature file</h1>
+    <p><span class="modal-header-description"> {{headerDescription}}</span></p>
+
 </ion-header>
 <ion-content>
     <!--
     <ion-slides #wizard>
         <ion-slide> -->
+
+    <form [formGroup]="featureForm">
+       
+                    <ion-item>
+                    <ion-label floating>Feature Name</ion-label>
+                    <ion-input #name [formControl]="featureForm.controls.name" type="text" required (keyup)="onFeatureFileNameChanged()" (keyup.enter)="goToNext()"></ion-input>
+                    </ion-item>
+                    <p *ngIf="featureForm.controls.name.hasError('required') && (featureForm.controls.name.touched || featureForm.controls.name.dirty)"
+                        style="color:red">feature name is mandatory</p>
+                    <p *ngIf="featureForm.controls.name.hasError('minlength') && (featureForm.controls.name.touched || featureForm.controls.name.dirty)"
+                        style="color:red">feature name is too short</p>
+                    <p *ngIf="featureForm.controls.name.hasError('validateFileName') && (featureForm.controls.name.touched || featureForm.controls.name.dirty)"
+                        style="color:red">feature file already exists</p>
+                   
+               
+                    <ion-item>
+                    <ion-label floating>Feature Id</ion-label>
+                    <ion-input #featureid [formControl]="featureForm.controls.id" type="text" required (keyup)="onFeatureIdChanged()"></ion-input>
+                    </ion-item>
+                    <p *ngIf="featureForm.controls.id.hasError('required') && (featureForm.controls.id.touched || featureForm.controls.id.dirty)"
+                        style="color:red">feature name is mandatory</p>
+                    <p *ngIf="featureForm.controls.id.hasError('validatefeatureId') && (featureForm.controls.id.touched || featureForm.controls.id.dirty)"
+                        style="color:red">feature id already exists</p>
+                    <p *ngIf="featureForm.controls.id.hasError('minlength') && (featureForm.controls.id.touched || featureForm.controls.id.dirty)"
+                        style="color:red">feature id is too short</p>
+                   
+               
+                    <!--ion-item *ngIf="!featureForm.controls.name.valid && (featureForm.controls.name.touched || featureForm.controls.name.dirty)"-->
+
+
+                    <!--/ion-item-->
+                    <!--ion-item>
+            <ion-label floating>Feature Id</ion-label>
+            <ion-input #featureid [formControl]="featureForm.controls.id" type="text" required (keyup)="onFeatureIdChanged()"></ion-input>
+            <p *ngIf="featureForm.controls.id.hasError('validatefeatureId') && (featureForm.controls.id.touched || featureForm.controls.id.dirty)"
+            style="color:red">feature id already exists</p>
+        </ion-item-->
+    </form>
+    <ion-card>
+        <ion-card-header>
+             <button  class ="descriptive-button" outline round (click)="selectDirectory()">Select Directory..<ion-icon ios="ios-folder-open" md="md-folder-open"></ion-icon></button>
+        </ion-card-header>
+        <ion-card-content>
+         
+                {{featureFilepath}}
            
-                    <form [formGroup]="featureForm">
-                        <ion-item>
-                            <ion-label floating>Feature Name</ion-label>
-                            <ion-input #name [formControl]="featureForm.controls.name" type="text" required (keyup)="onFeatureFileNameChanged()" (keyup.enter)="goToNext()"></ion-input>
-                        </ion-item>
-                        <!--ion-item *ngIf="!featureForm.controls.name.valid && (featureForm.controls.name.touched || featureForm.controls.name.dirty)"-->
-                            <p *ngIf="!featureForm.controls.name.valid && (featureForm.controls.name.touched || featureForm.controls.name.dirty)" style="color:red">Please enter a valid name value</p>
-                        <!--/ion-item-->
-                    </form>
-               <!--
+        </ion-card-content>
+    </ion-card>
+    <!--
             <button *ngIf="canSlideToFolderSelect " ion-button outline (click)="goToNext()"> Select a folder <ion-icon name="arrow-forward" ></ion-icon></button> -->
-            <ion-item>
-            <tsp-testsuite-tree [testsuite]='testsuite' (folderSelected)="onFolderSelected($event)">
-                        </tsp-testsuite-tree>
-            </ion-item>
-       <!--
+    <!--
+    <ion-item>
+        <tsp-testsuite-tree [testsuite]='testsuite' (folderSelected)="onFolderSelected($event)">
+        </tsp-testsuite-tree>
+    </ion-item>
+    -->
+    <!--
         </ion-slide>
         <ion-slide>
             
@@ -57,11 +97,9 @@
         </ion-slide>
     </ion-slides> -->
     <ion-footer class="modal-footer">
-        
+
         <ion-buttons end>
-            <div class="feature-path">
-            {{featureFilepath}}
-            </div>
+           
             <button primary (click)="editFeature()" [disabled]="!canStartFeatureEdit">
         Edit
       </button>

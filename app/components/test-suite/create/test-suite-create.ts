@@ -60,17 +60,7 @@ export class TestSuiteCreate {
     }
 
     validateTestSuiteName(c: FormControl) {
-        /*
-    this.workspacepath = this.workspace + this.fileSystem.fileSeparator() + c.value
-    let result = this.testSuiteService.folderExists(this.workspacepath) ? {
-        validateTestSuiteName : {
-            valid: false
-        }
-    }:null
-
-    return result*/
-
-    
+           
         return new Promise(resolve => {
             this.workspacepath = this.workspace + this.fileSystem.fileSeparator() + c.value
             let exists = this.testSuiteService.folderExists(this.workspacepath)

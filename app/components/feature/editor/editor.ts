@@ -6,16 +6,10 @@ require('brace/theme/clouds');
 require('brace/theme/monokai');
 require('brace/ext/language_tools');
 require('brace/ext/spellcheck');
+require('brace/ext/searchbox');
+require('brace/ext/spellcheck');
 
 
-
-/*
-@Component({
-    selector: 'editor',
-    template: `
-    <div #aceeditor style="display:block; height: 80vh; width:100%"></div>
-    `
-}) */
 @Directive({
     selector: '[ace-editor]',
     exportAs: 'gherkineditor',
@@ -26,15 +20,7 @@ export class Editor implements AfterContentInit{
     static get parameters() {
     return [[ElementRef]];
   }
-    /*@ViewChild("aceeditor") divRef: ElementRef
-     @Input() mode
-     @Input() theme
-     @Input() readOnly
-     @Input() options
-     @Input() text
-    
-    @Output() textChanged = new EventEmitter();  
-*/
+   
     private editor: any 
 
      private _mode :any
@@ -75,6 +61,28 @@ export class Editor implements AfterContentInit{
     ngAfterContentInit() {
         this.editor.focus();
         this.editor.gotoLine(1)
+        var electronwin : any = window
+        electronwin.ace.acequire('ace/lib/dom').importCssString(".ace_search_field{color: black}") 
+
+        /*
+        var snippetManager = electronwin.ace.acequire("ace/snippets").snippetManager;
+        snippetManager.register( snippetManager.parseSnippetFile("snippet } catch (e) {}"), "gherkin"); */
+
+         var langTools = electronwin.ace.acequire("ace/ext/language_tools");
+         var completer = { getCompletions: function(editor, session, pos, prefix, callback) { 
+             
+             var completions = []; 
+             completions.push({ caption: "Scenario", snippet: 
+             "  Scenario: <Scenario summary> \n  <Scenario description> \n\    Given <Given step summary> \n\      And <Given And step summary>\n\     When <When step summary> \n\      And <When And step summary> \n\     Then <Then step summary> \n\      And <Then And step summary > \n ", 
+             meta: "gherkin" }); 
+
+
+             callback(null, completions); } } 
+             langTools.setCompleters([completer]); 
+    
+             this.editor.setOptions({
+            enableBasicAutocompletion: true,
+})
     }
 
     
@@ -115,6 +123,10 @@ export class Editor implements AfterContentInit{
 
     public getCursorPosition(): Object{
         return this.editor.getCursorPosition()
+    }
+
+     public moveCursorPosition(row,column): void{
+        return this.editor.moveCursorTo(row,column)
     }
 
     public zoomIn(): void{

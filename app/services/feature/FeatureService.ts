@@ -6,6 +6,8 @@ import {Feature} from '../../models/Feature';
 export interface FeatureService {
     getAll(callback:(features:Array<Feature>)=> void): void;
     getByTestSuite(testSuiteId:string, callback:(feature:Array<Feature>)=> void):void;
+    fileExists(filePath:string):boolean
+    exists(featureId: string, existscallback:(feature:Feature)=>void, notexistscallback:()=>void):void
     findByQuery(queryOptions : Object): Array<Feature>;
     findById(id:String):Feature;
     getTextFromFile(filepath:String):string

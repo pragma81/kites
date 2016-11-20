@@ -1,7 +1,7 @@
-import {Injectable} from '@angular/core'
+import { Injectable } from '@angular/core'
 import * as PouchDB from 'pouchdb-browser';
-import {TestSuite} from '../models/TestSuite'
-import {ExecutionRuntime} from '../services/automation/AutomationService';
+import { TestSuite } from '../models/TestSuite'
+import { ExecutionRuntime } from '../services/automation/AutomationService';
 
 //let PouchDB = require('pouchdb');
 
@@ -14,7 +14,7 @@ export class TestSuiteRepository {
     constructor() {
         this._db = new PouchDB('kites-testsuite');
 
-        
+
     }
 
 
@@ -25,13 +25,13 @@ export class TestSuiteRepository {
             if (testSuite.getRevision === undefined) {
                 testSuite.setRevision(response.rev);
             }
-            if(callback)
+            if (callback)
                 callback(testSuite);
             console.log('Test suite [' + testSuite.getId() + ',' + testSuite.getName() + ',' + testSuite.getRevision() + '] saved ');
         }).catch(function (err) {
             throw new Error('Error while saving TestSuite [' + testSuite.getId() + ',' + testSuite.getName() + ',' + testSuite.getRevision() + '] :' + err.message);
         });
-      
+
     }
 
     delete(testsuite: TestSuite, callback: (testsuite: TestSuite) => void): void {
@@ -71,25 +71,21 @@ export class TestSuiteRepository {
 
     }
 
-public getByName(testSuiteName:string, callback: (testsuite: TestSuite) => void, errorcallback: (error: Error)=>void){
+    public getByName(testSuiteName: string, callback: (testsuite: TestSuite) => void, errorcallback: (error: Error) => void) {
 
-    let testSuiteMapFunction = function(doc){ emit(doc.name)}
-    let pouchDbQueryOptions = {key:testSuiteName,include_docs: true}
-    
-   
         this._db.get(testSuiteName).then(doc => {
-           
-            let testSuite : TestSuite = new TestSuite(doc.name,doc.scmSync,doc.testSuiteRepoName,doc.testSuiteFolderPath,doc.imported,doc.projectFilePath,doc.executionRuntimeType)
-           testSuite.setFeatures(doc.features)
-           testSuite.setApiTests(doc.apiTests)
-           testSuite.setUiTests(doc.uiTests)
-           testSuite.setRevision(doc.revision)
+
+            let testSuite: TestSuite = new TestSuite(doc.name, doc.scmSync, doc.testSuiteRepoName, doc.testSuiteFolderPath, doc.imported, doc.projectFilePath, doc.executionRuntimeType)
+            testSuite.setFeatures(doc.features)
+            testSuite.setApiTests(doc.apiTests)
+            testSuite.setUiTests(doc.uiTests)
+            testSuite.setRevision(doc.revision)
             callback(testSuite)
         }).catch(err => {
             console.log(err);
             errorcallback(err)
         });
-}
+    }
 
 
 
