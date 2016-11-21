@@ -22,8 +22,7 @@ import {TCMView} from '../../tcm/tcm-view';
 @Component({
   selector: 'tex-feature-explorer',
   templateUrl: 'build/components/feature/explorer/feature-explorer.html',
-  directives: [Tiles],
-  providers: [FeatureServiceImpl, SettingsServiceImpl]
+  directives: [Tiles]
 })
 export class FeatureExplorer {
   private selectedType: string = 'ui'

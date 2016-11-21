@@ -18,8 +18,7 @@ declare var nodeRequire: any
 
 @Component({
     directives: [TestSuiteTree],
-    templateUrl: 'build/components/feature/create/feature-create-wizard.html',
-    providers: [FileSystem, FeatureServiceImpl, FeatureRepository, SettingsServiceImpl, AppConfig, TestSuiteRepository]
+    templateUrl: 'build/components/feature/create/feature-create-wizard.html'
 })
 export class FeatureCreateWizard {
     private testsuite: TestSuite
@@ -32,6 +31,7 @@ export class FeatureCreateWizard {
     private canStartFeatureEdit: boolean = false
     private folderSelected: boolean = false
     private featureIdTouched: boolean = false
+    private filePathExists:boolean = false
 
     private featureForm: FormGroup;
 
@@ -87,6 +87,13 @@ export class FeatureCreateWizard {
         this.folderSelected = true
         this.featureFilepath = this.folderPath + this.fileSystem.fileSeparator() + (this.featureFilename ? this.featureFilename : "")
 
+        if(this.featureFilename && this.featureService.fileExists(this.featureFilepath)){
+            this.filePathExists = true
+            return
+        } else {
+             this.filePathExists = false
+        }
+            
         if (this.featureForm.valid)
             this.canStartFeatureEdit = true
     }
@@ -94,9 +101,12 @@ export class FeatureCreateWizard {
     private validateFileName(c: FormControl) {
         if (c.value === "")
             return null
-
-        this.featureFilepath = this.folderPath + this.fileSystem.fileSeparator() + c.value
-        return this.featureService.fileExists(this.featureFilepath) ? { "validateFileName": true } : null
+        
+        this.filePathExists = false
+        this.featureFilepath = this.folderPath + this.fileSystem.fileSeparator() + c.value + ".feature"
+        let exists = this.featureService.fileExists(this.featureFilepath) 
+       
+        return exists ?  { validateFileName: { valid: false} }: null
     }
 
     private validatefeatureId(c: FormControl) {

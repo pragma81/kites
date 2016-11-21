@@ -20,12 +20,7 @@ import { Feature } from '../../../models/Feature';
 
 
 @Component({
-    templateUrl: 'build/components/test-suite/create/test-suite-create.html',
-    providers: [FileSystem, AppConfig,
-        SettingsServiceImpl, TestSuiteServiceImpl,
-        TestSuiteRepository, GherkinService,
-        FeatureServiceImpl, FeatureRepository,
-        JavaAutomationService]
+    templateUrl: 'build/components/test-suite/create/test-suite-create.html'
 })
 export class TestSuiteCreate {
 

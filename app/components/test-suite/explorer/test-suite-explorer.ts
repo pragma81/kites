@@ -12,8 +12,7 @@ import {TestSuite} from '../../../models/TestSuite';
 @Component({
   selector: 'tex-testsuite-explorer',
   templateUrl: 'build/components/test-suite/explorer/test-suite-explorer.html',
-  directives: [Tiles],
-  providers: [TestSuiteServiceImpl]
+  directives: [Tiles]
 })
 export class TestSuiteExplorer {
   @Output() testSuiteClick = new EventEmitter();

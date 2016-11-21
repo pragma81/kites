@@ -14,8 +14,7 @@ import {FileSystem} from '../../services/storage/FileSystem';
 
 @Component({
   selector: 'tex-tcm-synchronizer',
-  templateUrl: 'build/components/tcm/tcm-feature-sychronizer.html',
-  providers: [JiraTCM, SettingsServiceImpl, AppConfig,FileSystem]
+  templateUrl: 'build/components/tcm/tcm-feature-sychronizer.html'
 })
 export class TCMFeatureSynchronizer {
   private feature: Feature

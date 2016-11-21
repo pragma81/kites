@@ -7,8 +7,7 @@ import {TestSuite} from '../../../models/TestSuite';
 @Component({
   selector: 'tsp-testsuite-tree',
   templateUrl: 'build/components/feature/create/testsuite-tree.html',
-  directives: [TreeComponent],
-  providers: [FileSystem]
+  directives: [TreeComponent]
 
 })
 export class TestSuiteTree implements OnInit {

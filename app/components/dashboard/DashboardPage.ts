@@ -14,8 +14,7 @@ import {TestSuiteServiceImpl} from '../../services/testsuite/TestSuiteServiceImp
 
 @Component({
   templateUrl: 'build/components/dashboard/DashboardPage.html',
-  directives: [Tiles, TestSuiteExplorer, FeatureExplorer],
-  providers: [AppStateHolder, TestSuiteServiceImpl]
+  directives: [Tiles, TestSuiteExplorer, FeatureExplorer]
 
 })
 export class DashboardPage {

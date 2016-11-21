@@ -7,10 +7,15 @@ import {FileSystem} from './services/storage/FileSystem';
 import {GherkinService} from './services/gherkin/GherkinService';
 import {SettingsServiceImpl} from './services/settings/SettingsServiceImpl';
 import {FeatureServiceImpl} from './services/feature/FeatureServiceImpl';
+import {TestSuiteServiceImpl} from './services/testsuite/TestSuiteServiceImpl';
 import {TestSuiteRepository} from './repository/TestSuiteRepository';
 import {FeatureRepository} from './repository/FeatureRepository';
 import {AppConfig} from './models/AppConfig';
+import {JiraTCM} from './services/tcm/JiraTCM'
+import {JavaAutomationService} from './services/automation/JavaAutomationService'
 import {GlobalExceptionHandler} from './error/GlobalExceptionHandler';
+import {AppStateHolder} from './services/AppStateHolder';
+
 
 
 
@@ -18,8 +23,7 @@ declare var nodeRequire: any
 
 @Component({
   templateUrl: 'build/app.html',
-  providers: [FileSystem, GherkinService, FeatureServiceImpl,
-    TestSuiteRepository, FeatureRepository, SettingsServiceImpl, AppConfig,ToastController]
+  providers: [ToastController]
 })
 class App {
 
@@ -48,4 +52,7 @@ class App {
 
 } 
 
-  ionicBootstrap(App, [provide(ExceptionHandler, { useClass: GlobalExceptionHandler })]);
+  ionicBootstrap(App, [provide(ExceptionHandler, { useClass: GlobalExceptionHandler }),
+  FileSystem, GherkinService, FeatureServiceImpl,TestSuiteServiceImpl,
+    TestSuiteRepository, FeatureRepository, SettingsServiceImpl, 
+    AppConfig,JiraTCM,JavaAutomationService,AppStateHolder]);

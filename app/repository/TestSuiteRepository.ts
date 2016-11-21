@@ -79,7 +79,7 @@ export class TestSuiteRepository {
             testSuite.setFeatures(doc.features)
             testSuite.setApiTests(doc.apiTests)
             testSuite.setUiTests(doc.uiTests)
-            testSuite.setRevision(doc.revision)
+            testSuite.setRevision(doc._rev)
             callback(testSuite)
         }).catch(err => {
             console.log(err);

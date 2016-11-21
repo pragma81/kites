@@ -19,7 +19,7 @@ import {GherkinBeautifier} from '../../../services/gherkin/GherkinBeautifier'
   selector: 'tsp-feature-editor',
   directives: [Editor],
   templateUrl: `build/components/feature/editor/feature-editor.html`,
-  providers: [FeatureServiceImpl, FeatureRepository, FileSystem, SettingsServiceImpl, GherkinBeautifier]
+  providers: [GherkinBeautifier]
 })
 export class FeatureEditor implements OnInit, AfterViewInit {
   @Input() feature: Feature;

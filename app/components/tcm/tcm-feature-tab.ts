@@ -12,8 +12,7 @@ import { SettingsService } from '../../services/settings/SettingsService';
 import { SettingsServiceImpl } from '../../services/settings/SettingsServiceImpl';
 
 @Component({
-  templateUrl: 'build/components/tcm/tcm-feature-tab.html',
-  providers: [JiraTCM]
+  templateUrl: 'build/components/tcm/tcm-feature-tab.html'
 })
 export class FeatureTab {
   private tcmService: TCMService

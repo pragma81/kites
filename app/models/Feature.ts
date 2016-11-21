@@ -28,7 +28,7 @@ export class FileInfo {
     public getCreationTime(): Date {
         return this.creationTime;
     }
-    public getUpdateTime() {
+    public getUpdateTime():Date {
         return this.updateTime;
     }
 }

@@ -28,7 +28,7 @@ import {Scenario} from '../../models/Scenario';
 @Component({
   templateUrl: 'build/components/tcm/tcm-scenario-tab.html',
   directives: [TaskReporter],
-  providers: [FeatureServiceImpl, TaskReporter, FeatureRepository, TestSuiteRepository, FileSystem]
+  providers: [TaskReporter]
 })
 export class ScenarioTab implements AsyncExecutionListener {
   private tcmService: TCMService

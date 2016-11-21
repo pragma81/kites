@@ -37,7 +37,7 @@ export class FeatureRepository {
     delete(feature: Feature, callback: (feature: Feature) => void): void {
 
         let featureid = feature.getId() + ":" + feature.getTestSuiteName()
-        this._db.remove(feature.getId(), feature.getRevision()).then(result => {
+        this._db.remove(featureid, feature.getRevision()).then(result => {
             callback(feature);
         }).catch(err => {
             console.log(err);

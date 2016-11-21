@@ -30,10 +30,7 @@ import 'rxjs/add/observable/from';
 @Component({
   templateUrl: 'build/components/test-suite/import/test-suite-importer.html',
   directives: [TaskReporter],
-  providers: [TestSuiteRepository, GherkinService,
-    SettingsServiceImpl, TestSuiteServiceImpl,
-    FeatureServiceImpl, FileSystem, TaskReporter,
-    FeatureRepository, AppConfig]
+  providers: [ TaskReporter]
 
 })
 export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListener {

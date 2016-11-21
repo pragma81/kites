@@ -25,7 +25,7 @@ import {AppConfig} from '../../../models/AppConfig';
     selector: 'tex-feature-importer',
     templateUrl: 'build/components/feature/import/feature-importer.html',
     directives: [TaskReporter],
-    providers: [FeatureServiceImpl, TaskReporter, FeatureRepository, FileSystem, SettingsServiceImpl,TestSuiteRepository,AppConfig]
+    providers: [TaskReporter]
 })
 export class FeatureImporter {
     private feature: Feature;

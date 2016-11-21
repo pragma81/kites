@@ -20,10 +20,7 @@ require('brace/theme/monokai');
 
 @Component({
   directives: [TestSuiteTree,FeatureEditor],
-  templateUrl: `build/components/feature/create/feature-create.html`,
-   providers: [FeatureServiceImpl,FeatureRepository, 
-              FileSystem, SettingsServiceImpl,
-              AppConfig,TestSuiteRepository]
+  templateUrl: `build/components/feature/create/feature-create.html`
 })
 export class FeatureCreate {
   private text: string
