@@ -125,7 +125,10 @@ export class FeatureServiceImpl implements FeatureService {
     isOld(feature: Feature): boolean {
 
         let stats = this.fileSystem.stat(feature.getFileInfo().getFileAbsolutePath());
-        return stats.mtime.getTime() > feature.getFileInfo().getUpdateTime().getTime()
+        /*TOFIX Strange hack. At runtime i've got a string for feature.getFileInfo().getUpdateTime().
+        Need to be investigate*/
+        let dateString :any = feature.getFileInfo().getUpdateTime()
+        return stats.mtime.getTime() > Date.parse(dateString)
     }
 
     private replaceTagOnGherkinFile(fileAbsolutePath: string, lineToCkeck: string, tag: string): void {

@@ -1,7 +1,7 @@
-@featureid=US0150-001 @jiraid=RXRN-1098 @process:patientdatamanagement @ui
+@featureid=US0150-002 @jiraid=RXRN-1098 @process:patientdatamanagement @ui
 Feature: US0150-002 Add Patient Demographic Information
 
-As a pharmacy team member
+As a pharmacy team member 
 I want to capture patient demographic information 
 So that I can create a patient
 
