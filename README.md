@@ -38,14 +38,14 @@
   * ~~scenario total to review~~
  
   
-  * Formatter bug: always got a new line charachter every time format button is clicked
+  * ~~Formatter bug: always got a new line charachter every time format button is clicked~~
   
-  * directory tree with one root node is null
+  * ~~directory tree with one root node is null~~
   * Delete should also delete directory ?
   * During empty test suite case import must be blocked
-  * Update test suite statistics when a new feature is created or modified (bug)
+  * ~~Update test suite statistics when a new feature is created or modified (bug)~~
   * ~~Import test suite duplicate entries~~
-  * Error while updating testsuite statics after feature creating
+  * ~~Error while updating testsuite statics after feature creating~~
 
 
 

@@ -23,9 +23,9 @@ export class FeatureRepository {
         storedFeature['_id'] = storedFeature['_id'] + ":" + storedFeature['testSuiteName']
         this._db.put(storedFeature).then(function (response) {
             //save revision for the first time
-            if (feature.getRevision === undefined) {
+           // if (feature.getRevision === undefined) {
                 feature.setRevision(response.rev);
-            }
+            //}
             console.log('Feature [' + feature.getId() + ',' + feature.getName() + ',' + feature.getRevision() + '] saved ');
             callback(feature);
         }).catch(function (err) {
