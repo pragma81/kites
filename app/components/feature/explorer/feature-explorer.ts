@@ -17,12 +17,14 @@ import {FeatureEditor} from '../editor/feature-editor'
 import {FeatureCreate} from '../create/feature-create'
 import {FeatureCreateWizard} from '../create/feature-create-wizard'
 import {TCMView} from '../../tcm/tcm-view';
+import {MsToDate} from '../../../pipes/MsToDate'
 
 
 @Component({
   selector: 'tex-feature-explorer',
   templateUrl: 'build/components/feature/explorer/feature-explorer.html',
-  directives: [Tiles]
+  directives: [Tiles],
+  pipes: [MsToDate]
 })
 export class FeatureExplorer {
   private selectedType: string = 'ui'

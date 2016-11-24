@@ -19,7 +19,8 @@ export class FeatureRepository {
 
         //create feature id pouchdb id as featureid  + testuitename
 
-        let storedFeature: any = JSON.parse(JSON.stringify(feature))
+        //let storedFeature: any = JSON.parse(JSON.stringify(feature))
+        let storedFeature :any = feature
         storedFeature['_id'] = storedFeature['_id'] + ":" + storedFeature['testSuiteName']
         this._db.put(storedFeature).then(function (response) {
             //save revision for the first time

@@ -14,8 +14,8 @@ export class FileInfo {
 
     constructor(private filename: string,
         private fileAbsolutePath: string,
-        private creationTime: Date,
-        private updateTime: Date) { }
+        private creationTime: number,
+        private updateTime: number) { }
 
     public getFilename(): string {
         return this.filename
@@ -25,10 +25,10 @@ export class FileInfo {
         return this.fileAbsolutePath
     }
 
-    public getCreationTime(): Date {
+    public getCreationTime(): number {
         return this.creationTime;
     }
-    public getUpdateTime():Date {
+    public getUpdateTime():number {
         return this.updateTime;
     }
 }

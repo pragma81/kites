@@ -97,7 +97,7 @@ export class FeatureServiceImpl implements FeatureService {
         let fileName = pathElements[pathElements.length - 1];
 
         let stats = this.fileSystem.stat(filepath);
-        let fileInfo = new FileInfo(fileName, filepath, stats.birthtime, stats.mtime);
+        let fileInfo = new FileInfo(fileName, filepath, stats.birthtime.getTime(), stats.mtime.getTime());
         let feature = new Feature(gherkinAST, fileInfo);
 
 
@@ -128,7 +128,7 @@ export class FeatureServiceImpl implements FeatureService {
         /*TOFIX Strange hack. At runtime i've got a string for feature.getFileInfo().getUpdateTime().
         Need to be investigate*/
         let dateString :any = feature.getFileInfo().getUpdateTime()
-        return stats.mtime.getTime() > Date.parse(dateString)
+        return stats.mtime.getTime() > feature.getFileInfo().getUpdateTime()
     }
 
     private replaceTagOnGherkinFile(fileAbsolutePath: string, lineToCkeck: string, tag: string): void {

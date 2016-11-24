@@ -39,7 +39,7 @@
             </ion-col>
             <ion-col width-60>
               <h2 class="feature-summary">{{ featureInfo.feature.name}}</h2>
-              <p style="font-size : 1.1rem;"><strong> Last Modified </strong> {{featureInfo.feature.fileInfo.updateTime}}</p>  
+              <p style="font-size : 1.1rem;"><strong> Last Modified </strong> {{ featureInfo.feature.fileInfo.updateTime | MsToDate}}</p>  
               <template [ngIf]="featureInfo.feature.getTCMId()">
               <i class="fa fa-link"></i> <span> {{tcmSettings.TcmName}}</span>
               <a  href="#" (click)="onTcmClick(featureInfo.feature)" style="font-size: 1.3rem"> {{ featureInfo.feature.getTCMId()}}</a>

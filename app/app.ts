@@ -19,11 +19,13 @@ import {AppStateHolder} from './services/AppStateHolder';
 
 
 
+
 declare var nodeRequire: any
 
 @Component({
   templateUrl: 'build/app.html',
   providers: [ToastController]
+  
 })
 class App {
 
