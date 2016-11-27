@@ -117,7 +117,7 @@ export class FeatureServiceImpl implements FeatureService {
     public lyncTestCase(feature: Feature, scenario: Scenario, testcase: TestCase): void {
 
         let tcmIdTag = "@" + this.tcmSettings.TagKeyword + "=" + testcase.Id
-        let lineToCheck: string = scenario.getKeyword() + ":" + scenario.getSummary()
+        let lineToCheck: string = scenario.getKeyword() + ": " + scenario.getSummary()
         this.replaceTagOnGherkinFile(feature.getFileInfo().getFileAbsolutePath(), lineToCheck, tcmIdTag)
 
     }
