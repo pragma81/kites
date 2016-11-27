@@ -1,17 +1,17 @@
-import {FeatureCreationError} from '../../../error/FeatureCreationError';
-import {ViewController, NavParams, Events, NavController, AlertController} from 'ionic-angular';
-import {Component, OnInit, Input, ViewChild, AfterViewInit} from '@angular/core';
-import {Feature} from '../../../models/Feature';
-import {Editor, Annotation, KeyBinding, BindKey} from './editor';
+import { FeatureCreationError } from '../../../error/FeatureCreationError';
+import { ViewController, NavParams, Events, NavController, AlertController } from 'ionic-angular';
+import { Component, OnInit, Input, ViewChild, AfterViewInit } from '@angular/core';
+import { Feature, GherkinAST } from '../../../models/Feature';
+import { Editor, Annotation, KeyBinding, BindKey } from './editor';
 
-import {FeatureServiceImpl} from '../../../services/feature/FeatureServiceImpl';
-import {FeatureService} from '../../../services/feature/FeatureService';
-import {FeatureRepository} from '../../../repository/FeatureRepository';
-import {FileSystem} from '../../../services/storage/FileSystem';
-import {SettingsServiceImpl} from '../../../services/settings/SettingsServiceImpl';
-import {TestSuite} from '../../../models/TestSuite';
-import {DashboardPage} from '../../dashboard/DashboardPage'
-import {GherkinBeautifier} from '../../../services/gherkin/GherkinBeautifier'
+import { FeatureServiceImpl } from '../../../services/feature/FeatureServiceImpl';
+import { FeatureService } from '../../../services/feature/FeatureService';
+import { FeatureRepository } from '../../../repository/FeatureRepository';
+import { FileSystem } from '../../../services/storage/FileSystem';
+import { SettingsServiceImpl } from '../../../services/settings/SettingsServiceImpl';
+import { TestSuite } from '../../../models/TestSuite';
+import { DashboardPage } from '../../dashboard/DashboardPage'
+import { GherkinBeautifier } from '../../../services/gherkin/GherkinBeautifier'
 
 
 
@@ -25,7 +25,7 @@ export class FeatureEditor implements OnInit, AfterViewInit {
   @Input() feature: Feature;
   @Input() filepath: string;
   @Input() testsuitename: string;
-  @Input() templateText:string
+  @Input() templateText: string
 
   @ViewChild("editorref") editor: Editor
 
@@ -76,7 +76,7 @@ export class FeatureEditor implements OnInit, AfterViewInit {
 
     if (!this.createMode)
       this.text = this.featureService.getTextFromFile(this.filepath)
-      else
+    else
       this.text = this.templateText
   }
 
@@ -113,16 +113,16 @@ export class FeatureEditor implements OnInit, AfterViewInit {
       name: 'zoomin',
       bindKey: { win: 'Ctrl-1', mac: 'Command-1' },
       exec: (editor) => {
-        editor.setFontSize(editor.getFontSize()+2)
+        editor.setFontSize(editor.getFontSize() + 2)
       }
     }
     this.editor.addkeyBinding(zoominKeyBinding)
 
-     let zoomoutKeyBinding: KeyBinding = {
+    let zoomoutKeyBinding: KeyBinding = {
       name: 'zoomout',
       bindKey: { win: 'Ctrl-2', mac: 'Command-2' },
       exec: (editor) => {
-        editor.setFontSize(editor.getFontSize()-2)
+        editor.setFontSize(editor.getFontSize() - 2)
       }
     }
     this.editor.addkeyBinding(zoomoutKeyBinding)
@@ -137,8 +137,12 @@ export class FeatureEditor implements OnInit, AfterViewInit {
       return
 
     try {
-      let parsedFeature = this.featureService.parseGherkinText(this.text)
-      this.validateFeatureId(parsedFeature)
+      let gherkinAST = this.featureService.parseGherkinText(this.text)
+      
+      //Try to build a feature
+      let feature = new Feature(gherkinAST,this.testsuitename)
+      
+      this.validateFeatureUniqueness(gherkinAST, this.testsuitename)
       this.hasCompileErrors = false
     } catch (e) {
       this.hasCompileErrors = true
@@ -154,9 +158,9 @@ export class FeatureEditor implements OnInit, AfterViewInit {
       }
 
       setTimeout(() => {
-         this.editor.addAnnotations(annotations)
+        this.editor.addAnnotations(annotations)
       }, 100);
-     
+
 
     }
 
@@ -169,16 +173,17 @@ export class FeatureEditor implements OnInit, AfterViewInit {
     //
 
     setTimeout(() => {
-            this.editor.moveCursorPosition(currentRowPosition,currentColumnPosition)
-        },100);
+      this.editor.moveCursorPosition(currentRowPosition, currentColumnPosition)
+    }, 100);
   }
 
   save() {
     if (this.hasCompileErrors)
       return
 
-    let detachedFeature: Feature = this.featureService.parseGherkinText(this.text)
-    detachedFeature.setTestSuiteName(this.testsuitename)
+    let gherkinAST = this.featureService.parseGherkinText(this.text)
+    let detachedFeature: Feature = new Feature(gherkinAST, this.testsuitename)
+
 
     if (this.createMode) {
       //Create file for the first time in synch mode
@@ -195,7 +200,7 @@ export class FeatureEditor implements OnInit, AfterViewInit {
       this.dirty = false
       if (this.createMode) {
         this.createMode = false
-        this.events.publish("feature:create",  this.storedFeature)
+        this.events.publish("feature:create", this.storedFeature)
       }
 
     })
@@ -219,43 +224,62 @@ export class FeatureEditor implements OnInit, AfterViewInit {
           text: 'Yes',
           handler: () => {
             this.nav.pop().then(() => {
-             this.events.publish('feature:update', {testsuitename : this.testsuitename, feature :this.storedFeature});
+              setTimeout(()=>{
+                this.events.publish('feature:update', { testsuitename: this.testsuitename, feature: this.storedFeature });
+              },100)
+              
             })
 
           }
         }]
     });
 
-    if (this.storedFeature && this.dirty) {
+    if (this.dirty) {
       alert.present();
     } else {
       this.nav.pop().then(() => {
-        this.events.publish('feature:update', {testsuitename : this.testsuitename, feature :this.storedFeature});
+        this.events.publish('feature:update', { testsuitename: this.testsuitename, feature: this.storedFeature });
       })
       //this.nav.push(DashboardPage, { feature: this.storedFeature })
     }
 
   }
 
-  private validateFeatureId(parsedFeature : Feature){
-    //check featureid is dirty
-    if(this.storedFeature && (parsedFeature.getId() === this.storedFeature.getId()))
-    return
-    
-    let storeFeatureid = parsedFeature.getId() + ":" +this.testsuitename
-    let exists = this.featureService.exists(storeFeatureid,feature =>{
-       let annotations: Array<Annotation> = []
+  private validateFeatureUniqueness(gherkinAST: GherkinAST, testsuitename: string) {
+    let featuretags = gherkinAST.ast.feature.tags
+    if (!featuretags)
+      return
 
-    annotations.push({
-      row: 0,
-      column: 0,
-      text: parsedFeature.getId()+ " already exists",
-      type: "error"
+    let featureAST = featuretags.find(function (value, index, array) {
+      let valueAny: any = value;
+      let tagSplit = valueAny.name.split('=');
+      return tagSplit[0] === '@featureid'
+
     })
 
-    this.editor.addAnnotations(annotations)
-    this.hasCompileErrors = true
-    },()=>{})
+    if(!featureAST)
+    return
+    let featureId = featureAST.name.split('=')[1];
+    let tempStoreFeatureid = featureId + ":" + this.testsuitename
+
+    //check featureid is dirty
+    if (this.storedFeature && (tempStoreFeatureid === this.storedFeature.getId()))
+      return
+
+
+    let exists = this.featureService.exists(tempStoreFeatureid, feature => {
+      let annotations: Array<Annotation> = []
+
+      annotations.push({
+        row: 0,
+        column: 0,
+        text: featureId + " already exists",
+        type: "error"
+      })
+
+      this.editor.addAnnotations(annotations)
+      this.hasCompileErrors = true
+    }, () => { })
 
 
   }

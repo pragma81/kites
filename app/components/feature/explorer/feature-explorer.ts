@@ -36,6 +36,7 @@ export class FeatureExplorer {
   private tcmBaseUrl: string
   private settingsService: SettingsService
   private tcmSettings: TCMSettings
+  private testsuitename: string
 
 
   @Output() featureUpdate = new EventEmitter();
@@ -60,7 +61,8 @@ export class FeatureExplorer {
   loadByTestSuiteName(testSuiteName: string): void {
    
     console.log("load features for test suite:" + testSuiteName);
-
+    this.testsuitename = testSuiteName
+    
     this.featureService.getByTestSuite(testSuiteName,
       (features: Array<Feature>) => {
          this.featuresInfo.length = 0

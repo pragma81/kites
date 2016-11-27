@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Scenario} from './Scenario';
+import {FileInfo} from './FileInfo';
 import {TCMSettings} from './TCMSettings'
 import {FeatureCreationError} from '../error/FeatureCreationError';
 import {ErrorDetail, Severity} from '../error/ErrorDetail';
@@ -10,28 +11,12 @@ export enum FeatureType {
     UI
 }
 
-export class FileInfo {
 
-    constructor(private filename: string,
-        private fileAbsolutePath: string,
-        private creationTime: number,
-        private updateTime: number) { }
 
-    public getFilename(): string {
-        return this.filename
-    }
-
-    public getFileAbsolutePath(): string {
-        return this.fileAbsolutePath
-    }
-
-    public getCreationTime(): number {
-        return this.creationTime;
-    }
-    public getUpdateTime():number {
-        return this.updateTime;
-    }
+export interface GherkinAST {
+ ast:any
 }
+
 @Injectable()
 export class Feature {
     private _id: string;
@@ -42,7 +27,7 @@ export class Feature {
     private tcmId: string;
     private type: FeatureType;
     private fileInfo: FileInfo;
-    private rawData: Object;
+    private rawData: any;
     private wellFormed: boolean;
     private scenarios: Array<Scenario> = [];
     private background: Scenario;
@@ -51,49 +36,49 @@ export class Feature {
 
 
 
-    //Used internally for updating object using puchdb
+    //Used internally for updating object using pouchdb
     private _rev: string;
 
     //Internal AST
     private ast: string;
-    constructor(featureAst: Object, fileInfo: FileInfo) {
-        this.rawData = featureAst;
+    constructor(gherkinAST: GherkinAST, testsuitename: string, fileInfo?: FileInfo) {
+        this.rawData = gherkinAST.ast;
         this.fileInfo = fileInfo;
-        let featureAstAny: any = featureAst;
-        this.name = featureAstAny.feature.name;
-        this.description = featureAstAny.feature.description;
-        this.buildTags(featureAstAny.feature.tags);
-        this.buildTCMId(featureAstAny.feature.tags);
-        this.buildProcessId(featureAstAny.feature.tags);
-        this.buildFeatureId(featureAstAny.feature.tags);
+        this.testSuiteName = testsuitename
+        this.name = this.rawData.feature.name;
+        this.description = this.rawData.feature.description;
+        this.buildTags(this.rawData.feature.tags);
+        this.buildTCMId(this.rawData.feature.tags);
+        this.buildProcessId(this.rawData.feature.tags);
+        this.buildFeatureId(this.rawData.feature.tags);
 
-        if (this.hasUITag(featureAstAny.feature.tags)) {
+        if (this.hasUITag(this.rawData.feature.tags)) {
             this.type = FeatureType.UI;
-        } else if (this.hasAPITag(featureAstAny.feature.tags)) {
+        } else if (this.hasAPITag(this.rawData.feature.tags)) {
             this.type = FeatureType.API;
         } else {
             let errorDetail = new ErrorDetail("Feature is not well formed",
                 "Feature tags missing",
                 Severity.blocker);
             errorDetail.setResolutionHint("Add @ui or @api on topo of you feature file")
-            let featureError = new FeatureCreationError("@ui or @api tags is missing for feature [" + featureAstAny.feature.name + "]", new Error(), errorDetail)
+            let featureError = new FeatureCreationError("@ui or @api tags is missing for feature [" + this.rawData.feature.name + "]", new Error(), errorDetail)
             featureError.Row = 0
             featureError.Column = 0
             throw featureError
         }
 
-        if (featureAstAny.feature.children === undefined || featureAstAny.feature.children.length === 0) {
+        if (this.rawData.feature.children === undefined || this.rawData.feature.children.length === 0) {
             //throw new Error("Feature [" + this.name + "] has no scenarios")
             let errorDetail = new ErrorDetail("Feature is not well formed",
                 "No scenarios found",
                 Severity.blocker);
             errorDetail.setResolutionHint("Add Scenario: ---- Given:--- When:--- Then:---- in your feature file")
             let featureError = new FeatureCreationError("Feature [" + this.name + "] has no scenarios", new Error(), errorDetail)
-            featureError.Row = featureAstAny.feature.location.line - 1
+            featureError.Row = this.rawData.feature.location.line - 1
             throw featureError
         }
 
-        featureAstAny.feature.children.forEach(element => {
+        this.rawData.feature.children.forEach(element => {
             let scenario: Scenario = new Scenario(element);
             if (scenario.isBackground()) {
                 this.background = scenario
@@ -294,7 +279,7 @@ export class Feature {
 
         }
         let featureIdAny: any = featureId;
-        this._id = featureIdAny.name.split('=')[1];
+        this._id = featureIdAny.name.split('=')[1] + ":"+ this.testSuiteName
     }
 
 }

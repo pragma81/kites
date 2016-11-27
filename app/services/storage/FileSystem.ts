@@ -1,8 +1,10 @@
-import {Injectable} from '@angular/core'
-import * as fs from 'fs'
+import { FileInfo } from '../../models/FileInfo';
+import { Injectable } from '@angular/core';
+
+import * as fs from 'fs';
 import * as readline from 'readline'
-import * as path from 'path'
-import * as minimatch from 'minimatch'
+import * as path from 'path';
+import * as minimatch from 'minimatch';
 
 declare var nodeRequire: any
 @Injectable()
@@ -40,6 +42,14 @@ export class FileSystem {
     return pathElements[pathElements.length - 1];
   }
 
+  public getFileInfo(filepath: string): FileInfo {
+    let fileName = this.getFileNameFromPath(filepath)
+
+    let stats = this.stat(filepath);
+    let fileInfo = new FileInfo(fileName, filepath, stats.birthtime.getTime(), stats.mtime.getTime());
+    return fileInfo
+  }
+
   public readFile(filePath, encoding): string {
     let fileData;
     try {
@@ -54,29 +64,29 @@ export class FileSystem {
     return this.path.sep;
   }
 
-  public listFiles(absolutePath: string, matcherPaths: string,dirExcludes : Array<string>): Array<string> {
+  public listFiles(absolutePath: string, matcherPaths: string, dirExcludes: Array<string>): Array<string> {
 
     var matchers = this.toPatternMatcher(matcherPaths);
     var list: Array<string> = []
 
-    
+
     var files = this.fs.readdirSync(absolutePath);
 
     files.forEach((file) => {
-     if(dirExcludes && dirExcludes.indexOf(file) > -1)
-     return
+      if (dirExcludes && dirExcludes.indexOf(file) > -1)
+        return
       var filePath = this.path.join(absolutePath, file)
 
       let fileStat: fs.Stats = this.fs.statSync(filePath);
 
       if (fileStat.isDirectory()) {
-        let recursiveList: Array<string> = this.listFiles(filePath, matcherPaths,dirExcludes);
+        let recursiveList: Array<string> = this.listFiles(filePath, matcherPaths, dirExcludes);
 
         list = list.concat(recursiveList)
 
       } else {
 
-        
+
         if (matchers(filePath)) {
           list.push(filePath)
         }
@@ -116,7 +126,7 @@ export class FileSystem {
     dir.forEach(file => {
       let nestedFilepath = filepath + this.fileSeparator() + file
       if (this.isDir(nestedFilepath))
-          tree['children'].push(this.buildDirTree(nestedFilepath))
+        tree['children'].push(this.buildDirTree(nestedFilepath))
     })
 
     return tree

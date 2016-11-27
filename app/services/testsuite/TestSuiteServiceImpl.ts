@@ -133,34 +133,7 @@ export class TestSuiteServiceImpl implements TestSuiteService {
     return this.fileSystem.listFiles(featureFilesFolder, '**/*.feature', ["target"]);
 
   }
-  public importFromLocalDir(projectFilePath: string, importIntoAppFolder: boolean): void {
-
-    let testSuiteName = this.getTestSuiteName(projectFilePath);
-
-    let testSuite: TestSuite = new TestSuite(testSuiteName, false, null,
-      null, importIntoAppFolder,
-      projectFilePath, ExecutionRuntime.JAVA);
-    this.testSuiteRepository.save(testSuite,()=>{});
-    let featurefiles: Array<string> = this.listFeatureFiles(projectFilePath);
-    featurefiles.forEach(file => {
-      //Parse feature file
-
-      let featureAst = this.gherkinService.parse(file);
-      //Build feature ,scenario,steps model
-      let feature: Feature = this.featureService.parseGherkinFile(projectFilePath)
-      //Save to storage
-      this.featureService.save(feature, (feature) => {
-        testSuite.incrementFeaturesCounter();
-        if (feature.isAPI()) {
-          testSuite.incrementApiTestCounter();
-        } else {
-          testSuite.incrementUiTestCounter()
-        }
-      });
-       this.testSuiteRepository.save(testSuite,()=>{});
-    });
-
-  }
+ 
 
   imporFromSCMRepo(testSuiteDirePath: string) {
 

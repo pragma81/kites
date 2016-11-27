@@ -148,8 +148,9 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
     try {
       let featureFilePath = taskInfo.getInputHolder().filepath;
       let testsuitename = taskInfo.getInputHolder().testSuiteName
-      let feature = this.featureService.parseGherkinFile(featureFilePath);
-      feature.setTestSuiteName(testsuitename)
+      let gherkinAST = this.featureService.parseGherkinFile(featureFilePath);
+      let fileInfo = this.fileSystem.getFileInfo(featureFilePath)
+      let feature = new Feature(gherkinAST,testsuitename,fileInfo)
 
       let metrics: Array<Metric> = [];
       metrics.push(new Metric(feature.getId(), "Id"));

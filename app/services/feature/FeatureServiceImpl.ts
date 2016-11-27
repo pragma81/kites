@@ -1,7 +1,8 @@
 import {TCMSettings} from '../../models/TCMSettings';
 
 import {Injectable} from '@angular/core';
-import {Feature, FileInfo} from '../../models/Feature';
+import {Feature,GherkinAST} from '../../models/Feature';
+import {FileInfo} from '../../models/FileInfo';
 import {FeatureService} from './FeatureService';
 import {FeatureRepository} from '../../repository/FeatureRepository';
 import {TestSuiteRepository} from '../../repository/TestSuiteRepository';
@@ -65,10 +66,13 @@ export class FeatureServiceImpl implements FeatureService {
     public store(feature:Feature, filepath:string, text:string, callback: (feature: Feature) => void) : void{
         this.fileSystem.writeTextFile(filepath,text)
         
-        let newFeature = this.parseGherkinFile(filepath)
-        
-        //copy 
-        newFeature.setTestSuiteName(feature.getTestSuiteName())
+        //get gherkin ast
+        let gherkinAST = this.parseGherkinFile(filepath)
+           
+        let fileInfo = this.fileSystem.getFileInfo(filepath)
+   
+        //copy
+        let newFeature =  new Feature (gherkinAST,feature.getTestSuiteName(),fileInfo)   
         newFeature.setRevision(feature.getRevision())
 
         this.featureRepository.save(newFeature,callback)
@@ -85,39 +89,35 @@ export class FeatureServiceImpl implements FeatureService {
     
     /* Return the Javascript Object representing the feature file AST
     */
-    public parseGherkinFile(filepath: string): Feature {
+    public parseGherkinFile(filepath: string): GherkinAST {
         let featureFileData = this.fileSystem.readFile(filepath, 'utf-8');
         var parser = new Gherkin.Parser();
         //var parser = Gherkin.Parser;
         parser.stopAtFirstError = false;
         let gherkinAST: Object = parser.parse(featureFileData);
 
-        //filename 
-        let pathElements: Array<string> = filepath.split(this.fileSystem.fileSeparator());
-        let fileName = pathElements[pathElements.length - 1];
+       
+        //let feature = new Feature(gherkinAST, fileInfo);
+        return { ast : gherkinAST}
 
-        let stats = this.fileSystem.stat(filepath);
-        let fileInfo = new FileInfo(fileName, filepath, stats.birthtime.getTime(), stats.mtime.getTime());
-        let feature = new Feature(gherkinAST, fileInfo);
-
-
-        return feature
+       // return feature
 
     }
 
-     public parseGherkinText(text: string): Feature {
+     public parseGherkinText(text: string): GherkinAST {
         var parser = new Gherkin.Parser();
 
         let gherkinAST: Object = parser.parse(text);
-        let feature = new Feature(gherkinAST, null);
-        return feature
+        //let feature = new Feature(gherkinAST, null);
+        return { ast : gherkinAST}
+        //return feature
     }
 
 
     public lyncTestCase(feature: Feature, scenario: Scenario, testcase: TestCase): void {
 
         let tcmIdTag = "@" + this.tcmSettings.TagKeyword + "=" + testcase.Id
-        let lineToCheck: string = scenario.getKeyword() + ": " + scenario.getSummary()
+        let lineToCheck: string = scenario.getKeyword() + ":" + scenario.getSummary()
         this.replaceTagOnGherkinFile(feature.getFileInfo().getFileAbsolutePath(), lineToCheck, tcmIdTag)
 
     }

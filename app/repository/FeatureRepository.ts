@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core'
 import * as PouchDB from 'pouchdb-browser';
-import { Feature, FileInfo } from '../models/Feature'
+import { Feature } from '../models/Feature'
+import { FileInfo } from '../models/FileInfo'
+
 
 //let PouchDB = require('pouchdb');
 
@@ -17,12 +19,8 @@ export class FeatureRepository {
 
     public save(feature: Feature, callback: (feature: Feature) => void): void {
 
-        //create feature id pouchdb id as featureid  + testuitename
 
-        //let storedFeature: any = JSON.parse(JSON.stringify(feature))
-        let storedFeature :any = feature
-        storedFeature['_id'] = storedFeature['_id'] + ":" + storedFeature['testSuiteName']
-        this._db.put(storedFeature).then(function (response) {
+        this._db.put(feature).then(function (response) {
             //save revision for the first time
            // if (feature.getRevision === undefined) {
                 feature.setRevision(response.rev);
@@ -37,8 +35,8 @@ export class FeatureRepository {
 
     delete(feature: Feature, callback: (feature: Feature) => void): void {
 
-        let featureid = feature.getId() + ":" + feature.getTestSuiteName()
-        this._db.remove(featureid, feature.getRevision()).then(result => {
+      
+        this._db.remove(feature.getId(), feature.getRevision()).then(result => {
             callback(feature);
         }).catch(err => {
             console.log(err);
@@ -64,14 +62,13 @@ export class FeatureRepository {
             }
             result.rows.forEach(row => {
                 let fileInfo = new FileInfo(row.doc.fileInfo.filename, row.doc.fileInfo.fileAbsolutePath, row.doc.fileInfo.creationTime, row.doc.fileInfo.updateTime)
-                let feature = new Feature(row.doc.rawData, fileInfo)
+                let feature = new Feature({ast:row.doc.rawData},row.doc.testSuiteName, fileInfo)
                 feature.setRevision(row.doc._rev)
-                feature.setTestSuiteName(row.doc.testSuiteName)
                 features.push(feature)
             })
             callback(features)
         }).catch(err => {
-            console.log(err);
+         throw new Error('Error while reading feature files for test suite  [' + testSuiteName +'] :' + err.message);
         });
     }
 
@@ -80,9 +77,8 @@ export class FeatureRepository {
         this._db.get(featureid).then(doc => {
 
             let fileInfo = new FileInfo(doc.fileInfo.filename, doc.fileInfo.fileAbsolutePath, doc.fileInfo.creationTime, doc.fileInfo.updateTime)
-        let feature = new Feature(doc.rawData, fileInfo)
+        let feature = new Feature({ast:doc.rawData},doc.testSuiteName, fileInfo)
         feature.setRevision(doc._rev)
-        feature.setTestSuiteName(doc.testSuiteName)
             callback(feature)
         }).catch(err => {
             console.log(err);

@@ -48,7 +48,8 @@ export class ScenarioTab implements AsyncExecutionListener {
   */
   constructor(private navParams: NavParams, injector: Injector,
     settingsService: SettingsServiceImpl, private events: Events,
-    featureService: FeatureServiceImpl, private toastController: ToastController) {
+    featureService: FeatureServiceImpl, private toastController: ToastController,
+    private fileSystem: FileSystem) {
 
     this.feature = <Feature>this.navParams.data
     this.featureService = featureService
@@ -130,10 +131,11 @@ export class ScenarioTab implements AsyncExecutionListener {
   beforeAsyncProcess(execution: AsyncTaskExecutor): void { }
   postAsyncProcess(execution: AsyncTaskExecutor): void { 
    
-    // reload feature file from file system
-      let featureWithNewTags = this.featureService.parseGherkinFile(this.feature.getFileInfo().getFileAbsolutePath())
+    // reload feature file from file system and save new tcm tags
+      let updatedGherkinAST = this.featureService.parseGherkinFile(this.feature.getFileInfo().getFileAbsolutePath())
+      let featureWithNewTags = new Feature(updatedGherkinAST,this.feature.getTestSuiteName(),this.feature.getFileInfo())
       featureWithNewTags.setRevision(this.feature.getRevision())
-      featureWithNewTags.setTestSuiteName(this.feature.getTestSuiteName())
+     
       this.featureService.save(featureWithNewTags,(feature)=>{
         
       })
