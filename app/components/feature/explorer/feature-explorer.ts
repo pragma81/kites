@@ -1,11 +1,12 @@
 import {TCMFeatureSynchronizer} from '../../tcm/tcm-feature-synchronizer';
 import {Component, Output, EventEmitter} from '@angular/core';
-import {ModalController, ToastController, NavController, PopoverController, ViewController} from 'ionic-angular';
+import {ModalController, ToastController, NavController, PopoverController, ViewController,AlertController,Events} from 'ionic-angular';
 import {FeatureService} from '../../../services/feature/FeatureService';
 import {SettingsService} from '../../../services/settings/SettingsService';
 import {SettingsServiceImpl} from '../../../services/settings/SettingsServiceImpl';
 import {FeatureServiceImpl} from '../../../services/feature/FeatureServiceImpl';
 import {Tiles, Tile} from '../../tiles/tiles';
+import {CardPlaceholder} from '../../card/card-placeholder';
 import {TestSuite} from '../../../models/TestSuite';
 import {TCMSettings} from '../../../models/TCMSettings';
 import {Feature, FeatureType} from '../../../models/Feature';
@@ -23,7 +24,7 @@ import {MsToDate} from '../../../pipes/MsToDate'
 @Component({
   selector: 'tex-feature-explorer',
   templateUrl: 'build/components/feature/explorer/feature-explorer.html',
-  directives: [Tiles],
+  directives: [Tiles,CardPlaceholder],
   pipes: [MsToDate]
 })
 export class FeatureExplorer {
@@ -37,6 +38,7 @@ export class FeatureExplorer {
   private settingsService: SettingsService
   private tcmSettings: TCMSettings
   private testsuitename: string
+  private loading: boolean = false
 
 
   @Output() featureUpdate = new EventEmitter();
@@ -45,7 +47,9 @@ export class FeatureExplorer {
     featureService: FeatureServiceImpl,
     private toastController: ToastController,
     public popoverCtrl: PopoverController,
-    settingsService: SettingsServiceImpl) {
+    settingsService: SettingsServiceImpl,
+    private alertController: AlertController,
+    private events:Events) {
     this.featureService = featureService;
     this.settingsService = settingsService
     this.tcmSettings = settingsService.getTestCaseManegementSettings()
@@ -59,8 +63,7 @@ export class FeatureExplorer {
   }
 
   loadByTestSuiteName(testSuiteName: string): void {
-   
-    console.log("load features for test suite:" + testSuiteName);
+   this.loading = true
     this.testsuitename = testSuiteName
     
     this.featureService.getByTestSuite(testSuiteName,
@@ -84,7 +87,7 @@ export class FeatureExplorer {
           featureInfo.tiles.push(acceptance)
           this.featuresInfo.push(featureInfo)
           this.unfilteredFeaturesInfo.push(featureInfo)
-
+          this.loading = false
         })
       })
   }
@@ -171,7 +174,28 @@ export class FeatureExplorer {
   }
 
   edit(featureInfo: FeatureInfo) {
+    let filexists : boolean = this.featureService.fileExists(featureInfo.feature.getFileInfo().getFileAbsolutePath())
+    if(!filexists){
+        let alert = this.alertController.create({
+      title: "Cannot edit feature file",
+
+      message: "Feature file was deleted or moved from its original path.It will removed from '"+featureInfo.feature.getTestSuiteName()+"' test suite in order to avoid further incosistencies. It is recommeded to delete and re-import the test suite",
+      buttons: [
+        {
+          text: 'Ok',
+          handler: () => {
+            this.featureService.delete(featureInfo.feature,()=>{
+                this.events.publish('feature:update', { testsuitename: featureInfo.feature.getTestSuiteName(), feature: featureInfo.feature });
+            })
+        
+
+          }
+        }]
+    });
+    alert.present()
+    } else {
     this.nav.push(FeatureCreate, { feature: featureInfo.feature })
+    }
   }
 
 
@@ -243,7 +267,7 @@ export class AddFeatureMenu {
 
 @Component({
   template: `
-        <button  block clear (click)="tcmSync(featureInfo)"><ion-icon name='md-link'></ion-icon>
+        <button  block clear (click)="tcmSync()"><ion-icon name='md-link'></ion-icon>
           Sync
         </button>
        <button block clear (click)="run()"><ion-icon name='ios-play'></ion-icon>
@@ -256,24 +280,54 @@ export class AddFeatureMenu {
 })
 export class FeatureMenu {
   private feature: Feature
-  constructor(private nav: NavController, private viewCtrl: ViewController, private modalController: ModalController) {
+  private featureService: FeatureService
+  constructor(private nav: NavController, private viewCtrl: ViewController, 
+  private modalController: ModalController,
+  private alertController:AlertController,featureService:FeatureServiceImpl,
+  private events: Events) {
     this.feature = this.viewCtrl.data.feature
+    this.featureService = featureService
   }
 
   tcmSync() {
-    const modal = this.modalController.create(TCMFeatureSynchronizer, { "feature": this.feature, callback: () => { } });
+    const modal = this.modalController.create(TCMFeatureSynchronizer, { "feature": this.feature, callback: () => { } },{/*enableBackdropDismiss:false*/});
     modal.onDidDismiss(isSuccess => { });
     this.viewCtrl.dismiss().then(() => {
       modal.present()
     })
 
-
   }
 
   delete() {
-    this.viewCtrl.dismiss()
-    console.log("Delete Not yet implemented")
+
+       let alert = this.alertController.create({
+      title: "Confirmation Requested",
+
+      message: "Are you sure you want to delete '"+this.feature.getName()+"' ? ",
+      buttons: [
+        {
+          text: 'No',
+          handler: () => {
+            console.log('Disagree clicked');
+          }
+        },
+        {
+          text: 'Yes',
+          handler: () => {
+            this.featureService.delete(this.feature,()=>{
+                this.events.publish('feature:update', { testsuitename: this.feature.getTestSuiteName(), feature: this.feature });
+            })
+        
+
+          }
+        }]
+    });
+
+    this.viewCtrl.dismiss().then(() => {
+      alert.present()
+    })
   }
+
   run() {
     this.viewCtrl.dismiss()
     console.log("Run Not yet implemented")
