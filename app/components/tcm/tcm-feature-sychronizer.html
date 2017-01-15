@@ -1,25 +1,125 @@
-<ion-tabs #tcmTabs class="tabs-basic" tabsHighlight = "true" tabsPlacement="top" preloadTabs>
-  <ion-tab tabTitle="Feature" [root]="featureTab" [rootParams]="feature" (featureLinked)="onFeatureLinked(featureTcm)" ></ion-tab>
-  <ion-tab tabTitle="Scenarios" [root]="scenarioTab" [rootParams]="feature" enabled="false" ></ion-tab>
-</ion-tabs>
+<ion-header class="slide-header">
 
-<!--div padding>
-  <ion-segment [(ngModel)]="segment">
-    <ion-segment-button value="Feature">
-      Feature
-    </ion-segment-button>
-    <ion-segment-button value="Scenario">
-      Scenario
-    </ion-segment-button>
-  </ion-segment>
-</div>
+    <h1>Feature Synchronization</h1>
+    <p><span class="modal-header-description"> {{headerInfo}}</span></p>
 
-<div [ngSwitch]="segment">
-  <h2 *ngSwitchCase="'Feature'">
-    this is the feature segment
-  </h2>
+</ion-header>
+<ion-content>
+    <ion-slides #wizard>
 
-  <h2 *ngSwitchCase="'Scenario'">
-    this is the scenario segment
-  </h2>
-</div-->
+        <ion-slide class="slide-overflow">
+            <!-- Feature Search Slide -->
+            <ion-card>
+
+                <ion-card-header *ngIf="featureTCM && testCasesWarning" style="background-color : lightsalmon;"> Warning
+<ion-icon name="alert"></ion-icon>
+Your local feature file has
+<ion-badge>{{feature.getScenarios().length}}</ion-badge> scenarios while feature [{{tcmSearchForm.controls.tcmId.value}}] has
+<ion-badge>{{featureTCM.TestCases.length}}</ion-badge> test cases
+
+</ion-card-header>
+
+<ion-card-content>
+    <form [formGroup]="tcmSearchForm">
+        <ion-item>
+            <ion-label floating>{{tcmSettings.TcmName | uppercase }} ID</ion-label>
+            <ion-input #tcmId [formControl]="tcmSearchForm.controls.tcmId" type="text" (keyup)="onFeatureIdChanged()" required></ion-input>
+            <button ion-button clear item-right (click)="search()">
+        Search <ion-icon name="settings" ></ion-icon>
+      </button>
+        </ion-item>
+        <ion-item *ngIf="!tcmSearchForm.controls.tcmId.valid && (tcmSearchForm.controls.tcmId.touched || tcmSearchForm.controls.tcmId.dirty)">
+            <p style="color:red">Please enter a valid value</p>
+</ion-item>
+</form>
+<ion-spinner style="width:700px;height:62px" *ngIf="isSearching" name="crescent"></ion-spinner>
+</ion-card-content>
+</ion-card>
+
+
+<ion-card *ngIf="featureTCM && !isSearching">
+    <ion-card-header class="feature-header">
+        <ion-grid>
+            <ion-row>
+                <ion-col width-90>
+                    <h2>{{featureTCM.getCustomField('project')}}/{{ featureTCM.Id}}</h2>
+                    <p style="font-size : 1.3rem;">{{featureTCM.Summary}}</p>
+</ion-col>
+<ion-col width-10>
+    <button clear primary (click)="expandDetail()"> 
+          <ion-icon *ngIf="!showDetail" name="ios-arrow-down" class="arrow-custom" item-right></ion-icon>
+          <ion-icon *ngIf="showDetail" name="ios-arrow-up" class="arrow-custom" item-right></ion-icon>
+           </button>
+</ion-col>
+</ion-row>
+</ion-grid>
+</ion-card-header>
+<ion-card-content>
+    <ion-item *ngIf='showDetail'>
+        <ion-grid>
+            <ion-row>
+                <ion-col width-50>
+                    <p style="font-size : 1.3rem;"><strong>Status</strong> {{featureTCM.Status}}</p>
+<p style="font-size : 1.3rem;"><strong>Author</strong> {{featureTCM.Author}}</p>
+<p style="font-size : 1.3rem;"><strong>Release</strong> {{featureTCM.Release}}</p>
+</ion-col>
+<ion-col width-50>
+    <p style="font-size : 1.3rem;"><strong>Created</strong> {{featureTCM.CreationTime}}</p>
+<p style="font-size : 1.3rem;"><strong>Updated</strong> {{featureTCM.UpdateTime}}</p>
+<p style="font-size : 1.3rem;"><strong>TestCases</strong>
+<ion-badge>{{featureTCM.TestCases.length}}</ion-badge>
+</p>
+</ion-col>
+</ion-row>
+</ion-grid>
+</ion-item>
+<ion-item>
+    <p style="font-size : 1.3rem;">{{featureTCM.Description}}</p>
+</ion-item>
+
+</ion-card-content>
+</ion-card>
+
+</ion-slide>
+<ion-slide class="slide-overflow">
+    <!-- Feature Sync Slide -->
+    <ion-content class="modal-reporter">
+        <da-task-report [showButtons]="false"></da-task-report>
+    </ion-content>
+</ion-slide>
+</ion-slides>
+<ion-footer class="modal-footer">
+
+    <ion-buttons end>
+        <button primary *ngIf="isLink" (click)="validate()" [disabled]="(featureTCM == undefined) || isSearching">
+        <ion-icon  name="checkmark"></ion-icon> Validate
+      </button>
+        <template [ngIf]="isProcessed && isCheckSuccess">
+            <button success (click)="close()"> <ion-icon  name="checkmark-circle" color="primary"></ion-icon> </button>
+        </template>
+        <template [ngIf]="(isProcessed || isValidated ) && !isCheckSuccess">
+            <button danger (click)="close()"> <ion-icon  name="close-circle" color="danger"></ion-icon> </button>
+        </template>
+
+        <button primary *ngIf="!isLink && !isProcessed && isCheckSuccess" (click)="process()" [disabled]="!isCheckSuccess || isProcessing">
+                <template [ngIf]="isProcessing">
+        <ion-spinner  name="crescent"></ion-spinner>
+         {{ isValidated ? "Processing..." : "Validating..." }}
+         </template>
+           <template [ngIf]="isValidated && isCheckSuccess && !isProcessed && !isProcessing">
+             <ion-icon  name="done-all"></ion-icon> Process
+         </template>
+
+      </button>
+
+        <button  *ngIf="!isLink" (click)="back()">
+                Back
+      </button>
+        <button clear (click)="close()">
+                Cancel
+      </button>
+
+    </ion-buttons>
+
+</ion-footer>
+</ion-content>

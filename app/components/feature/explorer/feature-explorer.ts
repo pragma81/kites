@@ -290,7 +290,7 @@ export class FeatureMenu {
   }
 
   tcmSync() {
-    const modal = this.modalController.create(TCMFeatureSynchronizer, { "feature": this.feature, callback: () => { } },{/*enableBackdropDismiss:false*/});
+    const modal = this.modalController.create(TCMFeatureSynchronizer, { "feature": this.feature, callback: () => { } },{enableBackdropDismiss:false});
     modal.onDidDismiss(isSuccess => { });
     this.viewCtrl.dismiss().then(() => {
       modal.present()
