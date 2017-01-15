@@ -9,8 +9,8 @@ import {Feature} from '../../../models/Feature';
 })
 export class FeatureSourceView {
    feature : Feature;
-    constructor( public viewCtrl: ViewController, private navParams: NavParams) {
-    console.log("initialize NewItemModal")
+  constructor( public viewCtrl: ViewController, private navParams: NavParams) {
+   
     this.feature = this.navParams.get("feature")
 
 
