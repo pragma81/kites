@@ -35,7 +35,7 @@
   <kit-card-placeholder *ngIf="loading"> </kit-card-placeholder>
   <kit-card-placeholder *ngIf="loading"> </kit-card-placeholder>
   <ion-content *ngIf="!loading" style="height: 480px;">
-    <ion-scroll scroll-y="true" style="height: 3000px;">
+    <ion-scroll scroll-y="true"  [ngStyle]="{'height': (featuresInfo.length * 270 ) + 'px'}">
       <ion-card *ngFor=" let featureInfo of featuresInfo" [ngStyle]="{'border-top': '3px solid '+(featureInfo.feature.isUI() ? '#64DD17' : '#757575')}">
         <ion-card-header class="feature-header">
          
