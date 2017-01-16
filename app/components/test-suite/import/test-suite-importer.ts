@@ -46,6 +46,7 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
   private isCheckSuccess: boolean
   private isProcessed: boolean = false
   private isValidated: boolean = false
+  private isImportValidated: boolean = false
   private importErrorMessage: string = ""
 
   @ViewChild('wizard') slider: Slides;
@@ -113,7 +114,7 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
     this.slider.slideNext()
     this.importTestSuite()
     this.isImport = false
-    this.headerDescription = "Import results are shown below"
+    
   }
 
   checkNextAction() {
@@ -121,7 +122,6 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
       this.slider.slideNext()
       this.import()
       this.isImport = false
-      this.headerDescription = "Import results are shown below"
     } else {
       this.viewCtrl.dismiss()
     }
@@ -216,11 +216,15 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
   beforeAsyncCheck(execution: AsyncTaskExecutor): void {
   }
   postAsyncCheck(execution: AsyncTaskExecutor): void {
-    this.isValidated = true
-    if (execution.getResult() === ExecutionResult.success)
+    this.isImportValidated = true
+   if (execution.getResult() === ExecutionResult.success){
       this.isCheckSuccess = true
-    else
+      this.headerDescription = "Successfully validated "+ execution.getTasksCounter()+ " feature files."
+    }
+    else {
       this.isCheckSuccess = false
+      this.headerDescription = "Error while validating "+ execution.getTasksCounter()+ " feature files. See below for error details."
+    }
   }
 
 
