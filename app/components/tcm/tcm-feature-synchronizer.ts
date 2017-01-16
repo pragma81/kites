@@ -3,8 +3,6 @@ import { ViewController, NavParams, Tabs, Tab, Events, ToastController, Slides }
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 
 import { Feature } from '../../models/Feature';
-import { FeatureTab } from './tcm-feature-tab';
-import { ScenarioTab } from './tcm-scenario-tab';
 import { JiraTCM } from '../../services/tcm/JiraTCM';
 import { FeatureTCM } from '../../models/tcm/FeatureTCM'
 import { SettingsServiceImpl } from '../../services/settings/SettingsServiceImpl'
