@@ -53,7 +53,7 @@
               <a  href="#" (click)="onTcmClick(featureInfo.feature)" style="font-size: 1.3rem"> {{ featureInfo.feature.getTCMId()}}</a>
               </template>
             </ion-col>
-            <ion-col width-10 offset-20>
+            <ion-col width-10 >
               <button clear  (click)="showFeatureMenu(featureInfo)"> <ion-icon name="more"></ion-icon> </button>
             </ion-col>
           </ion-row>
@@ -69,11 +69,11 @@
               <da-tiles [tiles]='featureInfo.tiles'></da-tiles>
 
             </ion-col>
-            <ion-col width-20 offset-10>
+            <!--ion-col width-20 offset-10>
               <button clear primary>
           <ion-icon name="ios-arrow-forward" class="arrow-custom" item-right></ion-icon>
            </button>
-            </ion-col>
+            </ion-col-->
           </ion-row>
         </ion-card-content>
 

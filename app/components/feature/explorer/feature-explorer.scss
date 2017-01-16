@@ -18,6 +18,9 @@
 
 .feature-summary {
   font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 50rem
 }
 
 .toast-container {

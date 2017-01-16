@@ -75,7 +75,7 @@ export class TCMFeatureSynchronizer implements AsyncExecutionListener {
     this.featureService = featureService
     this.settingsService = settingsService
     this.tcmSettings = this.settingsService.getTestCaseManegementSettings()
-    this.headerInfo = "Syncronize feature file with an existing" + this.tcmSettings.TcmName + " issue."
+    this.headerInfo = "Syncronize feature file with an existing " + this.tcmSettings.TcmName + " issue."
 
     console.log("initialize TCMFeatureSynchronizer ")
     this.feature = this.navParams.get("feature")
@@ -102,6 +102,8 @@ export class TCMFeatureSynchronizer implements AsyncExecutionListener {
         },
         error => {
           this.isSearching = false
+          if (error.status === 404)
+          this.showToast(this.tcmId + ' not found in ' + this.tcmSettings.TcmName)
         }
 
         )
@@ -229,20 +231,29 @@ export class TCMFeatureSynchronizer implements AsyncExecutionListener {
   postAsyncCheck(execution: AsyncTaskExecutor): void {
     this.isValidated = true
     this.isProcessing = false
-    if (execution.getResult() === ExecutionResult.success)
+    if (execution.getResult() === ExecutionResult.success) {
       this.isCheckSuccess = true
-    else
+      this.headerInfo = "Successfully validated "+ execution.getTasksCounter()+ " test scenarios."  
+    }
+    else {
       this.isCheckSuccess = false
+      this.headerInfo = "Error while validating "+ execution.getTasksCounter()+ " test scenarios. See below for errors detail."  
+    }
   }
   beforeAsyncProcess(execution: AsyncTaskExecutor): void { }
   postAsyncProcess(execution: AsyncTaskExecutor): void {
     this.isProcessed = true
     this.isProcessing = false
     
-    if (execution.getResult() === ExecutionResult.success)
+    if (execution.getResult() === ExecutionResult.success) {
       this.isCheckSuccess = true
-    else
+       this.headerInfo = "Successfully processed "+ execution.getTasksCounter()+ " test scenarios."  
+    }
+    else {
       this.isCheckSuccess = false
+      this.headerInfo = "Error while processing "+ execution.getTasksCounter()+ " test scenarios. See below for errors detail."  
+      
+  }
 
     if (this.isCheckSuccess) {
       // reload feature file from file system and save new tcm tags

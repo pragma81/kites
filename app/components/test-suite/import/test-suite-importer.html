@@ -26,6 +26,12 @@
   <ion-footer class="modal-footer">
 
     <ion-buttons end>
+       <template [ngIf]="isProcessed && isCheckSuccess">
+            <button success (click)="close()"> <ion-icon  name="checkmark-circle" color="primary"></ion-icon> </button>
+        </template>
+        <template [ngIf]="isProcessed && !isCheckSuccess">
+            <button danger (click)="close()"> <ion-icon  name="close-circle" color="danger"></ion-icon> </button>
+        </template>
       <button *ngIf="isImport" primary (click)="import()" [disabled]="!fileSelected || !isValidated">
         Import
       </button>

@@ -244,10 +244,14 @@ export class TestSuiteImporter implements AsyncTaskHandler, AsyncExecutionListen
   }
   postAsyncProcess(execution: AsyncTaskExecutor): void {
     this.isProcessed = true
-    if (execution.getResult() === ExecutionResult.success)
+    if (execution.getResult() === ExecutionResult.success){
       this.isCheckSuccess = true
-    else
+      this.headerDescription = "Successfully processed "+ execution.getTasksCounter()+ " feature files."
+    }
+    else {
       this.isCheckSuccess = false
+      this.headerDescription = "Error while processing "+ execution.getTasksCounter()+ " feature files. See below for error details."
+    }
   }
 
 }
