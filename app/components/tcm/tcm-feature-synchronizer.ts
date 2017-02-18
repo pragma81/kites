@@ -231,7 +231,7 @@ export class TCMFeatureSynchronizer implements AsyncExecutionListener {
   postAsyncCheck(execution: AsyncTaskExecutor): void {
     this.isValidated = true
     this.isProcessing = false
-    if (execution.getResult() === ExecutionResult.success) {
+    if (execution.getResult() != ExecutionResult.error) {
       this.isCheckSuccess = true
       this.headerInfo = "Successfully validated "+ execution.getTasksCounter()+ " test scenarios."  
     }
@@ -245,7 +245,7 @@ export class TCMFeatureSynchronizer implements AsyncExecutionListener {
     this.isProcessed = true
     this.isProcessing = false
     
-    if (execution.getResult() === ExecutionResult.success) {
+    if (execution.getResult() != ExecutionResult.error) {
       this.isCheckSuccess = true
        this.headerInfo = "Successfully processed "+ execution.getTasksCounter()+ " test scenarios."  
     }

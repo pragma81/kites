@@ -192,14 +192,12 @@ export class AsyncTaskExecutor {
 
 					if (taskInfo.getExecutionResult() === ExecutionResult.success) {
 						// If only one task is in error the overall execution still be error
-						if(this.result != ExecutionResult.error)
-							this.result = ExecutionResult.success
 						
 						if (!taskInfo.getStatusDescription())
 							taskInfo.setStatusDescription(this.defaultSuccessDescription)
 					}
 
-					if (taskInfo.getExecutionResult() === ExecutionResult.warning) {
+					if (taskInfo.getExecutionResult() === ExecutionResult.warning && this.result !=ExecutionResult.error) {
 						this.result = ExecutionResult.warning
 						if (!taskInfo.getStatusDescription())
 							taskInfo.setStatusDescription(this.defaultWarningDescription)
@@ -293,14 +291,12 @@ export class AsyncTaskExecutor {
 
 					if (taskInfo.getExecutionResult() === ExecutionResult.success) {
 						// If only one task is in error the overall execution still be error
-						if(this.result != ExecutionResult.error)
-							this.result = ExecutionResult.success
 
 						if (!taskInfo.getStatusDescription())
 							taskInfo.setStatusDescription(this.defaultSuccessDescription)
 					}
 
-					if (taskInfo.getExecutionResult() === ExecutionResult.warning) {
+					if (taskInfo.getExecutionResult() === ExecutionResult.warning && this.result !=ExecutionResult.error) {
 						this.result = ExecutionResult.warning
 						if (!taskInfo.getStatusDescription())
 							taskInfo.setStatusDescription(this.defaultWarningDescription)
