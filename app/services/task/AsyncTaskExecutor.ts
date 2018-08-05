@@ -163,7 +163,7 @@ export class AsyncTaskExecutor {
 		/* Success by default. If one of the task is in error the overall 
 		task execution is error
 		*/
-		let result = ExecutionResult.success;
+		this.result = ExecutionResult.success;
 
 		//Execute report listener
 		if (this.executionListener != undefined) {

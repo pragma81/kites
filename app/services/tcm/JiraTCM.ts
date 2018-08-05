@@ -25,6 +25,7 @@ export class JiraTCM implements TCMService {
     private tcmSettings: TCMSettings
     private baseApiUrl: string
     private requestOptions: RequestOptions
+    
 
     constructor(private http: Http, settingsService: SettingsServiceImpl) {
         this.settingsService = settingsService
@@ -56,7 +57,7 @@ export class JiraTCM implements TCMService {
         let issuelinksUrl = this.baseApiUrl + '/issue/' + tcmid + '?fields=issuelinks'
         return Observable.forkJoin(
             this.http.get(issueDetailUrl, this.requestOptions).map(this.buildFeatureTCM),
-            this.http.get(issuelinksUrl, this.requestOptions).map(this.buildTestCases)
+            this.http.get(issuelinksUrl, this.requestOptions).map(this.buildTestCases,this)
         ).map((data) => {
             let featureTCM = <FeatureTCM>data[0]
             let testCases = <Array<TestCase>>data[1]
@@ -71,7 +72,7 @@ export class JiraTCM implements TCMService {
    */
     findTestCases(featureTCMId: string): Observable<Array<TestCase>> {
         let issuelinksUrl = this.baseApiUrl + '/issue/' + featureTCMId + '?fields=issuelinks'
-        return this.http.get(issuelinksUrl, this.requestOptions).map(this.buildTestCases).catch(RxHTTPErrorHandler.handleError)
+        return this.http.get(issuelinksUrl, this.requestOptions).map(this.buildTestCases,this).catch(RxHTTPErrorHandler.handleError)
 
     }
     /**
@@ -235,8 +236,9 @@ export class JiraTCM implements TCMService {
         //find 'tested by' issue types
         if (body.fields.issuelinks && body.fields.issuelinks.length > 0) {
             let testCaseIssueLinks = body.fields.issuelinks.filter((value, index, array): boolean => {
-                // return value.type.inward === this.tcmSettings.TestCaseRelationshipType
-                return value.type.inward === "is tested by"
+
+                return value.type.inward === this.tcmSettings.FeatureTestCaseRelationshipType
+        
             })
             if (testCaseIssueLinks && testCaseIssueLinks.length > 0) {
                 testCaseIssueLinks.forEach(issuelink => {
