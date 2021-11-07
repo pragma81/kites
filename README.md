@@ -21,7 +21,7 @@
 <h3 align="center">KITes</h3>
 
   <p align="center">
-    KITes (Keep It Testable) is an intelligent gherkin file editor which integrates with your preferred test case management tool. Business analysts, software and test engineers use KITes to edit, share feature files written in natural language and synch them with generated acceptance test script using tools like <a href="https://cucumber.io/">Cucumber</a>. JIRA extended with Zephyr plug-in is currently supported as test case management tool.
+    KITes (Keep It Testable) is an intelligent gherkin file editor which integrates with your preferred test case management tool. Business analysts, software and test engineers use KITes to edit, share feature files written in natural language and synch them with generated acceptance test script using tools like <a href="https://cucumber.io/">Cucumber</a>. JIRA extended with <a href="https://marketplace.atlassian.com/apps/1213259/zephyr-scale-test-management-for-jira?tab=overview&hosting=cloud">Zephyr plug-in </a> is currently supported as test case management tool.
   </p>
     <p align="center">
     Most of this work is inspired by <a href="https://opensource.com/article/18/11/continuous-testing-wrong"> this </a> opensource.com community article.
