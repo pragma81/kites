@@ -1,16 +1,16 @@
-import {Scenario} from '../../models/Scenario';
-import {Injectable} from '@angular/core';
-import {RequestOptions, Http, Headers, Response} from '@angular/http';
-import { Observable}     from 'rxjs/Observable';
-import {BehaviorSubject} from "rxjs/Rx";
-import {RxHTTPErrorHandler} from '../../error/RxHTTPErrorHandler';
-import {FeatureTCM} from '../../models/tcm/FeatureTCM'
-import {Feature} from '../../models/Feature';
-import {TCMService} from './TCMService';
-import {SettingsServiceImpl} from '../settings/SettingsServiceImpl';
-import {SettingsService} from '../settings/SettingsService';
-import {TCMSettings} from '../../models/TCMSettings';
-import {TestCase} from '../../models/tcm/TestCase';
+import { Scenario } from '../../models/Scenario';
+import { Injectable } from '@angular/core';
+import { RequestOptions, Http, Headers, Response } from '@angular/http';
+import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from "rxjs/Rx";
+import { RxHTTPErrorHandler } from '../../error/RxHTTPErrorHandler';
+import { FeatureTCM } from '../../models/tcm/FeatureTCM'
+import { Feature } from '../../models/Feature';
+import { TCMService } from './TCMService';
+import { SettingsServiceImpl } from '../settings/SettingsServiceImpl';
+import { SettingsService } from '../settings/SettingsService';
+import { TCMSettings } from '../../models/TCMSettings';
+import { TestCase } from '../../models/tcm/TestCase';
 import * as Mustache from 'mustache'
 
 import 'rxjs/add/operator/map'
@@ -25,7 +25,7 @@ export class JiraTCM implements TCMService {
     private tcmSettings: TCMSettings
     private baseApiUrl: string
     private requestOptions: RequestOptions
-    
+
 
     constructor(private http: Http, settingsService: SettingsServiceImpl) {
         this.settingsService = settingsService
@@ -57,7 +57,7 @@ export class JiraTCM implements TCMService {
         let issuelinksUrl = this.baseApiUrl + '/issue/' + tcmid + '?fields=issuelinks'
         return Observable.forkJoin(
             this.http.get(issueDetailUrl, this.requestOptions).map(this.buildFeatureTCM),
-            this.http.get(issuelinksUrl, this.requestOptions).map(this.buildTestCases,this)
+            this.http.get(issuelinksUrl, this.requestOptions).map(this.buildTestCases, this)
         ).map((data) => {
             let featureTCM = <FeatureTCM>data[0]
             let testCases = <Array<TestCase>>data[1]
@@ -72,7 +72,7 @@ export class JiraTCM implements TCMService {
    */
     findTestCases(featureTCMId: string): Observable<Array<TestCase>> {
         let issuelinksUrl = this.baseApiUrl + '/issue/' + featureTCMId + '?fields=issuelinks'
-        return this.http.get(issuelinksUrl, this.requestOptions).map(this.buildTestCases,this).catch(RxHTTPErrorHandler.handleError)
+        return this.http.get(issuelinksUrl, this.requestOptions).map(this.buildTestCases, this).catch(RxHTTPErrorHandler.handleError)
 
     }
     /**
@@ -139,16 +139,16 @@ export class JiraTCM implements TCMService {
                             observer.next(testCase);
                             observer.complete();
 
-                        }, error => { 
-                           // RxHTTPErrorHandler.handleError(error)
-                          
-                           observer.error(error)
+                        }, error => {
+                            // RxHTTPErrorHandler.handleError(error)
+
+                            observer.error(error)
                         })
 
                 },
-                error => { 
-                 //   RxHTTPErrorHandler.handleError(error)
-                observer.error(error)
+                error => {
+                    //   RxHTTPErrorHandler.handleError(error)
+                    observer.error(error)
                 })
 
         })
@@ -173,7 +173,7 @@ export class JiraTCM implements TCMService {
                     observer.next(testcase);
                     observer.complete();
 
-                }, error => { RxHTTPErrorHandler.handleError(error)})
+                }, error => { RxHTTPErrorHandler.handleError(error) })
         })
         return newTestCaseStream
     }
@@ -238,7 +238,7 @@ export class JiraTCM implements TCMService {
             let testCaseIssueLinks = body.fields.issuelinks.filter((value, index, array): boolean => {
 
                 return value.type.inward === this.tcmSettings.FeatureTestCaseRelationshipType
-        
+
             })
             if (testCaseIssueLinks && testCaseIssueLinks.length > 0) {
                 testCaseIssueLinks.forEach(issuelink => {
