@@ -14,7 +14,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/github_username/repo_name">
+  <a href="https://github.com/pragma81/kites">
     <img src="images/kites-icon_48x48x32.png" alt="Logo" width="50" height="50">
   </a>
 
@@ -22,6 +22,8 @@
 
   <p align="center">
     Kites is an intelligent gherkin file editor which integrates with your preferred test case management tool (Zephyr JIRA plug-in is supported). Business analysts, software and test engineers use Kites to edit, share feature files written in natural language and synch them with generated acceptance test script using tools like cucumber.
+  </p>
+    <p align="center">
     Most of this work is inspired by <a href="https://opensource.com/article/18/11/continuous-testing-wrong"> this </a> opensource.com community article.
     <br />
     <br />
