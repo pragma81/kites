@@ -33,11 +33,11 @@
 
 ## Built With
 
-* [Angular.js](https://angular.io/)
+* [Angular](https://angular.io/)
 * [Electron](https://www.electronjs.org/)
-* [Ionic.js](https://ionicframework.com/)
+* [Ionic Framework](https://ionicframework.com/)
 * [Typescript](https://www.typescriptlang.org/)
-* [Browserify.js](https://browserify.org/)
+* [Browserify](https://browserify.org/)
 * [PouchDB](https://pouchdb.com/)
 
 
