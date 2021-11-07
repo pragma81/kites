@@ -21,7 +21,8 @@
 <h3 align="center">KITes</h3>
 
   <p align="center">
-    Kites is an intelligent gherkin file editor which integrates with your preferred test case management tool (Zephyr JIRA plug-in is supported). Business analysts, software and test engineers use Kites to edit, share feature files written in natural language and synch them with generated acceptance test script using tools like cucumber
+    Kites is an intelligent gherkin file editor which integrates with your preferred test case management tool (Zephyr JIRA plug-in is supported). Business analysts, software and test engineers use Kites to edit, share feature files written in natural language and synch them with generated acceptance test script using tools like cucumber.
+    Most of this work is inspired by <a href="https://opensource.com/article/18/11/continuous-testing-wrong"> this </a> opensource.com community article.
     <br />
     <br />
     <img src="images/kites.png" alt="main" >
@@ -56,20 +57,8 @@
 
 ### Synchronize with Jira
 ![Synchronize][Synchronize]
-<p align="right">(<a href="#top">back to top</a>)</p>
 
 
-<!-- ROADMAP -->
-## Roadmap
-
-- Upgrade to third parties libraries LT versions (mainly angular, ionic, electron)
-    - Ionic v5
-    - Angular v8 (constrained by Ionic version)
-    - Electron v15 (node version upgrade will be required as well) 
-- Support Jira 7.x
-- Support Azure Test Plans
-- Enable spelling check within feature editor
-- Test steps dictionary available within intellisense
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -111,7 +100,7 @@
     npm start app-mac
     ```
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+
 
 
 <!-- CONTRIBUTING -->
@@ -119,7 +108,7 @@
 
 Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement". If you want to contribute the roadmap (see below) use the tag "feature".
 Don't forget to give the project a star! Thanks again!
 
 1. Fork the Project
@@ -127,6 +116,20 @@ Don't forget to give the project a star! Thanks again!
 3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+<!-- ROADMAP -->
+## Roadmap
+
+- Upgrade to third parties libraries LT versions
+    - Ionic v5
+    - Angular v8 (constrained by Ionic version)
+    - Electron v15 (node version upgrade will be required as well) 
+- Support Jira 7.x
+- Support Azure Test Plans
+- Enable spelling check within feature editor
+- Test steps dictionary available within intellisense
+
+
 
 <!-- LICENSE -->
 ## License
