@@ -69,8 +69,8 @@
 ### Prerequisites
 
 1. Install Node Manager
-   - For windows Install nvm. Download it from [here](https://github.com/coreybutler/nvm-windows).
-   - For MacOs use homebrew and run ```brew install nvm ``` . Use this [link](https://tecadmin.net/install-nvm-macos-with-homebrew/) to setup nvm.
+   - [Windows] Install nvm downloading from [here](https://github.com/coreybutler/nvm-windows).
+   - [MacOs] Install nvm using homebrew and run ```brew install nvm ``` . Use this [link](https://tecadmin.net/install-nvm-macos-with-homebrew/) to setup nvm.
 
 2. Install Nodejs
     - Use a shell or prompt (with administrator privilegies) and run ```sh nvm install v6.14.3```
